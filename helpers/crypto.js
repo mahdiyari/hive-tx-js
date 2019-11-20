@@ -1,0 +1,24 @@
+const CryptoJS = require('crypto-js')
+// const crypto = require('crypto')
+
+const sha256 = input => {
+  // const hash = crypto.createHash('sha256').update(input).digest()
+  const wa = CryptoJS.lib.WordArray.create(input)
+  const hash = Buffer.from(
+    CryptoJS.SHA256(wa).toString(CryptoJS.enc.Hex),
+    'hex'
+  )
+  return hash
+}
+
+const ripemd160 = input => {
+  // return crypto.createHash('ripemd160').update(input).digest()
+  const wa = CryptoJS.lib.WordArray.create(input)
+  const hash = Buffer.from(
+    CryptoJS.HmacRIPEMD160(wa).toString(CryptoJS.enc.Hex),
+    'hex'
+  )
+  return hash
+}
+
+module.exports = { sha256, ripemd160 }
