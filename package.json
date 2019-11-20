@@ -1,6 +1,6 @@
 {
   "name": "steem-tx",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Create, sign, and broadcast transactions on Steem blockchain",
   "main": "index.js",
   "scripts": {
@@ -23,5 +23,10 @@
     "crypto-js": "^3.1.9-1",
     "node-fetch": "^2.6.0",
     "secp256k1": "^3.7.1"
+  },
+  "homepage": "https://github.com/mahdiyari/steem-tx-js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mahdiyari/steem-tx-js.git"
   }
 }
