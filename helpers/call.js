@@ -1,8 +1,4 @@
-try {
-  var fetch = !fetch ? require('node-fetch') : fetch
-} catch (e) {
-  // DO NOTHING
-}
+const axios = require('axios')
 const config = require('../config')
 
 /**
@@ -11,20 +7,18 @@ const config = require('../config')
  * @param params - an array
  */
 const call = async (method, params = []) => {
-  let res = await fetch(config.node, {
-    method: 'post',
-    body: JSON.stringify({
+  const res = await axios.post(
+    config.node,
+    JSON.stringify({
       jsonrpc: '2.0',
       method,
       params,
       id: 1
     })
-  })
-  if (res && !res.ok) {
-    throw new Error(res ? res.status : 'Network error')
+  )
+  if (res && res.statusText === 'OK') {
+    return res.data
   }
-  res = await res.json()
-  return res
 }
 
 module.exports = call
