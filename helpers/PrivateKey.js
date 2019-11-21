@@ -3,7 +3,10 @@ const crypto = require('./crypto')
 const PublicKey = require('./PublicKey')
 const Signature = require('./Signature')
 const bs58 = require('bs58')
+const config = require('../config')
+
 const NETWORK_ID = Buffer.from([0x80])
+const DEFAULT_ADDRESS_PREFIX = config.address_prefix
 
 /** ECDSA (secp256k1) private key. */
 class PrivateKey {
@@ -58,7 +61,7 @@ class PrivateKey {
   }
 
   /** Derive the public key for this private key. */
-  createPublic (prefix = undefined) {
+  createPublic (prefix = DEFAULT_ADDRESS_PREFIX) {
     return new PublicKey(secp256k1.publicKeyCreate(this.key), prefix)
   }
 

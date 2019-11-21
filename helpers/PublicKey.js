@@ -1,8 +1,9 @@
 // const crypto = require('crypto')
 const crypto = require('./crypto')
 const bs58 = require('bs58')
+const config = require('../config')
 
-const DEFAULT_ADDRESS_PREFIX = 'STM'
+const DEFAULT_ADDRESS_PREFIX = config.address_prefix
 
 /** ECDSA (secp256k1) public key. */
 class PublicKey {
