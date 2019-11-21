@@ -58,7 +58,7 @@ class PrivateKey {
   }
 
   /** Derive the public key for this private key. */
-  createPublic (prefix = '') {
+  createPublic (prefix = undefined) {
     return new PublicKey(secp256k1.publicKeyCreate(this.key), prefix)
   }
 
