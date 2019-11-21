@@ -15,7 +15,7 @@ const ripemd160 = input => {
   // return crypto.createHash('ripemd160').update(input).digest()
   const wa = CryptoJS.lib.WordArray.create(input)
   const hash = Buffer.from(
-    CryptoJS.HmacRIPEMD160(wa).toString(CryptoJS.enc.Hex),
+    CryptoJS.RIPEMD160(wa).toString(CryptoJS.enc.Hex),
     'hex'
   )
   return hash
