@@ -3,6 +3,7 @@ const createTransaction = require('./transactions/createTransaction')
 const broadcastTransaction = require('./transactions/broadcastTransaction')
 const PrivateKey = require('./helpers/PrivateKey')
 const call = require('./helpers/call')
+const config = require('./config')
 
 /** Transaction for Steem blockchain */
 class Transaction {
@@ -43,4 +44,4 @@ class Transaction {
   }
 }
 
-module.exports = { Transaction, PrivateKey, call }
+module.exports = { Transaction, PrivateKey, call, config }
