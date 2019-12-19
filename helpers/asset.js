@@ -2,7 +2,7 @@
  * e.g. `1.000 STEEM` or `12.112233 VESTS`. */
 class Asset {
   /** Create a new Asset instance from a string, e.g. `42.000 STEEM`. */
-  static fromString(string, expectedSymbol = null) {
+  static fromString (string, expectedSymbol = null) {
     const [amountString, symbol] = string.split(' ')
     if (['STEEM', 'VESTS', 'SBD', 'TESTS', 'TBD'].indexOf(symbol) === -1) {
       throw new Error(`Invalid asset symbol: ${symbol}`)
@@ -24,7 +24,7 @@ class Asset {
    * @param symbol Symbol to use when created from number. Will also be used to validate
    *               the asset, throws if the passed value has a different symbol than this.
    */
-  static from(value, symbol = null) {
+  static from (value, symbol = null) {
     if (value instanceof Asset) {
       if (symbol && value.symbol !== symbol) {
         throw new Error(
@@ -41,13 +41,13 @@ class Asset {
     }
   }
 
-  constructor(amount, symbol) {
+  constructor (amount, symbol) {
     this.amount = amount
     this.symbol = symbol
   }
 
   /** Return asset precision. */
-  getPrecision() {
+  getPrecision () {
     switch (this.symbol) {
       case 'TESTS':
       case 'TBD':
@@ -60,11 +60,11 @@ class Asset {
   }
 
   /** Return a string representation of this asset, e.g. `42.000 STEEM`. */
-  toString() {
+  toString () {
     return `${this.amount.toFixed(this.getPrecision())} ${this.symbol}`
   }
 
-  toJSON() {
+  toJSON () {
     return this.toString()
   }
 }

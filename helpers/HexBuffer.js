@@ -1,7 +1,7 @@
 /** Buffer wrapper that serializes to a hex-encoded string. */
 class HexBuffer {
   /** Convenience to create a new HexBuffer, does not copy data if value passed is already a buffer. */
-  static from(value) {
+  static from (value) {
     if (value instanceof HexBuffer) {
       return value
     } else if (value instanceof Buffer) {
@@ -13,15 +13,15 @@ class HexBuffer {
     }
   }
 
-  constructor(buffer) {
+  constructor (buffer) {
     this.buffer = buffer
   }
 
-  toString(encoding = 'hex') {
+  toString (encoding = 'hex') {
     return this.buffer.toString(encoding)
   }
 
-  toJSON() {
+  toJSON () {
     return this.toString()
   }
 }
