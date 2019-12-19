@@ -27,7 +27,7 @@ const signTransaction = (transaction, keys) => {
 }
 
 /** Serialize transaction */
-const transactionDigest = (transaction, chainId) => {
+const transactionDigest = (transaction, chainId = CHAIN_ID) => {
   const buffer = new ByteBuffer(
     ByteBuffer.DEFAULT_CAPACITY,
     ByteBuffer.LITTLE_ENDIAN
