@@ -36,6 +36,18 @@ or
 const steemTx = require('steem-tx')
 ```
 
+## Usage examples
+
+**Configuration**
+Set or get configs:
+
+```
+// default values already defined in config.js
+steemTx.config.node = "https://api.steemit.com"
+steemTx.config.chain_id = "0000000000000000000000000000000000000000000000000000000000000000"
+steemTx.config.address_prefix = "STM"
+```
+
 **Create transaction:**
 
 ```
