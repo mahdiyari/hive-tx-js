@@ -4,7 +4,8 @@
   "description": "Create, sign, and broadcast transactions on Steem blockchain",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-browser": "browserify index.js -p tinyify --standalone steemTx > dist/steem-tx.min.js"
   },
   "keywords": [
     "steem",
@@ -28,5 +29,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/mahdiyari/steem-tx-js.git"
+  },
+  "devDependencies": {
+    "browserify": "^16.5.0",
+    "tinyify": "^2.5.2"
   }
 }
