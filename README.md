@@ -16,10 +16,29 @@ npm install steem-tx --save
 
 ## Usage
 
-**Create transaction:**
+**Browser:**
+
+```
+<script src="https://cdn.jsdelivr.net/npm/steem-tx/dist/steem-tx.min.js"></script>
+```
+
+or
+
+```
+<script src="dist/steem-tx.min.js"></script>
+```
+
+`steemTx` is available after including /dist/steem-tx.min.js file in your html file.
+
+**NodeJS:**
 
 ```
 const steemTx = require('steem-tx')
+```
+
+**Create transaction:**
+
+```
 const operations = [
   [
     'vote',
