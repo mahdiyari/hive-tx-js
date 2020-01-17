@@ -39,6 +39,7 @@ const steemTx = require('steem-tx')
 ## Usage examples
 
 **Configuration**
+
 Set or get configs:
 
 ```
