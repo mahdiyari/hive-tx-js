@@ -16,7 +16,7 @@ const call = async (method, params = []) => {
       id: 1
     })
   )
-  if (res && res.statusText === 'OK') {
+  if (res && res.status === 200) {
     return res.data
   }
 }
