@@ -1,12 +1,12 @@
 # steem-tx-js
 
-Lightweight JavaScript library for creating and signing transactions (Steem blockchain)
+Lightweight and complete JavaScript library for using Steem blockchain in Javascript environments such as Web or NodeJS.
 
 #### Why this?
 
 [steem-js](https://github.com/steemit/steem-js) and [dsteem](https://github.com/jnordberg/dsteem) libraries are not easy to integrate and in some cases are incompatible with some frameworks like [Nativescript](https://www.nativescript.org/)
 
-This library is a solution to such cases when official libraries are not working. And also an alternative for just creating, signing, and broadcasting transactions.
+This library is a solution to such cases when official libraries are not working. And also an lightweight alternative for other libraries.
 
 ## Installation
 
