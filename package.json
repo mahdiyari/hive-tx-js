@@ -1,13 +1,14 @@
 {
   "name": "steem-tx",
-  "version": "2.0.7",
-  "description": "Create, sign, and broadcast transactions on Steem blockchain",
+  "version": "2.1.0",
+  "description": "Create, sign, and broadcast transactions on Steem/Hive blockchain",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-browser": "browserify index.js -p tinyify --standalone steemTx > dist/steem-tx.min.js"
   },
   "keywords": [
+    "hive",
     "steem",
     "tx",
     "transaction",
