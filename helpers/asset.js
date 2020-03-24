@@ -4,7 +4,7 @@ class Asset {
   /** Create a new Asset instance from a string, e.g. `42.000 STEEM`. */
   static fromString (string, expectedSymbol = null) {
     const [amountString, symbol] = string.split(' ')
-    if (['STEEM', 'VESTS', 'SBD', 'TESTS', 'TBD'].indexOf(symbol) === -1) {
+    if (['STEEM', 'VESTS', 'SBD', 'TESTS', 'TBD', 'HIVE', 'HBD'].indexOf(symbol) === -1) {
       throw new Error(`Invalid asset symbol: ${symbol}`)
     }
     if (expectedSymbol && symbol !== expectedSymbol) {
@@ -43,7 +43,7 @@ class Asset {
 
   constructor (amount, symbol) {
     this.amount = amount
-    this.symbol = symbol
+    this.symbol = symbol === 'HIVE' ? 'STEEM' : symbol === 'HBD' ? 'SBD' : symbol
   }
 
   /** Return asset precision. */
@@ -53,6 +53,8 @@ class Asset {
       case 'TBD':
       case 'STEEM':
       case 'SBD':
+      case 'HBD':
+      case 'HIVE':
         return 3
       case 'VESTS':
         return 6
