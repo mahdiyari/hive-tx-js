@@ -1,6 +1,6 @@
 # steem-tx-js
 
-Lightweight and complete JavaScript library for using Steem blockchain in Javascript environments such as Web or NodeJS.
+Lightweight and complete JavaScript library for using Steem/Hive blockchain in Javascript environments such as Web or NodeJS.
 
 #### Why this?
 
