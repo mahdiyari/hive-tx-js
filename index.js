@@ -1,6 +1,7 @@
 const signTransaction = require('./transactions/signTransaction')
 const createTransaction = require('./transactions/createTransaction')
 const broadcastTransaction = require('./transactions/broadcastTransaction')
+const broadcastTransactionNoResult = require('./transactions/broadcastTransactionNoResult')
 const PrivateKey = require('./helpers/PrivateKey')
 const call = require('./helpers/call')
 const config = require('./config')
@@ -40,6 +41,20 @@ class Transaction {
       throw new Error('First sign the transaction by .sign(keys)')
     }
     const result = await broadcastTransaction(this.signedTransaction)
+    return result
+  }
+
+  /** Fast broadcast - No open connection
+   * TODO: return trx_id
+   */
+  async broadcastNoResult () {
+    if (!this.created) {
+      throw new Error('First create a transaction by .create(operations)')
+    }
+    if (!this.signedTransaction) {
+      throw new Error('First sign the transaction by .sign(keys)')
+    }
+    const result = await broadcastTransactionNoResult(this.signedTransaction)
     return result
   }
 }
