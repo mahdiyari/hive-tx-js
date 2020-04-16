@@ -29,7 +29,9 @@ class Transaction {
     if (!this.created) {
       throw new Error('First create a transaction by .create(operations)')
     }
-    this.signedTransaction = signTransaction(this.transaction, keys)
+    const { signedTransaction, txId } = signTransaction(this.transaction, keys)
+    this.signedTransaction = signedTransaction
+    this.txId = txId
     return this.signedTransaction
   }
 
@@ -54,8 +56,8 @@ class Transaction {
     if (!this.signedTransaction) {
       throw new Error('First sign the transaction by .sign(keys)')
     }
-    const result = await broadcastTransactionNoResult(this.signedTransaction)
-    return result
+    await broadcastTransactionNoResult(this.signedTransaction)
+    return { id: 1, jsonrpc: '2.0', result: { tx_id: this.txId, status: 'unkown' } } // result
   }
 }
 

@@ -10,7 +10,7 @@ const CHAIN_ID = Buffer.from(config.chain_id, 'hex')
  * @param keys - Array of keys<Buffer>
  */
 const signTransaction = (transaction, keys) => {
-  const digest = transactionDigest(transaction, CHAIN_ID)
+  const { digest, txId } = transactionDigest(transaction, CHAIN_ID)
   const signedTransaction = { ...transaction }
   if (!signedTransaction.signatures) {
     signedTransaction.signatures = []
@@ -23,7 +23,7 @@ const signTransaction = (transaction, keys) => {
     signedTransaction.signatures.push(signature.customToString())
   }
 
-  return signedTransaction
+  return { signedTransaction, txId }
 }
 
 /** Serialize transaction */
@@ -38,10 +38,10 @@ const transactionDigest = (transaction, chainId = CHAIN_ID) => {
     throw new Error('Unable to serialize transaction')
   }
   buffer.flip()
-
   const transactionData = Buffer.from(buffer.toBuffer())
+  const txId = crypto.sha256(transactionData).toString('hex').slice(0, 40)
   const digest = crypto.sha256(Buffer.concat([chainId, transactionData]))
-  return digest
+  return { digest, txId }
 }
 
 module.exports = signTransaction
