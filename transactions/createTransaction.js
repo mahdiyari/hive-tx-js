@@ -1,8 +1,8 @@
 const globalProps = require('../helpers/globalProps')
 
 /** Create transaction by operations */
-const createTransaction = async operations => {
-  const expireTime = 1000 * 60
+const createTransaction = async (operations, exp) => {
+  const expireTime = exp ? 1000 * exp : 1000 * 60
   const props = await globalProps()
   const refBlockNum = props.head_block_number & 0xffff
   const refBlockPrefix = Buffer.from(props.head_block_id, 'hex').readUInt32LE(4)
