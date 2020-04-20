@@ -50,7 +50,16 @@ steemTx.config.address_prefix = "STM"
 ```
 
 **Create transaction:**
+```
+const tx = new steemTx.Transaction(trx?)
+```
+or
+```
+const tx = new steemTx.Transaction()
+tx.create(operations, expiration = 60)
+```
 
+Example:
 ```
 const operations = [
   [
@@ -85,7 +94,11 @@ tx.broadcast().then(res => console.log(res))
 ```
 
 **Make node call:**
+```
+steemTx.call(method, params = [], timeout = 10): Promise
+```
 
+Example:
 ```
 steemTx.call('condenser_api.get_accounts', [['mahdiyari']]).then(res => console.log(res))
 ```
