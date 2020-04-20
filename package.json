@@ -1,6 +1,6 @@
 {
   "name": "steem-tx",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Create, sign, and broadcast transactions on Steem/Hive blockchain",
   "main": "index.js",
   "scripts": {
