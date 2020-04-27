@@ -1,17 +1,19 @@
-# steem-tx-js
+# hive-tx-js
 
-Lightweight and complete JavaScript library for using Steem/Hive blockchain in Javascript environments such as Web or NodeJS.
+Lightweight and complete JavaScript library for using Hive blockchain in Javascript environments such as Web or NodeJS.
 
 #### Why this?
 
-[steem-js](https://github.com/steemit/steem-js) and [dsteem](https://github.com/jnordberg/dsteem) libraries are not easy to integrate and in some cases are incompatible with some frameworks like [Nativescript](https://www.nativescript.org/)
+Most lightweight library to use in your applications.
+
+Some libraries are not easy to integrate and in some cases are incompatible with some frameworks like [Nativescript](https://www.nativescript.org/)
 
 This library is a solution to such cases when official libraries are not working. And also an lightweight alternative for other libraries.
 
 ## Installation
 
 ```
-npm install steem-tx --save
+npm install hive-tx --save
 ```
 
 ## Usage
@@ -19,21 +21,21 @@ npm install steem-tx --save
 **Browser:**
 
 ```
-<script src="https://cdn.jsdelivr.net/npm/steem-tx/dist/steem-tx.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hive-tx/dist/hive-tx.min.js"></script>
 ```
 
 or
 
 ```
-<script src="dist/steem-tx.min.js"></script>
+<script src="dist/hive-tx.min.js"></script>
 ```
 
-`steemTx` is available after including /dist/steem-tx.min.js file in your html file.
+`hiveTx` is available after including /dist/hive-tx.min.js file in your html file.
 
 **NodeJS:**
 
 ```
-const steemTx = require('steem-tx')
+const hiveTx = require('hive-tx')
 ```
 
 ## Usage examples
@@ -44,18 +46,18 @@ Set or get configs:
 
 ```
 // default values already defined in config.js
-steemTx.config.node = "https://api.steemit.com"
-steemTx.config.chain_id = "0000000000000000000000000000000000000000000000000000000000000000"
-steemTx.config.address_prefix = "STM"
+hiveTx.config.node = "https://api.hive.blog"
+hiveTx.config.chain_id = "0000000000000000000000000000000000000000000000000000000000000000"
+hiveTx.config.address_prefix = "STM"
 ```
 
 **Create transaction:**
 ```
-const tx = new steemTx.Transaction(trx?)
+const tx = new hiveTx.Transaction(trx?)
 ```
 or
 ```
-const tx = new steemTx.Transaction()
+const tx = new hiveTx.Transaction()
 tx.create(operations, expiration = 60)
 ```
 
@@ -73,7 +75,7 @@ const operations = [
   ]
 ]
 
-const tx = new steemTx.Transaction()
+const tx = new hiveTx.Transaction()
 tx.create(operations).then(() => console.log(tx.transaction))
 ```
 
@@ -81,7 +83,7 @@ tx.create(operations).then(() => console.log(tx.transaction))
 
 ```
 const myKey = '5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg'
-const privateKey = steemTx.PrivateKey.from(myKey)
+const privateKey = hiveTx.PrivateKey.from(myKey)
 
 tx.sign(privateKey)
 console.log(tx.signedTransaction)
@@ -95,12 +97,12 @@ tx.broadcast().then(res => console.log(res))
 
 **Make node call:**
 ```
-steemTx.call(method, params = [], timeout = 10): Promise
+hiveTx.call(method, params = [], timeout = 10): Promise
 ```
 
 Example:
 ```
-steemTx.call('condenser_api.get_accounts', [['mahdiyari']]).then(res => console.log(res))
+hiveTx.call('condenser_api.get_accounts', [['mahdiyari']]).then(res => console.log(res))
 ```
 
 ## License
