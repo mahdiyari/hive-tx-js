@@ -10,6 +10,7 @@ const CHAIN_ID = Buffer.from(config.chain_id, 'hex')
  * @param keys - Array of keys<Buffer>
  */
 const signTransaction = (transaction, keys) => {
+  const CHAIN_ID = Buffer.from(config.chain_id, 'hex')
   const { digest, txId } = transactionDigest(transaction, CHAIN_ID)
   const signedTransaction = { ...transaction }
   if (!signedTransaction.signatures) {
