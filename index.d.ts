@@ -1,10 +1,6 @@
-import { PublicKey } from './helpers/PublicKey'
-import { Signature } from './helpers/Signature'
 import { PrivateKey as PK } from './helpers/PrivateKey'
 
 declare module 'hive-tx'
-
-export type KeyRole = 'owner' | 'active' | 'posting' | 'memo'
 
 export class PrivateKey extends PK {}
 

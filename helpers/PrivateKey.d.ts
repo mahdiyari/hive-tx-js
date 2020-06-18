@@ -1,3 +1,8 @@
+import { PublicKey } from './PublicKey'
+import { Signature } from './Signature'
+
+export type KeyRole = 'owner' | 'active' | 'posting' | 'memo'
+
 export class PrivateKey {
   key: Buffer
 
