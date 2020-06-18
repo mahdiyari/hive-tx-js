@@ -48,4 +48,4 @@ export const config: {
   node: string
 }
 
-export function call(method: string, params: any[], timeout?: number): any
+export function call(method: string, params?: any[], timeout?: number): any
