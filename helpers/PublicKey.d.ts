@@ -1,3 +1,5 @@
+import { Signature } from './Signature'
+
 export class PublicKey {
   key: Buffer
   prefix: string

@@ -1,3 +1,5 @@
+import { PublicKey } from './PublicKey'
+
 export class Signature {
   data: Buffer
   recovery: number
