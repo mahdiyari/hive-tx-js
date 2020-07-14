@@ -1,7 +1,8 @@
 const PublicKey = require('./PublicKey')
 const Asset = require('./asset')
 const HexBuffer = require('./HexBuffer')
-const rebrandedApi = require('../config').rebranded_api
+const config = require('../config')
+let rebrandedApi = config.rebranded_api
 
 const VoidSerializer = () => {
   throw new Error('Void can not be serialized')
@@ -47,7 +48,7 @@ const BooleanSerializer = (buffer, data) => {
   buffer.writeByte(data ? 1 : 0)
 }
 
-const StaticVariantSerializer = itemSerializers => {
+const StaticVariantSerializer = (itemSerializers) => {
   return (buffer, data) => {
     const [id, item] = data
     buffer.writeVarint32(id)
@@ -115,7 +116,7 @@ const FlatMapSerializer = (keySerializer, valueSerializer) => {
   }
 }
 
-const ArraySerializer = itemSerializer => {
+const ArraySerializer = (itemSerializer) => {
   return (buffer, data) => {
     buffer.writeVarint32(data.length)
     for (const item of data) {
@@ -124,7 +125,7 @@ const ArraySerializer = itemSerializer => {
   }
 }
 
-const ObjectSerializer = keySerializers => {
+const ObjectSerializer = (keySerializers) => {
   return (buffer, data) => {
     for (const [key, serializer] of keySerializers) {
       try {
@@ -137,7 +138,7 @@ const ObjectSerializer = keySerializers => {
   }
 }
 
-const OptionalSerializer = valueSerializer => {
+const OptionalSerializer = (valueSerializer) => {
   return (buffer, data) => {
     if (data !== undefined) {
       buffer.writeByte(1)
@@ -176,7 +177,7 @@ const SignedBlockHeaderSerializer = ObjectSerializer([
 const ChainPropertiesSerializer = ObjectSerializer([
   ['account_creation_fee', AssetSerializer],
   ['maximum_block_size', UInt32Serializer],
-  [rebrandedApi ? 'hbd' : 'sbd' + '_interest_rate', UInt16Serializer]
+  [(rebrandedApi ? 'hbd' : 'sbd') + '_interest_rate', UInt16Serializer]
 ])
 
 const OperationDataSerializer = (operationId, definitions) => {
@@ -189,7 +190,8 @@ const OperationDataSerializer = (operationId, definitions) => {
 
 const OperationSerializers = {}
 
-const updateOperations = () {
+const updateOperations = () => {
+  rebrandedApi = config.rebranded_api
   OperationSerializers.account_create = OperationDataSerializer(9, [
     ['fee', AssetSerializer],
     ['creator', StringSerializer],
@@ -239,7 +241,10 @@ const updateOperations = () {
 
   OperationSerializers.cancel_transfer_from_savings = OperationDataSerializer(
     34,
-    [['from', StringSerializer], ['request_id', UInt32Serializer]]
+    [
+      ['from', StringSerializer],
+      ['request_id', UInt32Serializer]
+    ]
   )
 
   OperationSerializers.change_recovery_account = OperationDataSerializer(26, [
@@ -256,8 +261,8 @@ const updateOperations = () {
 
   OperationSerializers.claim_reward_balance = OperationDataSerializer(39, [
     ['account', StringSerializer],
-    ['reward_' + rebrandedApi ? 'hive' : 'steem', AssetSerializer],
-    ['reward_' + rebrandedApi ? 'hbd' : 'sbd', AssetSerializer],
+    ['reward_' + (rebrandedApi ? 'hive' : 'steem'), AssetSerializer],
+    ['reward_' + (rebrandedApi ? 'hbd' : 'sbd'), AssetSerializer],
     ['reward_vests', AssetSerializer]
   ])
 
@@ -275,7 +280,7 @@ const updateOperations = () {
     ['author', StringSerializer],
     ['permlink', StringSerializer],
     ['max_accepted_payout', AssetSerializer],
-    ['percent_' + rebrandedApi ? 'hbd' : 'steem_dollars', UInt16Serializer],
+    ['percent_' + (rebrandedApi ? 'hbd' : 'steem_dollars'), UInt16Serializer],
     ['allow_votes', BooleanSerializer],
     ['allow_curation_rewards', BooleanSerializer],
     [
@@ -369,8 +374,8 @@ const updateOperations = () {
     ['who', StringSerializer],
     ['receiver', StringSerializer],
     ['escrow_id', UInt32Serializer],
-    [rebrandedApi ? 'hbd' : 'sbd' + '_amount', AssetSerializer],
-    [rebrandedApi ? 'hive' : 'steem' + '_amount', AssetSerializer]
+    [(rebrandedApi ? 'hbd' : 'sbd') + '_amount', AssetSerializer],
+    [(rebrandedApi ? 'hive' : 'steem') + '_amount', AssetSerializer]
   ])
 
   OperationSerializers.escrow_transfer = OperationDataSerializer(27, [
@@ -378,8 +383,8 @@ const updateOperations = () {
     ['to', StringSerializer],
     ['agent', StringSerializer],
     ['escrow_id', UInt32Serializer],
-    [rebrandedApi ? 'hbd' : 'sbd' + '_amount', AssetSerializer],
-    [rebrandedApi ? 'hive' : 'steem' + '_amount', AssetSerializer],
+    [(rebrandedApi ? 'hbd' : 'sbd') + '_amount', AssetSerializer],
+    [(rebrandedApi ? 'hive' : 'steem') + '_amount', AssetSerializer],
     ['fee', AssetSerializer],
     ['ratification_deadline', DateSerializer],
     ['escrow_expiration', DateSerializer],
@@ -446,12 +451,15 @@ const updateOperations = () {
     ['reset_account', StringSerializer]
   ])
 
-  OperationSerializers.set_withdraw_vesting_route = OperationDataSerializer(20, [
-    ['from_account', StringSerializer],
-    ['to_account', StringSerializer],
-    ['percent', UInt16Serializer],
-    ['auto_vest', BooleanSerializer]
-  ])
+  OperationSerializers.set_withdraw_vesting_route = OperationDataSerializer(
+    20,
+    [
+      ['from_account', StringSerializer],
+      ['to_account', StringSerializer],
+      ['percent', UInt16Serializer],
+      ['auto_vest', BooleanSerializer]
+    ]
+  )
 
   OperationSerializers.transfer = OperationDataSerializer(2, [
     ['from', StringSerializer],
