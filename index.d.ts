@@ -42,6 +42,9 @@ export const config: {
   address_prefix: string
   chain_id: string
   node: string
+  rebranded_api: boolean
 }
 
 export function call(method: string, params?: any[], timeout?: number): any
+
+export function updateOperations(): void
