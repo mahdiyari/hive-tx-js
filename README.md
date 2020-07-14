@@ -51,17 +51,42 @@ hiveTx.config.chain_id = "000000000000000000000000000000000000000000000000000000
 hiveTx.config.address_prefix = "STM"
 ```
 
+**HF24**
+
+Eclipse rpc nodes require this configuration for now:
+
+```
+hiveTx.config.rebranded_api = true
+hiveTx.updateOperations()
+```
+
+You can get the node version to check whether an RPC node is updated or not:
+
+```
+hiveTx.call('condenser_api.get_version').then(res => {
+  if (res.blockchain_version !== '0.23.0') {
+    // RPC node is updated to eclipse
+    hiveTx.config.rebranded_api = true
+    hiveTx.updateOperations()
+  }
+})
+```
+
 **Create transaction:**
+
 ```
 const tx = new hiveTx.Transaction(trx?)
 ```
+
 or
+
 ```
 const tx = new hiveTx.Transaction()
 tx.create(operations, expiration = 60)
 ```
 
 Example:
+
 ```
 const operations = [
   [
@@ -96,11 +121,13 @@ tx.broadcast().then(res => console.log(res))
 ```
 
 **Make node call:**
+
 ```
 hiveTx.call(method, params = [], timeout = 10): Promise
 ```
 
 Example:
+
 ```
 hiveTx.call('condenser_api.get_accounts', [['mahdiyari']]).then(res => console.log(res))
 ```
