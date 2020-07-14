@@ -52,6 +52,7 @@ hiveTx.config.address_prefix = "STM"
 ```
 
 **HF24**
+
 Eclipse rpc nodes require this configuration for now:
 
 ```
