@@ -47,29 +47,8 @@ Set or get configs:
 ```
 // default values already defined in config.js
 hiveTx.config.node = "https://api.hive.blog"
-hiveTx.config.chain_id = "0000000000000000000000000000000000000000000000000000000000000000"
+hiveTx.config.chain_id = "beeab0de00000000000000000000000000000000000000000000000000000000"
 hiveTx.config.address_prefix = "STM"
-```
-
-**HF24**
-
-Eclipse rpc nodes require this configuration for now:
-
-```
-hiveTx.config.rebranded_api = true
-hiveTx.updateOperations()
-```
-
-You can get the node version to check whether an RPC node is updated or not:
-
-```
-hiveTx.call('condenser_api.get_version').then(res => {
-  if (res.blockchain_version !== '0.23.0') {
-    // RPC node is updated to eclipse
-    hiveTx.config.rebranded_api = true
-    hiveTx.updateOperations()
-  }
-})
 ```
 
 **Create transaction:**
