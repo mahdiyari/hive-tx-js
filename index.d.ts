@@ -26,9 +26,7 @@ export class Transaction {
     ref_block_prefix: number
   }>
 
-  sign(
-    keys: any | any[]
-  ): {
+  sign(keys: any | any[]): {
     expiration: string
     extensions: any[]
     operations: any[]
@@ -42,9 +40,9 @@ export const config: {
   address_prefix: string
   chain_id: string
   node: string
-  rebranded_api: boolean
 }
 
 export function call(method: string, params?: any[], timeout?: number): any
 
+/** Don't need anymore - deprecated */
 export function updateOperations(): void
