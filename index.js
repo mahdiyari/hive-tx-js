@@ -5,14 +5,18 @@ const broadcastTransactionNoResult = require('./transactions/broadcastTransactio
 const PrivateKey = require('./helpers/PrivateKey')
 const call = require('./helpers/call')
 const config = require('./config')
-const updateOperations = require('./helpers/serializer').updateOperations
+const updateOperations = () => {
+  console.log(
+    '[Hive-tx] Warning: You can safely remove `.updateOperations()` from you app. Deprecated.'
+  )
+}
 
-/** Transaction for Steem blockchain */
+/** Transaction for Hive blockchain */
 class Transaction {
   /** A transaction object could be passed or created later
    * @param {{}} trx Object of transaction - Optional
    */
-  constructor(trx = null) {
+  constructor (trx = null) {
     this.created = true
     if (!trx) {
       this.created = false
@@ -24,7 +28,7 @@ class Transaction {
    * @param {[Array]} operations
    * @param {Number} expiration Optional - Default 60 seconds
    */
-  async create(operations, expiration = 60) {
+  async create (operations, expiration = 60) {
     this.transaction = await createTransaction(operations)
     this.created = true
     return this.transaction
@@ -33,7 +37,7 @@ class Transaction {
   /** Sign the transaction by key or keys[] (supports multi signature)
    * @param {PrivateKey|[PrivateKey]} keys single key or multiple keys in array
    */
-  sign(keys) {
+  sign (keys) {
     if (!this.created) {
       throw new Error('First create a transaction by .create(operations)')
     }
@@ -43,7 +47,7 @@ class Transaction {
     return this.signedTransaction
   }
 
-  async broadcast() {
+  async broadcast () {
     if (!this.created) {
       throw new Error('First create a transaction by .create(operations)')
     }
@@ -57,7 +61,7 @@ class Transaction {
   /** Fast broadcast - No open connection
    * TODO: return trx_id
    */
-  async broadcastNoResult() {
+  async broadcastNoResult () {
     if (!this.created) {
       throw new Error('First create a transaction by .create(operations)')
     }
