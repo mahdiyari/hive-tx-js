@@ -544,7 +544,6 @@ OperationSerializers.remove_proposal = OperationDataSerializer(46, [
   ['extensions', ArraySerializer(VoidSerializer)]
 ])
 
-
 const PropsalUpdateSerializer = ObjectSerializer([
   ['end_date', StringSerializer]
 ])
@@ -555,7 +554,12 @@ OperationSerializers.update_proposal = OperationDataSerializer(47, [
   ['daily_pay', AssetSerializer],
   ['subject', StringSerializer],
   ['permlink', StringSerializer],
-  ['extensions', ArraySerializer(StaticVariantSerializer([VoidSerializer, PropsalUpdateSerializer]))]
+  [
+    'extensions',
+    ArraySerializer(
+      StaticVariantSerializer([VoidSerializer, PropsalUpdateSerializer])
+    )
+  ]
 ])
 
 OperationSerializers.collateralized_convert = OperationDataSerializer(48, [
@@ -569,7 +573,7 @@ OperationSerializers.recurrent_transfer = OperationDataSerializer(49, [
   ['to', StringSerializer],
   ['amount', AssetSerializer],
   ['memo', StringSerializer],
-  ['recurrency', UInt16Serializer],
+  ['recurrence', UInt16Serializer],
   ['executions', UInt16Serializer],
   ['extensions', ArraySerializer(VoidSerializer)]
 ])
