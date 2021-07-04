@@ -544,8 +544,8 @@ OperationSerializers.remove_proposal = OperationDataSerializer(46, [
   ['extensions', ArraySerializer(VoidSerializer)]
 ])
 
-const PropsalUpdateSerializer = ObjectSerializer([
-  ['end_date', StringSerializer]
+const ProposalUpdateSerializer = ObjectSerializer([
+  ['end_date', DateSerializer]
 ])
 
 OperationSerializers.update_proposal = OperationDataSerializer(47, [
@@ -557,7 +557,7 @@ OperationSerializers.update_proposal = OperationDataSerializer(47, [
   [
     'extensions',
     ArraySerializer(
-      StaticVariantSerializer([VoidSerializer, PropsalUpdateSerializer])
+      StaticVariantSerializer([VoidSerializer, ProposalUpdateSerializer])
     )
   ]
 ])
