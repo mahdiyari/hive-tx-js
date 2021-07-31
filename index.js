@@ -54,14 +54,17 @@ class Transaction {
     if (!this.signedTransaction) {
       throw new Error('First sign the transaction by .sign(keys)')
     }
-    const result = await broadcastTransaction(this.signedTransaction)
-    return result
+    await broadcastTransaction(this.signedTransaction)
+    return {
+      id: 1,
+      jsonrpc: '2.0',
+      result: { tx_id: this.txId, status: 'unkown' }
+    }
   }
 
-  /** Fast broadcast - No open connection
-   * TODO: return trx_id
-   */
+  /** Fast broadcast - No open connection */
   async broadcastNoResult () {
+    console.log('Deprecated: .broadcastNoResult() is identical to .broadcast() - use .broadcast() instead')
     if (!this.created) {
       throw new Error('First create a transaction by .create(operations)')
     }
