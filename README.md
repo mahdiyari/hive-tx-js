@@ -114,5 +114,3 @@ hiveTx.call('condenser_api.get_accounts', [['mahdiyari']]).then(res => console.l
 ## License
 
 MIT
-
-Note: In building some parts we used functions from [dsteem](https://github.com/jnordberg/dsteem) library
