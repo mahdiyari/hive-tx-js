@@ -7,7 +7,11 @@ export class PrivateKey extends PK {}
 export class Transaction {
   constructor(trx?: object)
 
-  broadcast(): Promise<object>
+  broadcast(): Promise<{
+    id: number
+    jsonrpc: string
+    result: { tx_id: string; status: string }
+  } | {error: object}>
 
   broadcastNoResult(): Promise<{
     id: number
