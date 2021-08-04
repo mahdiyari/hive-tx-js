@@ -54,7 +54,10 @@ class Transaction {
     if (!this.signedTransaction) {
       throw new Error('First sign the transaction by .sign(keys)')
     }
-    await broadcastTransaction(this.signedTransaction)
+    const result = await broadcastTransaction(this.signedTransaction)
+    if (result.error) {
+      return result
+    }
     return {
       id: 1,
       jsonrpc: '2.0',
