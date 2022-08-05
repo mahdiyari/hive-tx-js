@@ -29,7 +29,7 @@ class Transaction {
    * @param {Number} expiration Optional - Default 60 seconds
    */
   async create (operations, expiration = 60) {
-    this.transaction = await createTransaction(operations)
+    this.transaction = await createTransaction(operations, expiration)
     this.created = true
     return this.transaction
   }
