@@ -8,7 +8,7 @@ export class PrivateKey {
 
   constructor(key?: Buffer)
 
-  createPublic(prefix?): PublicKey
+  createPublic(prefix?: string): PublicKey
 
   inspect(): string
 
