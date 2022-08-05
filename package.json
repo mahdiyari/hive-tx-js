@@ -1,6 +1,6 @@
 {
   "name": "hive-tx",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Create, sign, and broadcast transactions on Hive blockchain",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "author": "Mahdi Yari",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "bs58": "^4.0.1",
     "bytebuffer": "^5.0.1",
     "crypto-js": "^3.1.9-1",
