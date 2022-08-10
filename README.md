@@ -127,6 +127,10 @@ const message = sha256('testing')
 const signature = privateKey.sign(message)
 const verify = publicKey.verify(message, signature) // true
 ```
+Or create Sginature from string:
+```
+const signature = hiveTx.Signature.from('1f019dc13a308cef138162cc16ab7c3aa1891941fddec66d83ff29b01b649a86600802d301f13505abc8c9ccbbeb86852fc71134fe209a6e717c6fd7b4cd1505a2')
+```
 
 ## License
 

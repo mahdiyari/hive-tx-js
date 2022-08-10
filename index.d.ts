@@ -1,10 +1,12 @@
 import { PrivateKey as PK } from './helpers/PrivateKey'
 import { PublicKey as PubK } from './helpers/PublicKey'
+import { Signature as Sig } from './helpers/Signature'
 
 declare module 'hive-tx'
 
 export class PrivateKey extends PK {}
 export class PublicKey extends PubK {}
+export class Signature extends Sig {}
 
 export class Transaction {
   constructor(trx?: object)
