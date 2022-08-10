@@ -111,6 +111,23 @@ Example:
 hiveTx.call('condenser_api.get_accounts', [['mahdiyari']]).then(res => console.log(res))
 ```
 
+**Sign message and verify sginature:**
+```
+hiveTx.PrivateKey.sign(message: Buffer)
+hiveTx.PublicKey.verify(message: Buffer, signature: Signature)
+```
+
+Example:
+```
+const { sha256 } = require( 'hive-tx/helpers/crypto' )
+
+const privateKey = hiveTx.PrivateKey.from('5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg')
+const publicKey = hiveTx.PublicKey.from('STM6aGPtxMUGnTPfKLSxdwCHbximSJxzrRjeQmwRW9BRCdrFotKLs')
+const message = sha256('testing')
+const signature = privateKey.sign(message)
+const verify = publicKey.verify(message, signature) // true
+```
+
 ## License
 
 MIT
