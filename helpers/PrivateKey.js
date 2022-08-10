@@ -103,7 +103,7 @@ const encodePrivate = key => {
 
 /** Decode bs58+doubleSha256-checksum encoded private key. */
 const decodePrivate = encodedKey => {
-  const buffer = bs58.decode(encodedKey)
+  const buffer = Buffer.from(bs58.decode(encodedKey))
   // assert.deepEqual(buffer.slice(0, 1), NETWORK_ID, 'private key network id mismatch')
   // const checksum = buffer.slice(-4)
   const key = buffer.slice(0, -4)
