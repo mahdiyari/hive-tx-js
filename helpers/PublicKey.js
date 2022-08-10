@@ -2,6 +2,8 @@
 const crypto = require('./crypto')
 const bs58 = require('bs58')
 const config = require('../config')
+const secp256k1 = require('secp256k1')
+
 
 const DEFAULT_ADDRESS_PREFIX = config.address_prefix
 
@@ -33,9 +35,9 @@ class PublicKey {
    * @param message 32-byte message to verify.
    * @param signature Signature to verify.
    */
-  // verify(message, signature) {
-  //     return secp256k1.verify(message, signature.data, this.key)
-  // }
+  verify(message, signature) {
+      return secp256k1.verify(message, signature.data, this.key)
+  }
 
   /** Return a WIF-encoded representation of the key. */
   toString () {
@@ -62,7 +64,7 @@ const encodePublic = (key, prefix) => {
 const decodePublic = encodedKey => {
   const prefix = encodedKey.slice(0, 3)
   encodedKey = encodedKey.slice(3)
-  const buffer = bs58.decode(encodedKey)
+  const buffer = Buffer.from(bs58.decode(encodedKey))
   const key = buffer.slice(0, -4)
   return { key, prefix }
 }
