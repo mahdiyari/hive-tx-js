@@ -3,6 +3,7 @@ const createTransaction = require('./transactions/createTransaction')
 const broadcastTransaction = require('./transactions/broadcastTransaction')
 const broadcastTransactionNoResult = require('./transactions/broadcastTransactionNoResult')
 const PrivateKey = require('./helpers/PrivateKey')
+const PublicKey = require('./helpers/PublicKey')
 const call = require('./helpers/call')
 const config = require('./config')
 const updateOperations = () => {
@@ -83,4 +84,4 @@ class Transaction {
   }
 }
 
-module.exports = { Transaction, PrivateKey, call, config, updateOperations }
+module.exports = { Transaction, PrivateKey, call, config, updateOperations, PublicKey }
