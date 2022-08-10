@@ -6,4 +6,5 @@ export class Signature {
   constructor(data: Buffer, recovery: number)
   toBuffer(): Buffer
   customToString(): string
+  static from(data: string): Signature
 }
