@@ -1,4 +1,4 @@
-const signTransaction = require('./transactions/signTransaction')
+const { signTransaction, transactionDigest } = require('./transactions/signTransaction')
 const createTransaction = require('./transactions/createTransaction')
 const broadcastTransaction = require('./transactions/broadcastTransaction')
 const broadcastTransactionNoResult = require('./transactions/broadcastTransactionNoResult')
@@ -7,6 +7,8 @@ const PublicKey = require('./helpers/PublicKey')
 const Signature = require('./helpers/Signature')
 const call = require('./helpers/call')
 const config = require('./config')
+
+// TODO: remove on a major update
 const updateOperations = () => {
   console.log(
     '[Hive-tx] Warning: You can safely remove `.updateOperations()` from you app. Deprecated.'
@@ -67,7 +69,8 @@ class Transaction {
     }
   }
 
-  /** Fast broadcast - No open connection */
+  // TODO: remove on a major update
+  /** Deprecated - Use .broadcast instead */
   async broadcastNoResult () {
     console.log('Deprecated: .broadcastNoResult() is identical to .broadcast() - use .broadcast() instead')
     if (!this.created) {
@@ -82,6 +85,14 @@ class Transaction {
       jsonrpc: '2.0',
       result: { tx_id: this.txId, status: 'unkown' }
     } // result
+  }
+
+  /** Return the transaction hash which can be used to verify against a signature */
+  digest () {
+    if (!this.created) {
+      throw new Error('First create a transaction by .create(operations)')
+    }
+    return transactionDigest(this.transaction)
   }
 }
 

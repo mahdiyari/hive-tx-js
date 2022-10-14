@@ -45,4 +45,4 @@ const transactionDigest = (transaction, chainId = CHAIN_ID) => {
   return { digest, txId }
 }
 
-module.exports = signTransaction
+module.exports = { signTransaction, transactionDigest }
