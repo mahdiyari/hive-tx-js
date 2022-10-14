@@ -42,6 +42,11 @@ export class Transaction {
     ref_block_prefix: number
     signatures: string[]
   }
+
+  digest(): {
+    digest: Buffer,
+    txId: string
+  }
 }
 
 export const config: {
@@ -52,5 +57,6 @@ export const config: {
 
 export function call(method: string, params?: any[], timeout?: number): any
 
+// TODO: remove on a major update
 /** Don't need anymore - deprecated */
 export function updateOperations(): void
