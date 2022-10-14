@@ -99,6 +99,13 @@ console.log(tx.signedTransaction)
 tx.broadcast().then(res => console.log(res))
 ```
 
+**Get transaction digest and id**
+Will return the hash and transaction id without broadcasting the transaction.
+```
+const digest = tx.digest()
+// { digest: Buffer, txId: string }
+```
+
 **Make node call:**
 
 ```
