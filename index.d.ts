@@ -55,7 +55,7 @@ export const config: {
   node: string
 }
 
-export function call(method: string, params?: any[], timeout?: number): any
+export function call(method: string, params?: any[] | object, timeout?: number): any
 
 // TODO: remove on a major update
 /** Don't need anymore - deprecated */
