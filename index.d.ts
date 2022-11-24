@@ -47,6 +47,15 @@ export class Transaction {
     digest: Buffer,
     txId: string
   }
+
+  addSignature(signature: string): {
+    expiration: string
+    extensions: any[]
+    operations: any[]
+    ref_block_num: number
+    ref_block_prefix: number
+    signatures: string[]
+  }
 }
 
 export const config: {
