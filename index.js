@@ -70,6 +70,9 @@ class Transaction {
     if (result.error) {
       return result
     }
+    if (!this.txId) {
+      this.txId = this.digest().txId
+    }
     return {
       id: 1,
       jsonrpc: '2.0',
