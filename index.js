@@ -38,19 +38,27 @@ class Transaction {
     return this.transaction
   }
 
-  /** Sign the transaction by key or keys[] (supports multi signature)
+  /** Sign the transaction by key or keys[] (supports multi signature).
+   * It is also possible to sign with one key at a time for multi signature.
    * @param {PrivateKey|[PrivateKey]} keys single key or multiple keys in array
    */
   sign (keys) {
     if (!this.created) {
       throw new Error('First create a transaction by .create(operations)')
     }
-    const { signedTransaction, txId } = signTransaction(this.transaction, keys)
-    this.signedTransaction = signedTransaction
-    this.txId = txId
+    if (this.signedTransaction) {
+      const { signedTransaction, txId } = signTransaction(this.signedTransaction, keys)
+      this.signedTransaction = signedTransaction
+      this.txId = txId
+    } else {
+      const { signedTransaction, txId } = signTransaction(this.transaction, keys)
+      this.signedTransaction = signedTransaction
+      this.txId = txId
+    }
     return this.signedTransaction
   }
 
+  /** Broadcast the signed transaction. */
   async broadcast () {
     if (!this.created) {
       throw new Error('First create a transaction by .create(operations)')
@@ -61,6 +69,9 @@ class Transaction {
     const result = await broadcastTransaction(this.signedTransaction)
     if (result.error) {
       return result
+    }
+    if (!this.txId) {
+      this.txId = this.digest().txId
     }
     return {
       id: 1,
@@ -93,6 +104,29 @@ class Transaction {
       throw new Error('First create a transaction by .create(operations)')
     }
     return transactionDigest(this.transaction)
+  }
+
+  /**
+   * Add a signature to already created transaction. You can add multiple signatures to one transaction but one at a time.
+   * This method is used when you sign your transaction with other tools instead of built-in .sign() method.
+   */
+  addSignature (signature = '') {
+    if (!this.created) {
+      throw new Error('First create a transaction by .create(operations)')
+    }
+    if (typeof signature !== 'string') {
+      throw new Error('Signature must be string')
+    }
+    if (signature.length !== 130) {
+      throw new Error('Signature must be 130 characters long')
+    }
+    if (this.signedTransaction && this.signedTransaction.signature && typeof this.signedTransaction.signature.length > 0) {
+      this.signedTransaction.signatures.push(signature)
+    } else {
+      this.signedTransaction = { ...this.transaction }
+      this.signedTransaction.signatures = [signature]
+    }
+    return this.signedTransaction
   }
 }
 
