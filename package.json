@@ -20,11 +20,11 @@
   "author": "Mahdi Yari",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.27.2",
+    "axios": "^1.3.4",
     "bs58": "^5.0.0",
     "bytebuffer": "^5.0.1",
     "crypto-js": "^3.1.9-1",
-    "secp256k1": "^3.8.0"
+    "secp256k1": "^5.0.0"
   },
   "homepage": "https://github.com/mahdiyari/hive-tx-js",
   "repository": {
