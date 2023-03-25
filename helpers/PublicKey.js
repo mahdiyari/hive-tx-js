@@ -9,6 +9,12 @@ const DEFAULT_ADDRESS_PREFIX = config.address_prefix
 
 /** ECDSA (secp256k1) public key. */
 class PublicKey {
+  constructor (key, prefix = DEFAULT_ADDRESS_PREFIX) {
+    this.key = key
+    this.prefix = prefix
+    // assert(secp256k1.publicKeyVerify(key), 'invalid public key')
+  }
+
   /** Create a new instance from a WIF-encoded key. */
   static fromString (wif) {
     const { key, prefix } = decodePublic(wif)
@@ -22,12 +28,6 @@ class PublicKey {
     } else {
       return PublicKey.fromString(value)
     }
-  }
-
-  constructor (key, prefix = DEFAULT_ADDRESS_PREFIX) {
-    this.key = key
-    this.prefix = prefix
-    // assert(secp256k1.publicKeyVerify(key), 'invalid public key')
   }
 
   /**
