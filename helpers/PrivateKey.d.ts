@@ -27,4 +27,6 @@ export class PrivateKey {
   static fromSeed(seed: string): PrivateKey
 
   static fromString(wif: string): PrivateKey
+
+  static randomKey(): PrivateKey
 }

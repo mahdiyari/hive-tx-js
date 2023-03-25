@@ -4,12 +4,20 @@ const PublicKey = require('./PublicKey')
 const Signature = require('./Signature')
 const bs58 = require('bs58')
 const config = require('../config')
+const { enc } = require('crypto-js')
 
 const NETWORK_ID = Buffer.from([0x80])
 const DEFAULT_ADDRESS_PREFIX = config.address_prefix
 
 /** ECDSA (secp256k1) private key. */
 class PrivateKey {
+  constructor (key) {
+    this.key = key
+    if (!secp256k1.privateKeyVerify(key)) {
+      throw new Error('invalid private key')
+    }
+  }
+
   /** Convenience to create a new instance from WIF string or buffer */
   static from (value) {
     if (typeof value === 'string') {
@@ -33,13 +41,6 @@ class PrivateKey {
   static fromLogin (username, password, role = 'active') {
     const seed = username + role + password
     return PrivateKey.fromSeed(seed)
-  }
-
-  constructor (key) {
-    this.key = key
-    if (!secp256k1.privateKeyVerify(key)) {
-      throw new Error('invalid private key')
-    }
   }
 
   /**
@@ -77,6 +78,27 @@ class PrivateKey {
   inspect () {
     const key = this.toString()
     return `PrivateKey: ${key.slice(0, 6)}...${key.slice(-6)}`
+  }
+
+  /**
+   * Returns a randomly generated instance of PrivateKey
+   * Might take up to 250ms
+   */
+  static randomKey () {
+    const rand1 = crypto.randomWords(32).toString(enc.Hex)
+    const rand2 = crypto.randomWords(32).toString(enc.Hex)
+    const rand3 = crypto.randomWords(32).toString(enc.Hex)
+    const date = crypto.sha256(Date.now().toString())
+    const rand4 = crypto.sha256(rand1 + rand2 + rand3 + date)
+    const now = Date.now()
+    let final = crypto.sha256(rand4 + rand3 + rand1)
+    const randFinal = Math.floor(Math.random() * 200) + 50
+    while (Date.now() - now < randFinal) {
+      final = crypto.sha256(final)
+    }
+    const hash = crypto.sha256(crypto.randomWords(32)).toString('hex')
+    final = crypto.sha256(final.toString('hex') + hash)
+    return PrivateKey.fromSeed(final.toString('hex'))
   }
 }
 

@@ -25,4 +25,8 @@ const ripemd160 = (input) => {
   return hash
 }
 
-module.exports = { sha256, ripemd160 }
+const randomWords = (n = 32) => {
+  return CryptoJS.lib.WordArray.random(n)
+}
+
+module.exports = { sha256, ripemd160, randomWords }
