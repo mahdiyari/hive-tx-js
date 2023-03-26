@@ -1,6 +1,6 @@
 /** Class representing a hive asset,
  * e.g. `1.000 HIVE` or `12.112233 VESTS`. */
-class Asset {
+export class Asset {
   /** Create a new Asset instance from a string, e.g. `42.000 HIVE`. */
   static fromString (string, expectedSymbol = null) {
     const [amountString, symbol] = string.split(' ')
@@ -76,5 +76,3 @@ class Asset {
     return this.toString()
   }
 }
-
-module.exports = Asset
