@@ -1,12 +1,10 @@
-const PublicKey = require('./PublicKey')
-const Asset = require('./asset')
-const HexBuffer = require('./HexBuffer')
-const config = require('../config')
+import { PublicKey } from './PublicKey.js'
+import { Asset } from './asset.js'
+import { HexBuffer } from './HexBuffer.js'
 
 const VoidSerializer = () => {
   throw new Error('Void can not be serialized')
 }
-
 const StringSerializer = (buffer, data) => {
   buffer.writeVString(data)
 }
@@ -599,7 +597,7 @@ const TransactionSerializer = ObjectSerializer([
   ['extensions', ArraySerializer(StringSerializer)]
 ])
 
-const Types = {
+export const Serializer = {
   Array: ArraySerializer,
   Asset: AssetSerializer,
   Authority: AuthoritySerializer,
@@ -625,5 +623,3 @@ const Types = {
   UInt8: UInt8Serializer,
   Void: VoidSerializer
 }
-
-module.exports = Types
