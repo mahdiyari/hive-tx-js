@@ -1,7 +1,8 @@
-const ByteBuffer = require('bytebuffer')
-const config = require('../config')
-const serializer = require('../helpers/serializer')
-const crypto = require('../helpers/crypto')
+import ByteBuffer from 'bytebuffer'
+import { config } from '../config.js'
+import { sha256 } from '../helpers/crypto.js'
+import { Serializer } from '../helpers/serializer.js'
+
 const CHAIN_ID = Buffer.from(config.chain_id, 'hex')
 
 /**
@@ -9,7 +10,7 @@ const CHAIN_ID = Buffer.from(config.chain_id, 'hex')
  * @param transaction - transaction to be signed
  * @param keys - Array of keys<Buffer>
  */
-const signTransaction = (transaction, keys) => {
+export const signTransaction = (transaction, keys) => {
   const CHAIN_ID = Buffer.from(config.chain_id, 'hex')
   const { digest, txId } = transactionDigest(transaction, CHAIN_ID)
   const signedTransaction = { ...transaction }
@@ -28,21 +29,19 @@ const signTransaction = (transaction, keys) => {
 }
 
 /** Serialize transaction */
-const transactionDigest = (transaction, chainId = CHAIN_ID) => {
+export const transactionDigest = (transaction, chainId = CHAIN_ID) => {
   const buffer = new ByteBuffer(
     ByteBuffer.DEFAULT_CAPACITY,
     ByteBuffer.LITTLE_ENDIAN
   )
   try {
-    serializer.Transaction(buffer, transaction)
+    Serializer.Transaction(buffer, transaction)
   } catch (cause) {
     throw new Error('Unable to serialize transaction')
   }
   buffer.flip()
   const transactionData = Buffer.from(buffer.toBuffer())
-  const txId = crypto.sha256(transactionData).toString('hex').slice(0, 40)
-  const digest = crypto.sha256(Buffer.concat([chainId, transactionData]))
+  const txId = sha256(transactionData).toString('hex').slice(0, 40)
+  const digest = sha256(Buffer.concat([chainId, transactionData]))
   return { digest, txId }
 }
-
-module.exports = { signTransaction, transactionDigest }
