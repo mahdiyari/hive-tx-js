@@ -1,7 +1,7 @@
-const call = require('./call')
+import { call } from "./call.js"
 
 /** return global properties */
-const getGlobalProps = async () => {
+export const getGlobalProps = async () => {
   const res = await call('condenser_api.get_dynamic_global_properties')
   if (!res) {
     throw new Error("Couldn't resolve global properties")
@@ -11,5 +11,3 @@ const getGlobalProps = async () => {
   }
   return res.result
 }
-
-module.exports = getGlobalProps

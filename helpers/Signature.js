@@ -1,5 +1,5 @@
 /** ECDSA (secp256k1) signature. */
-class Signature {
+export class Signature {
   constructor (data, recovery) {
     this.data = data
     this.recovery = recovery
@@ -27,5 +27,3 @@ class Signature {
     return this.toBuffer().toString('hex')
   }
 }
-
-module.exports = Signature

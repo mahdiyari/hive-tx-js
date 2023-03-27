@@ -1,11 +1,12 @@
 {
   "name": "hive-tx",
-  "version": "4.3.0",
+  "version": "5.0.0-beta.7",
   "description": "Create, sign, and broadcast transactions on Hive blockchain",
-  "main": "index.js",
+  "exports": "./index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-browser": "browserify index.js -p tinyify --standalone hiveTx > dist/hive-tx.min.js"
+    "build-browser": "browserify index.js -t [ babelify --global ] -p tinyify --standalone hiveTx > dist/hive-tx.min.js"
   },
   "keywords": [
     "hive",
@@ -19,11 +20,12 @@
   "author": "Mahdi Yari",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.27.2",
+    "@noble/hashes": "^1.3.0",
+    "@noble/secp256k1": "^2.0.0",
+    "axios": "^1.3.4",
     "bs58": "^5.0.0",
-    "bytebuffer": "^5.0.1",
-    "crypto-js": "^3.1.9-1",
-    "secp256k1": "^3.8.0"
+    "bytebuffer-hex-custom": "^1.0.1",
+    "secure-random": "^1.1.2"
   },
   "homepage": "https://github.com/mahdiyari/hive-tx-js",
   "repository": {
@@ -31,7 +33,12 @@
     "url": "https://github.com/mahdiyari/hive-tx-js.git"
   },
   "devDependencies": {
-    "browserify": "^16.5.0",
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.3",
+    "@babel/plugin-transform-runtime": "^7.21.0",
+    "@babel/preset-env": "^7.20.2",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.0",
     "tinyify": "^4.0.0"
   }
 }

@@ -8,21 +8,21 @@ export class PrivateKey extends PK {}
 export class PublicKey extends PubK {}
 export class Signature extends Sig {}
 
+/** Transaction for Hive blockchain */
 export class Transaction {
   constructor(trx?: object)
 
+  /** Broadcast the signed transaction. */
   broadcast(): Promise<{
     id: number
     jsonrpc: string
     result: { tx_id: string; status: string }
   } | {error: object}>
 
-  broadcastNoResult(): Promise<{
-    id: number
-    jsonrpc: string
-    result: { tx_id: string; status: string }
-  }>
-
+  /** Create the transaction by operations
+   * @param {[Array]} operations
+   * @param {Number} expiration Optional - Default 60 seconds
+   */
   create(
     operations: any[],
     expiration?: number
@@ -34,7 +34,11 @@ export class Transaction {
     ref_block_prefix: number
   }>
 
-  sign(keys: any | any[]): {
+  /** Sign the transaction by key or keys[] (supports multi signature).
+   * It is also possible to sign with one key at a time for multi signature.
+   * @param {PrivateKey|[PrivateKey]} keys single key or multiple keys in array
+   */
+  sign(keys: PrivateKey | PrivateKey[]): {
     expiration: string
     extensions: any[]
     operations: any[]
@@ -43,11 +47,16 @@ export class Transaction {
     signatures: string[]
   }
 
+  /** Return the transaction hash which can be used to verify against a signature */
   digest(): {
     digest: Buffer,
     txId: string
   }
 
+  /**
+   * Add a signature to already created transaction. You can add multiple signatures to one transaction but one at a time.
+   * This method is used when you sign your transaction with other tools instead of built-in .sign() method.
+   */
   addSignature(signature: string): {
     expiration: string
     extensions: any[]
@@ -58,14 +67,17 @@ export class Transaction {
   }
 }
 
+/** hive-tx configurations */
 export const config: {
   address_prefix: string
   chain_id: string
   node: string
 }
 
-export function call(method: string, params?: any[] | object, timeout?: number): any
-
-// TODO: remove on a major update
-/** Don't need anymore - deprecated */
-export function updateOperations(): void
+/**
+ * Make calls to a hive node
+ * @param {string}method - e.g. condenser_api.get_dynamic_global_properties
+ * @param {[any]|object}params - array or object
+ * @param {number}timeout - optional - default 10 seconds
+ */
+export function call(method: string, params?: any[] | object, timeout?: number): Promise<any>

@@ -1,13 +1,13 @@
-const axios = require('axios')
-const config = require('../config')
+import axios from 'axios'
+import { config } from '../config.js'
 
 /**
  * Make calls to hive node
  * @param {string}method - e.g. condenser_api.get_dynamic_global_properties
- * @param {Array}params - an array
- * @param {Number}timeout - optional - default 10 seconds
+ * @param {[any]|object}params - an array or object
+ * @param {number}timeout - optional - default 10 seconds
  */
-const call = async (method, params = [], timeout = 10) => {
+export const call = async (method, params = [], timeout = 10) => {
   let resolved = 0
   return new Promise((resolve, reject) => {
     axios
@@ -33,5 +33,3 @@ const call = async (method, params = [], timeout = 10) => {
     }, timeout * 1000)
   })
 }
-
-module.exports = call

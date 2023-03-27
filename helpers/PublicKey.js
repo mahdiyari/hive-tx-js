@@ -1,14 +1,14 @@
 // const crypto = require('crypto')
-const crypto = require('./crypto')
-const bs58 = require('bs58')
-const config = require('../config')
-const secp256k1 = require('secp256k1')
 
+import { ripemd160 } from './crypto.js'
+import bs58 from 'bs58'
+import { config } from '../config.js'
+import { verify } from '@noble/secp256k1'
 
 const DEFAULT_ADDRESS_PREFIX = config.address_prefix
 
 /** ECDSA (secp256k1) public key. */
-class PublicKey {
+export class PublicKey {
   constructor (key, prefix = DEFAULT_ADDRESS_PREFIX) {
     this.key = key
     this.prefix = prefix
@@ -36,7 +36,7 @@ class PublicKey {
    * @param signature Signature to verify.
    */
   verify(message, signature) {
-      return secp256k1.verify(message, signature.data, this.key)
+      return verify(signature.data, message, this.key)
   }
 
   /** Return a WIF-encoded representation of the key. */
@@ -56,8 +56,8 @@ class PublicKey {
 }
 
 const encodePublic = (key, prefix) => {
-  const checksum = crypto.ripemd160(key)
-  return prefix + bs58.encode(Buffer.concat([key, checksum.slice(0, 4)]))
+  const checksum = ripemd160(key)
+  return prefix + bs58.encode(Buffer.concat([key, checksum.subarray(0, 4)]))
 }
 
 /** Decode bs58+ripemd160-checksum encoded public key. */
@@ -65,8 +65,6 @@ const decodePublic = encodedKey => {
   const prefix = encodedKey.slice(0, 3)
   encodedKey = encodedKey.slice(3)
   const buffer = Buffer.from(bs58.decode(encodedKey))
-  const key = buffer.slice(0, -4)
+  const key = buffer.subarray(0, -4)
   return { key, prefix }
 }
-
-module.exports = PublicKey

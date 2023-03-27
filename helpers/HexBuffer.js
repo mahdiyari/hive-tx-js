@@ -1,5 +1,5 @@
 /** Buffer wrapper that serializes to a hex-encoded string. */
-class HexBuffer {
+export class HexBuffer {
   /** Convenience to create a new HexBuffer, does not copy data if value passed is already a buffer. */
   static from (value) {
     if (value instanceof HexBuffer) {
@@ -25,5 +25,3 @@ class HexBuffer {
     return this.toString()
   }
 }
-
-module.exports = HexBuffer

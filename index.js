@@ -1,19 +1,11 @@
-const { signTransaction, transactionDigest } = require('./transactions/signTransaction')
-const createTransaction = require('./transactions/createTransaction')
-const broadcastTransaction = require('./transactions/broadcastTransaction')
-const broadcastTransactionNoResult = require('./transactions/broadcastTransactionNoResult')
-const PrivateKey = require('./helpers/PrivateKey')
-const PublicKey = require('./helpers/PublicKey')
-const Signature = require('./helpers/Signature')
-const call = require('./helpers/call')
-const config = require('./config')
-
-// TODO: remove on a major update
-const updateOperations = () => {
-  console.log(
-    '[Hive-tx] Warning: You can safely remove `.updateOperations()` from you app. Deprecated.'
-  )
-}
+import { signTransaction, transactionDigest } from './transactions/signTransaction.js'
+import { createTransaction } from './transactions/createTransaction.js'
+import { broadcastTransaction } from './transactions/broadcastTransaction.js'
+import { PrivateKey } from './helpers/PrivateKey.js'
+import { PublicKey } from './helpers/PublicKey.js'
+import { Signature } from './helpers/Signature.js'
+import { call } from './helpers/call.js'
+import { config } from './config.js'
 
 /** Transaction for Hive blockchain */
 class Transaction {
@@ -80,24 +72,6 @@ class Transaction {
     }
   }
 
-  // TODO: remove on a major update
-  /** Deprecated - Use .broadcast instead */
-  async broadcastNoResult () {
-    console.log('Deprecated: .broadcastNoResult() is identical to .broadcast() - use .broadcast() instead')
-    if (!this.created) {
-      throw new Error('First create a transaction by .create(operations)')
-    }
-    if (!this.signedTransaction) {
-      throw new Error('First sign the transaction by .sign(keys)')
-    }
-    await broadcastTransactionNoResult(this.signedTransaction)
-    return {
-      id: 1,
-      jsonrpc: '2.0',
-      result: { tx_id: this.txId, status: 'unkown' }
-    } // result
-  }
-
   /** Return the transaction hash which can be used to verify against a signature */
   digest () {
     if (!this.created) {
@@ -130,4 +104,4 @@ class Transaction {
   }
 }
 
-module.exports = { Transaction, PrivateKey, call, config, updateOperations, PublicKey, Signature }
+export { Transaction, PrivateKey, call, config, PublicKey, Signature }

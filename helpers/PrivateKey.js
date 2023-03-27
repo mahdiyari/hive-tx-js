@@ -1,19 +1,24 @@
-const secp256k1 = require('secp256k1')
-const crypto = require('./crypto')
-const PublicKey = require('./PublicKey')
-const Signature = require('./Signature')
-const bs58 = require('bs58')
-const config = require('../config')
-const { enc } = require('crypto-js')
+import bs58 from 'bs58'
+import { etc, getPublicKey, sign, utils } from '@noble/secp256k1'
+import { config } from '../config.js'
+import { randomWords, sha256 } from './crypto.js'
+import { PublicKey } from './PublicKey.js'
+import { Signature } from './Signature.js'
+
+import { hmac } from '@noble/hashes/hmac'
+import { sha256 as sh256 } from '@noble/hashes/sha256'
+etc.hmacSha256Sync = (key, ...msgs) => hmac(sh256, key, etc.concatBytes(...msgs))
 
 const NETWORK_ID = Buffer.from([0x80])
 const DEFAULT_ADDRESS_PREFIX = config.address_prefix
 
 /** ECDSA (secp256k1) private key. */
-class PrivateKey {
+export class PrivateKey {
   constructor (key) {
     this.key = key
-    if (!secp256k1.privateKeyVerify(key)) {
+    try {
+      getPublicKey(key)
+    } catch (e) {
       throw new Error('invalid private key')
     }
   }
@@ -34,7 +39,7 @@ class PrivateKey {
 
   /** Create a new instance from a seed. */
   static fromSeed (seed) {
-    return new PrivateKey(crypto.sha256(seed))
+    return new PrivateKey(sha256(seed))
   }
 
   /** Create key from username and password. */
@@ -48,22 +53,26 @@ class PrivateKey {
    * @param message 32-byte message.
    */
   sign (message) {
+    let rs
+    let rss
     let rv = {}
     let attempts = 0
     do {
       const options = {
-        data: crypto.sha256(
-          Buffer.concat([message, Buffer.alloc(1, ++attempts)])
-        )
-      }
-      rv = secp256k1.sign(message, this.key, options)
-    } while (!isCanonicalSignature(rv.signature))
-    return new Signature(rv.signature, rv.recovery)
+        extraEntropy: sha256(
+            Buffer.concat([message, Buffer.alloc(1, ++attempts)])
+          )
+        }
+      rv = sign(message, this.key, options)
+      rss = rv.r.toString(16) + rv.s.toString(16)
+      rs = Buffer.from(rss)
+    } while (!isCanonicalSignature(rs.subarray(2)))
+    return Signature.from((rv.recovery + 31).toString(16) + rss)
   }
 
   /** Derive the public key for this private key. */
   createPublic (prefix = DEFAULT_ADDRESS_PREFIX) {
-    return new PublicKey(secp256k1.publicKeyCreate(this.key), prefix)
+    return new PublicKey(getPublicKey(this.key), prefix)
   }
 
   /** Return a WIF-encoded representation of the key. */
@@ -85,25 +94,12 @@ class PrivateKey {
    * Might take up to 250ms
    */
   static randomKey () {
-    const rand1 = crypto.randomWords(32).toString(enc.Hex)
-    const rand2 = crypto.randomWords(32).toString(enc.Hex)
-    const rand3 = crypto.randomWords(32).toString(enc.Hex)
-    const date = crypto.sha256(Date.now().toString())
-    const rand4 = crypto.sha256(rand1 + rand2 + rand3 + date)
-    const now = Date.now()
-    let final = crypto.sha256(rand4 + rand3 + rand1)
-    const randFinal = Math.floor(Math.random() * 200) + 50
-    while (Date.now() - now < randFinal) {
-      final = crypto.sha256(final)
-    }
-    const hash = crypto.sha256(crypto.randomWords(32)).toString('hex')
-    final = crypto.sha256(final.toString('hex') + hash)
-    return PrivateKey.fromSeed(final.toString('hex'))
+    return PrivateKey.fromSeed(randomWords(32).toString('hex'))
   }
 }
 
 const doubleSha256 = input => {
-  const dbl = crypto.sha256(crypto.sha256(input))
+  const dbl = sha256(sha256(input))
   return dbl
 }
 
@@ -134,4 +130,3 @@ const decodePrivate = encodedKey => {
   return key
 }
 
-module.exports = PrivateKey
