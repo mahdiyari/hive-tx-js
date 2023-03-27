@@ -1,4 +1,4 @@
-import ByteBuffer from 'bytebuffer'
+import ByteBuffer from 'bytebuffer-hex-custom'
 import { config } from '../config.js'
 import { sha256 } from '../helpers/crypto.js'
 import { Serializer } from '../helpers/serializer.js'
