@@ -1,7 +1,6 @@
 import { signTransaction, transactionDigest } from './transactions/signTransaction.js'
 import { createTransaction } from './transactions/createTransaction.js'
 import { broadcastTransaction } from './transactions/broadcastTransaction.js'
-import { broadcastTransactionNoResult } from './transactions/broadcastTransactionNoResult.js'
 import { PrivateKey } from './helpers/PrivateKey.js'
 import { PublicKey } from './helpers/PublicKey.js'
 import { Signature } from './helpers/Signature.js'
