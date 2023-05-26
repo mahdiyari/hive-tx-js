@@ -147,7 +147,7 @@ const signature = hiveTx.Signature.from('1f019dc13a308cef138162cc16ab7c3aa189194
 hiveTx.PrivateKey.randomKey()
 ```
 
-**Retrieve public key from Signature**
+**Retrieve public key from Signature**  
 For example we find the public key used for signing this transaction:  
 https://hiveblocks.com/tx/207c06a5448e18b501d15891aed6f3ecbeb96b83  
 
