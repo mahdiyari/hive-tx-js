@@ -102,7 +102,8 @@ console.log(tx.signedTransaction)
 tx.broadcast().then(res => console.log(res))
 ```
 
-**Get transaction digest and id**
+**Get transaction digest and id**  
+
 Will return the hash and transaction id without broadcasting the transaction.
 ```js
 const digest = tx.digest()
