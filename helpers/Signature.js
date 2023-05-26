@@ -1,3 +1,6 @@
+import { PublicKey } from "./PublicKey.js"
+import { Signature as SECPSignature } from '@noble/secp256k1'
+
 /** ECDSA (secp256k1) signature. */
 export class Signature {
   constructor (data, recovery) {
@@ -25,5 +28,18 @@ export class Signature {
 
   customToString () {
     return this.toBuffer().toString('hex')
+  }
+  
+  getPublicKey (message) {
+    if (Buffer.isBuffer(message) && message.length !== 32) {
+      return new Error('Expected a valid sha256 hash as message')
+    }
+    if (typeof message === 'string' && message.length !== 64) {
+      return new Error('Expected a valid sha256 hash as message')
+    }
+    const r = BigInt('0x' + this.data.subarray(0, 32).toString('hex'))
+    const s = BigInt('0x' + this.data.subarray(32, 64).toString('hex'))
+    const temp = new SECPSignature(r, s, this.recovery)
+    return new PublicKey(Buffer.from(temp.recoverPublicKey(message).toHex(), 'hex'))
   }
 }

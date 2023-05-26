@@ -10,4 +10,6 @@ export class Signature {
   customToString(): string
   /** Create a Signature from string */
   static from(data: string): Signature
+  /** Retrieve public key from the Signature by provided Hash message */
+  getPublicKey (message: Buffer | string): PublicKey
 }
