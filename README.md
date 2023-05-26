@@ -1,6 +1,6 @@
 # hive-tx
 
-Lightweight and complete JavaScript library Hive blockchain - Web and NodeJS.
+Lightweight and complete JavaScript library for Hive blockchain - Web and NodeJS.
 
 #### Why this?
 
