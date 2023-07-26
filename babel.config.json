@@ -1,6 +1,0 @@
-{
-  "presets": [["@babel/preset-env", { "modules": "cjs" }]],
-  "plugins": [
-    ["@babel/transform-runtime"]
-  ]
-}
