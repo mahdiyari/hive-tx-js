@@ -1,5 +1,5 @@
 import bs58 from 'bs58'
-import { etc, getPublicKey, sign, utils } from '@noble/secp256k1'
+import { etc, getPublicKey, sign } from '@noble/secp256k1'
 import { config } from '../config.js'
 import { randomWords, sha256 } from './crypto.js'
 import { PublicKey } from './PublicKey.js'
