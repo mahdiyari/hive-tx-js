@@ -6,6 +6,7 @@ import { PublicKey } from './helpers/PublicKey.js'
 import { Signature } from './helpers/Signature.js'
 import { call } from './helpers/call.js'
 import { config } from './config.js'
+import { Memo } from './helpers/memo.js'
 
 /** Transaction for Hive blockchain */
 class Transaction {
@@ -104,4 +105,4 @@ class Transaction {
   }
 }
 
-export { Transaction, PrivateKey, call, config, PublicKey, Signature }
+export { Transaction, PrivateKey, call, config, PublicKey, Signature, Memo }
