@@ -1,6 +1,7 @@
 import { PrivateKey as PK } from './helpers/PrivateKey'
 import { PublicKey as PubK } from './helpers/PublicKey'
 import { Signature as Sig } from './helpers/Signature'
+import { Memo as MemoType } from './helpers/memo'
 
 declare module 'hive-tx'
 
@@ -81,3 +82,5 @@ export const config: {
  * @param {number}timeout - optional - default 10 seconds
  */
 export function call(method: string, params?: any[] | object, timeout?: number): Promise<any>
+
+export const Memo: MemoType
