@@ -1,0 +1,17 @@
+{
+  "editor.tabSize": 2,
+  "prettier.semi": false,
+  "javascript.format.semicolons": "remove",
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": true,
+  "javascript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": true,
+  "javascript.format.insertSpaceAfterCommaDelimiter": true,
+  "editor.comments.insertSpace": true,
+  "javascript.format.insertSpaceAfterSemicolonInForStatements": true,
+  "javascript.format.insertSpaceBeforeAndAfterBinaryOperators": true,
+  "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+  "editor.useTabStops": true,
+  "standard.autoFixOnSave": true,
+  "standard.validate": [
+    "javascript"
+  ]
+}

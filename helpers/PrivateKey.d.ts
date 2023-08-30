@@ -44,4 +44,9 @@ export class PrivateKey {
    * Might take up to 250ms
    */
   static randomKey(): PrivateKey
+
+  /**
+   * Get shared secret for memo cryptography
+   */
+  getSharedSecret (publicKey: PublicKey): Buffer
 }

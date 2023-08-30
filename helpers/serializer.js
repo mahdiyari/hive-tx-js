@@ -1,5 +1,5 @@
 import { PublicKey } from './PublicKey.js'
-import { Asset } from './asset.js'
+import { Asset } from './Asset.js'
 import { HexBuffer } from './HexBuffer.js'
 
 const VoidSerializer = () => {
@@ -597,6 +597,14 @@ const TransactionSerializer = ObjectSerializer([
   ['extensions', ArraySerializer(StringSerializer)]
 ])
 
+const EncryptedMemoSerializer = ObjectSerializer([
+  ['from', PublicKeySerializer],
+  ['to', PublicKeySerializer],
+  ['nonce', UInt64Serializer],
+  ['check', UInt32Serializer],
+  ['encrypted', BinarySerializer()]
+])
+
 export const Serializer = {
   Array: ArraySerializer,
   Asset: AssetSerializer,
@@ -609,6 +617,7 @@ export const Serializer = {
   Int32: Int32Serializer,
   Int64: Int64Serializer,
   Int8: Int8Serializer,
+  Memo: EncryptedMemoSerializer,
   Object: ObjectSerializer,
   Operation: OperationSerializer,
   Optional: OptionalSerializer,

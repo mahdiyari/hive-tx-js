@@ -182,6 +182,23 @@ const account = await hiveTx.call('condenser_api.get_key_references', [["STM8WWU
 // steemauto
 ```
 
+**Encode/Decode Memo**
+```js
+import { Memo, PrivateKey, PublicKey } from 'hive-tx'
+
+// sender private key
+const privateKey = PrivateKey.from('...')
+// receiver public memo key
+const publicKey = PublicKey.from('...')
+
+// must have #
+const memo = '#testing'
+const encryptedMemo = await Memo.encode(privateKey, publicKey, memo)
+
+// Decode using receiver's private memo key
+const decryptedMemo = await Memo.decode(privateKey, encryptedMemo)
+```
+
 ## License
 
 MIT

@@ -1,7 +1,7 @@
 import bs58 from 'bs58'
-import { etc, getPublicKey, sign } from '@noble/secp256k1'
+import { etc, getPublicKey, sign, getSharedSecret as gss } from '@noble/secp256k1'
 import { config } from '../config.js'
-import { randomWords, sha256 } from './crypto.js'
+import { randomWords, sha256, sha512 } from './crypto.js'
 import { PublicKey } from './PublicKey.js'
 import { Signature } from './Signature.js'
 
@@ -60,9 +60,9 @@ export class PrivateKey {
     do {
       const options = {
         extraEntropy: sha256(
-            Buffer.concat([message, Buffer.alloc(1, ++attempts)])
-          )
-        }
+          Buffer.concat([message, Buffer.alloc(1, ++attempts)])
+        )
+      }
       rv = sign(message, this.key, options)
       rss = rv.r.toString(16) + rv.s.toString(16)
       rs = Buffer.from(rss)
@@ -87,6 +87,15 @@ export class PrivateKey {
   inspect () {
     const key = this.toString()
     return `PrivateKey: ${key.slice(0, 6)}...${key.slice(-6)}`
+  }
+
+  /**
+   * Get shared secret for memo cryptography
+   */
+  getSharedSecret (publicKey) {
+    const s = gss(this.key, publicKey.key)
+    // strip the parity byte
+    return sha512(s.subarray(1))
   }
 
   /**
@@ -129,4 +138,3 @@ const decodePrivate = encodedKey => {
   // assert.deepEqual(checksumVerify, checksum, 'private key checksum mismatch')
   return key
 }
-
