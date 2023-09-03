@@ -1,5 +1,5 @@
-const path = require('path');
-const webpack = require('webpack');
+const path = require('path')
+const webpack = require('webpack')
 
 module.exports = {
   entry: './index.js',
@@ -9,7 +9,7 @@ module.exports = {
     globalObject: 'this',
     library: {
       name: 'hiveTx',
-      type: 'umd',
+      type: 'umd'
     }
   },
   resolve: {
@@ -20,7 +20,7 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       process: 'process/browser',
-      Buffer: ['buffer', 'Buffer'],
-    }),
+      Buffer: ['buffer', 'Buffer']
+    })
   ]
-};
+}
