@@ -9,6 +9,10 @@ import { config } from '../config.js'
  */
 export const call = async (method, params = [], timeout = 10) => {
   let resolved = 0
+  const conf = {}
+  if (config.axiosAdapter !== null) {
+    conf.adapter = config.axiosAdapter
+  }
   return new Promise((resolve, reject) => {
     axios
       .post(
@@ -18,7 +22,8 @@ export const call = async (method, params = [], timeout = 10) => {
           method,
           params,
           id: 1
-        })
+        }),
+        conf
       )
       .then(res => {
         if (res && res.status === 200) {

@@ -72,7 +72,8 @@ export class Transaction {
 export const config: {
   address_prefix: string
   chain_id: string
-  node: string
+  node: string,
+  axiosAdapter: null | 'xhr' | 'http' | any
 }
 
 /**
