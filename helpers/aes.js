@@ -1,7 +1,7 @@
 import ByteBuffer from 'bytebuffer-hex-custom'
 import { sha256, sha512 } from './crypto.js'
 import { aes_256_cbc as AESCBC } from '@noble/ciphers/webcrypto/aes'
-import secureRandom from 'secure-random'
+import secureRandom from 'secure-random-hive-tx'
 const Long = ByteBuffer.Long
 
 export const encrypt = (
