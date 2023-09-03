@@ -1,7 +1,7 @@
 import { sha256 as sh256 } from '@noble/hashes/sha256'
 import { sha512 as sh512 } from '@noble/hashes/sha512'
 import { ripemd160 as rp160 } from '@noble/hashes/ripemd160'
-import secureRandom from 'secure-random'
+import secureRandom from 'secure-random-hive-tx'
 
 export const sha256 = (input) => {
   return Buffer.from(sh256(input))
@@ -42,9 +42,10 @@ const random32ByteBuffer = (entropy = browserEntropy()) => {
 const browserEntropy = () => {
   let entropyStr = Array(entropyArray).join()
   try {
-    entropyStr += (new Date()).toString() + ' ' + window.screen.height + ' ' + window.screen.width + ' ' +
-          window.screen.colorDepth + ' ' + ' ' + window.screen.availHeight + ' ' + window.screen.availWidth + ' ' +
-          window.screen.pixelDepth + navigator.language + ' ' + window.location + ' ' + window.history.length
+    const r = typeof globalThis === 'undefined' ? window : globalThis
+    entropyStr += (new Date()).toString() + ' ' + r.screen.height + ' ' + r.screen.width + ' ' +
+          r.screen.colorDepth + ' ' + ' ' + r.screen.availHeight + ' ' + r.screen.availWidth + ' ' +
+          r.screen.pixelDepth + navigator.language + ' ' + r.location + ' ' + r.history.length
     console.log('INFO\tbrowserEntropy gathered', entropyCount, 'events')
   } catch (error) {
     // nodejs:ReferenceError: window is not defined
