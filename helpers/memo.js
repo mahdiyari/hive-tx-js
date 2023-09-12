@@ -59,7 +59,7 @@ const decode = async (privateKey, memo) => {
     return memo
   }
   memo = memo.substring(1)
-  checkEncryption()
+  await checkEncryption()
   privateKey = toPrivateObj(privateKey)
   memo = bs58.decode(memo)
   let memoBuffer = Deserializer.Memo(Buffer.from(memo, 'binary'))
