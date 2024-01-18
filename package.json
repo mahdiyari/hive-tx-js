@@ -1,6 +1,6 @@
 {
   "name": "hive-tx",
-  "version": "5.2.2",
+  "version": "5.2.3",
   "description": "Create, sign, and broadcast transactions on Hive blockchain",
   "exports": "./index.js",
   "type": "module",
