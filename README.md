@@ -54,10 +54,10 @@ hiveTx.config.chain_id = "beeab0de0000000000000000000000000000000000000000000000
 hiveTx.config.address_prefix = "STM"
 hiveTx.config.axiosAdapter = null
 ```
-
-You can define a different adapter if your environment doesn't support 'xhr' or 'http'
-See https://github.com/haverstack/axios-fetch-adapter
-Example:
+  
+You can define a different adapter if your environment doesn't support 'xhr' or 'http'  
+See https://github.com/haverstack/axios-fetch-adapter  
+Example:  
 ```js
 import fetchAdapter from '@haverstack/axios-fetch-adapter'
 hiveTx.config.axiosAdapter = fetchAdapter
