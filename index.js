@@ -95,10 +95,12 @@ class Transaction {
     if (signature.length !== 130) {
       throw new Error('Signature must be 130 characters long')
     }
-    if (this.signedTransaction && this.signedTransaction.signature && typeof this.signedTransaction.signature.length > 0) {
+    if (!this.signedTransaction) {
+      this.signedTransaction = { ...this.transaction }
+    }
+    if (Array.isArray(this.signedTransaction.signature)) {
       this.signedTransaction.signatures.push(signature)
     } else {
-      this.signedTransaction = { ...this.transaction }
       this.signedTransaction.signatures = [signature]
     }
     return this.signedTransaction
