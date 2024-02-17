@@ -24,21 +24,22 @@ npm install hive-tx --save
 <script src="https://cdn.jsdelivr.net/npm/hive-tx/dist/hive-tx.min.js"></script>
 ```
 
-or
-
-```html
-<script src="dist/hive-tx.min.js"></script>
-```
-
 `hiveTx` is available after including /dist/hive-tx.min.js file in your html file.
 
 **NodeJS:**
 
 ```js
+// ES Module
 import * as hiveTx from 'hive-tx'
 
 // OR import what you use
-import { Transaction, PrivateKey } from 'hive-tx'
+import { call, Transaction, PrivateKey } from 'hive-tx'
+
+// OR in CommonJS environments using dynamic import()
+const hiveTx = await import('hive-tx')
+
+// OR import what you use
+const { call, Transaction, PrivateKey } = await import('hive-tx')
 ```
 
 ## Usage examples
