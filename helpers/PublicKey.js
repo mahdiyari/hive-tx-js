@@ -3,7 +3,7 @@
 import { ripemd160 } from './crypto.js'
 import bs58 from 'bs58'
 import { config } from '../config.js'
-import { verify } from '@noble/secp256k1'
+import { secp256k1 } from '@noble/curves/secp256k1'
 
 const DEFAULT_ADDRESS_PREFIX = config.address_prefix
 
@@ -35,8 +35,8 @@ export class PublicKey {
    * @param message 32-byte message to verify.
    * @param signature Signature to verify.
    */
-  verify(message, signature) {
-      return verify(signature.data, message, this.key)
+  verify (message, signature) {
+    return secp256k1.verify(signature.data, message, this.key)
   }
 
   /** Return a WIF-encoded representation of the key. */
