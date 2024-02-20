@@ -12,6 +12,7 @@ module.exports = {
       type: 'umd'
     }
   },
+  devtool: 'source-map',
   resolve: {
     fallback: {
       buffer: require.resolve('buffer')
@@ -21,6 +22,9 @@ module.exports = {
     new webpack.ProvidePlugin({
       process: 'process/browser',
       Buffer: ['buffer', 'Buffer']
+    }),
+    new webpack.NormalModuleReplacementPlugin(/node:/, (resource) => {
+      resource.request = resource.request.replace(/^node:/, '')
     })
   ]
 }

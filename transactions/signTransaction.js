@@ -34,8 +34,9 @@ export const transactionDigest = (transaction, chainId = CHAIN_ID) => {
     ByteBuffer.DEFAULT_CAPACITY,
     ByteBuffer.LITTLE_ENDIAN
   )
+  const temp = { ...transaction }
   try {
-    Serializer.Transaction(buffer, transaction)
+    Serializer.Transaction(buffer, temp)
   } catch (cause) {
     throw new Error('Unable to serialize transaction')
   }

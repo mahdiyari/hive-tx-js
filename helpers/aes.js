@@ -1,7 +1,7 @@
 import ByteBuffer from 'bytebuffer-hex-custom'
 import { sha256, sha512 } from './crypto.js'
 import { aes_256_cbc as AESCBC } from '@noble/ciphers/webcrypto/aes'
-import secureRandom from 'secure-random-hive-tx'
+import { secp256k1 } from '@noble/curves/secp256k1'
 const Long = ByteBuffer.Long
 
 export const encrypt = (
@@ -92,7 +92,7 @@ const uniqueNonce = () => {
   if (uniqueNonceEntropy === null) {
     const uint8randomArr = new Uint8Array(2)
     for (let i = 0; i < 2; ++i) {
-      uint8randomArr[i] = secureRandom.randomBuffer(2).readUInt8(i)
+      uint8randomArr[i] = secp256k1.utils.randomPrivateKey().readUInt8(i)
     }
     uniqueNonceEntropy = Math.round(
       (uint8randomArr[0] << 8) | uint8randomArr[1]
