@@ -1,13 +1,13 @@
 {
   "name": "hive-tx",
-  "version": "5.3.8",
+  "version": "5.4.0",
   "description": "Create, sign, and broadcast transactions on Hive blockchain",
   "type": "module",
   "module": "./index.js",
   "exports": "./index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-browser": "webpack --config webpack.config.cjs --mode=production"
+    "build:browser": "webpack --config webpack.config.cjs --mode=production"
   },
   "keywords": [
     "hive",
