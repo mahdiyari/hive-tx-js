@@ -9,7 +9,12 @@ export function validateUsername (username: string): null | string
  * @example
  * import { call } from 'hive-tx'
  * import { makeBitMaskFilter, operations as op } from 'hive-tx/helpers/utils.js'
- * const filter = makeBitMaskFilter([op.transfer, op.transfer_to_vesting])
+ * const filter = makeBitMaskFilter(
+ *   [
+ *     op.transfer,
+ *     op.transfer_to_vesting
+ *   ]
+ * )
  * call('condenser_api.get_account_history', ['mahdiyari', -1, 1, ...filter])
  *  .then(res => console.log(res))
  */
