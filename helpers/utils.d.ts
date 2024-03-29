@@ -40,15 +40,15 @@ interface WitnessProps {
  * import { buildWitnessSetProperties } from 'hive-tx/helpers/utils.js'
  * const owner = 'mahdiyari'
  * const props = {
- *  key: 'STM1111111111111111111111111111111114T1Anm', // Required - signing key
- *  account_creation_fee: '0.000 HIVE', // optional
- *  account_subsidy_budget: 10000, // optional
- *  account_subsidy_decay: 330782, // optional
- *  maximum_block_size: 65536, // optional
- *  hbd_interest_rate: 0, // optional
- *  hbd_exchange_rate: { base: '0.250 HBD', quote: '1.000 HIVE' }, // optional
- *  url: 'https://testurl', // optional
- *  new_signing_key: "STM1111111111111111111111111111111114T1Anm" // optional
+ *   key: 'STM1111111111111111111111111111111114T1Anm', // Required - signing key
+ *   account_creation_fee: '0.000 HIVE', // optional
+ *   account_subsidy_budget: 10000, // optional
+ *   account_subsidy_decay: 330782, // optional
+ *   maximum_block_size: 65536, // optional
+ *   hbd_interest_rate: 0, // optional
+ *   hbd_exchange_rate: { base: '0.250 HBD', quote: '1.000 HIVE' }, // optional
+ *   url: 'https://testurl', // optional
+ *   new_signing_key: "STM1111111111111111111111111111111114T1Anm" // optional
  * }
  * const witnessOps = buildWitnessSetProperties(owner, props)
  * const trx = new Transaction().create(witnessOps)
