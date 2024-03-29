@@ -1,3 +1,6 @@
+import { Serializer } from './serializer.js'
+import ByteBuffer from 'bytebuffer-hex-custom'
+
 /** Return null for a valid username */
 export const validateUsername = (username) => {
   let suffix = 'Account name should '
@@ -147,4 +150,58 @@ const reduceFunction = ([low, high], allowedOperation) => {
   } else {
     return [low, high | (BigInt(1) << BigInt(allowedOperation - 64))]
   }
+}
+
+/**
+ * Needed for witness_set_properties operation
+ * Example in utils.d.ts
+ */
+export const buildWitnessSetProperties = (owner, props) => {
+  const data = {
+    extensions: [],
+    owner,
+    props: []
+  }
+  for (const key of Object.keys(props)) {
+    let type
+    switch (key) {
+      case 'key':
+      case 'new_signing_key':
+        type = Serializer.PublicKey
+        break
+      case 'account_subsidy_budget':
+      case 'account_subsidy_decay':
+      case 'maximum_block_size':
+        type = Serializer.UInt32
+        break
+      case 'hbd_interest_rate':
+        type = Serializer.UInt16
+        break
+      case 'url':
+        type = Serializer.String
+        break
+      case 'hbd_exchange_rate':
+        type = Serializer.Price
+        break
+      case 'account_creation_fee':
+        type = Serializer.Asset
+        break
+      default:
+        throw new Error(`Unknown witness prop: ${key}`)
+    }
+    data.props.push([key, serialize(type, props[key])])
+  }
+  data.props.sort((a, b) => a[0].localeCompare(b[0]))
+  return ['witness_set_properties', data]
+}
+
+const serialize = (serializer, data) => {
+  const buffer = new ByteBuffer(
+    ByteBuffer.DEFAULT_CAPACITY,
+    ByteBuffer.LITTLE_ENDIAN
+  )
+  serializer(buffer, data)
+  buffer.flip()
+  // `props` values must be hex
+  return buffer.toString('hex')
 }
