@@ -192,7 +192,7 @@ const account = await hiveTx.call('condenser_api.get_key_references', [["STM8WWU
 // steemauto
 ```
 
-**Encode/Decode Memo**
+**Encode/Decode Memo**  
 ```js
 import { Memo, PrivateKey, PublicKey } from 'hive-tx'
 
@@ -207,6 +207,55 @@ const encryptedMemo = await Memo.encode(privateKey, publicKey, memo)
 
 // Decode using receiver's private memo key
 const decryptedMemo = await Memo.decode(privateKey, encryptedMemo)
+```
+  
+### Utils
+
+**Validate Username**  
+Example:
+```js
+import { validateUsername } from 'hive-tx/helpers/utils.js'
+console.log(validateUsername('test'))
+// null
+console.log(validateUsername('Big'))
+// Account name should start with a lowercase letter.
+```
+
+**makeBitMaskFilter - get_account_history**  
+Example:
+```js
+import { call } from 'hive-tx'
+import { makeBitMaskFilter, operations as op } from 'hive-tx/helpers/utils.js'
+const filter = makeBitMaskFilter(
+  [
+    op.transfer,
+    op.transfer_to_vesting
+  ]
+)
+call('condenser_api.get_account_history', ['mahdiyari', -1, 1, ...filter])
+  .then(res => console.log(res))
+```
+
+**buildWitnessSetProperties**  
+Needed for `witness_set_properties` operation.  
+  
+Example:
+```js
+import { buildWitnessSetProperties } from 'hive-tx/helpers/utils.js'
+const owner = 'mahdiyari'
+const props = {
+  key: 'STM1111111111111111111111111111111114T1Anm', // Required - signing key
+  account_creation_fee: '0.000 HIVE', // optional
+  account_subsidy_budget: 10000, // optional
+  account_subsidy_decay: 330782, // optional
+  maximum_block_size: 65536, // optional
+  hbd_interest_rate: 0, // optional
+  hbd_exchange_rate: { base: '0.250 HBD', quote: '1.000 HIVE' }, // optional
+  url: 'https://testurl', // optional
+  new_signing_key: "STM1111111111111111111111111111111114T1Anm" // optional
+}
+const witnessOps = buildWitnessSetProperties(owner, props)
+const trx = new Transaction().create(witnessOps)
 ```
 
 ## License
