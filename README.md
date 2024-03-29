@@ -192,7 +192,7 @@ const account = await hiveTx.call('condenser_api.get_key_references', [["STM8WWU
 // steemauto
 ```
 
-**Encode/Decode Memo**
+**Encode/Decode Memo**  
 ```js
 import { Memo, PrivateKey, PublicKey } from 'hive-tx'
 
@@ -211,7 +211,7 @@ const decryptedMemo = await Memo.decode(privateKey, encryptedMemo)
   
 ### Utils
 
-**Validate Username**
+**Validate Username**  
 Example:
 ```js
 import { validateUsername } from 'hive-tx/helpers/utils.js'
@@ -221,7 +221,7 @@ console.log(validateUsername('Big'))
 // Account name should start with a lowercase letter.
 ```
 
-**makeBitMaskFilter - get_account_history**
+**makeBitMaskFilter - get_account_history**  
 Example:
 ```js
 import { call } from 'hive-tx'
@@ -236,7 +236,7 @@ call('condenser_api.get_account_history', ['mahdiyari', -1, 1, ...filter])
   .then(res => console.log(res))
 ```
 
-**buildWitnessSetProperties**
+**buildWitnessSetProperties**  
 Needed for `witness_set_properties` operation.  
   
 Example:
