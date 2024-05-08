@@ -4,7 +4,7 @@ import { PublicKey } from './PublicKey'
 export class Signature {
   data: Buffer
   recovery: number
-  constructor(data: Buffer, recovery: number)
+  constructor(data: Buffer, recovery: number, compressed?: boolean)
   toBuffer(): Buffer
   /** String representation of the Signature */
   customToString(): string
