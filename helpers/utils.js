@@ -25,10 +25,10 @@ export const validateUsername = (username) => {
       return suffix + 'start with a lowercase letter.'
     }
     if (!/^[a-z0-9-]*$/.test(label)) {
-      return suffix + 'have only letters, digits, or dashes.'
+      return suffix + 'have only lowercase letters, digits, or dashes.'
     }
     if (!/[a-z0-9]$/.test(label)) {
-      return suffix + 'end with a letter or digit.'
+      return suffix + 'end with a lowercase letter or digit.'
     }
     if (!(label.length >= 3)) {
       return suffix + 'be longer'
