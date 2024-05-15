@@ -209,8 +209,13 @@ const encryptedMemo = await Memo.encode(privateKey, publicKey, memo)
 const decryptedMemo = await Memo.decode(privateKey, encryptedMemo)
 ```
   
-### Utils
-
+### Utils  
+  
+In browser build `utils` is exported. For example:
+```
+hiveTx.utils.validateUsername('test')
+```
+  
 **Validate Username**  
 Example:
 ```js
