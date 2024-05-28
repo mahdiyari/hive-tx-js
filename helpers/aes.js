@@ -92,7 +92,7 @@ const uniqueNonce = () => {
   if (uniqueNonceEntropy === null) {
     const uint8randomArr = new Uint8Array(2)
     for (let i = 0; i < 2; ++i) {
-      uint8randomArr[i] = secp256k1.utils.randomPrivateKey().readUInt8(i)
+      uint8randomArr[i] = secp256k1.utils.randomPrivateKey().at(i)
     }
     uniqueNonceEntropy = Math.round(
       (uint8randomArr[0] << 8) | uint8randomArr[1]
