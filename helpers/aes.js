@@ -1,6 +1,6 @@
 import ByteBuffer from 'bytebuffer-hex-custom'
 import { sha256, sha512 } from './crypto.js'
-import { aes_256_cbc as AESCBC } from '@noble/ciphers/webcrypto/aes'
+import { cbc as AESCBC } from '@noble/ciphers/aes'
 import { secp256k1 } from '@noble/curves/secp256k1'
 const Long = ByteBuffer.Long
 
