@@ -64,7 +64,7 @@ const StaticVariantSerializer = (itemSerializers) => {
     //   ]
     // ]
     // "comment_payout_beneficiaries" was 0 and at some point it got changed
-    // It should still be serialized as a 0 or a integer
+    // It should still be serialized as a 0 or an integer
     // Now the question is, always 0? will need an example transaction to prove otherwise
     if (typeof id === 'string') {
       id = 0
