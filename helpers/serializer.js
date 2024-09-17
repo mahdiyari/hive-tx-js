@@ -47,7 +47,28 @@ const BooleanSerializer = (buffer, data) => {
 
 const StaticVariantSerializer = (itemSerializers) => {
   return (buffer, data) => {
-    const [id, item] = data
+    let id = data[0]
+    const item = data[1]
+    // id was/is supposed to be 0 or integer here but seems to have been changed in e.g. comment_options
+    // extensions: [
+    //   [
+    //     "comment_payout_beneficiaries",
+    //     {
+    //       "beneficiaries": [
+    //         {
+    //           "account": "vimm",
+    //           "weight": 1000
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // ]
+    // "comment_payout_beneficiaries" was 0 and at some point it got changed
+    // It should still be serialized as a 0 or a integer
+    // Now the question is, always 0? will need an example transaction to prove otherwise
+    if (typeof id === 'string') {
+      id = 0
+    }
     buffer.writeVarint32(id)
     itemSerializers[id](buffer, item)
   }
