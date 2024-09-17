@@ -67,7 +67,11 @@ const StaticVariantSerializer = (itemSerializers) => {
     // It should still be serialized as a 0 or an integer
     // Now the question is, always 0? will need an example transaction to prove otherwise
     if (typeof id === 'string') {
-      id = 0
+      if (id === 'update_proposal_end_date') {
+        id = 1
+      } else {
+        id = 0
+      }
     }
     buffer.writeVarint32(id)
     itemSerializers[id](buffer, item)
