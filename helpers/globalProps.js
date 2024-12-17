@@ -1,4 +1,4 @@
-import { call } from "./call.js"
+import { call } from './call.js'
 
 /** return global properties */
 export const getGlobalProps = async () => {
