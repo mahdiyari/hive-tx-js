@@ -50,10 +50,13 @@ Set or get configs:
 
 ```js
 // default values that are already defined in config.js
-hiveTx.config.node = "https://api.hive.blog"
+hiveTx.config.node = ['https://api.hive.blog', 'https://api.deathwing.me', 'https://rpc.mahdiyari.info']
+// OR hiveTx.config.node = "https://api.hive.blog"
 hiveTx.config.chain_id = "beeab0de00000000000000000000000000000000000000000000000000000000"
 hiveTx.config.address_prefix = "STM"
 hiveTx.config.axiosAdapter = null
+hiveTx.config.timeout: 5, // 5 seconds
+hiveTx.config.retry: 5
 ```
   
 You can define a different adapter if your environment doesn't support 'xhr' or 'http'  
@@ -261,7 +264,22 @@ const props = {
 }
 const witnessOps = buildWitnessSetProperties(owner, props)
 const trx = new Transaction().create(witnessOps)
+```  
+  
+**Retrying and failover**  
+Hive-tx will retry and change the node to the next in the array IF `hiveTx.config.node` provided as array which by default is.  
+By default hive-tx will use the timeout and retry values from the global config but you can supply timeout and retry values per request as well.  
+```js
+// timeout: 5, retry: 3
+hiveTx.call('condenser_api.get_accounts', [['mahdiyari']], 5, 3).then(res => console.log(res))
+// retrying applies to broadcasting as well
+tx.broadcast(5, 3)
 ```
+  
+Note: Retrying a transaction is safe in this implementation as the chain won't accept a duplicate transaction.  
+Note: retry = 5 will actually make 6 calls.  
+Note: Failover will happen on any error and switch to the next node.  
+  
 
 ## License
 
