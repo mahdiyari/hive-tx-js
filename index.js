@@ -53,15 +53,24 @@ class Transaction {
   }
 
   /** Broadcast the signed transaction. */
-  async broadcast () {
+  async broadcast (timeout = 5, retry = 5) {
     if (!this.created) {
       throw new Error('First create a transaction by .create(operations)')
     }
     if (!this.signedTransaction) {
       throw new Error('First sign the transaction by .sign(keys)')
     }
-    const result = await broadcastTransaction(this.signedTransaction)
+    const result = await broadcastTransaction(this.signedTransaction, timeout, retry)
     if (result.error) {
+      // When we retry, we might have already broadcasted the transaction
+      // So catch duplicate trx error and return trx id
+      if (result.error.message.includes('Duplicate transaction check failed')) {
+        return {
+          id: 1,
+          jsonrpc: '2.0',
+          result: { tx_id: this.txId, status: 'unkown' }
+        }
+      }
       return result
     }
     if (!this.txId) {
