@@ -15,7 +15,8 @@ module.exports = {
   devtool: 'source-map',
   resolve: {
     fallback: {
-      buffer: require.resolve('buffer')
+      buffer: require.resolve('buffer'),
+      'process/browser': require.resolve('process/browser')
     }
   },
   plugins: [

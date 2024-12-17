@@ -13,8 +13,11 @@ export class Signature extends Sig {}
 export class Transaction {
   constructor(trx?: object)
 
-  /** Broadcast the signed transaction. */
-  broadcast(): Promise<{
+  /** Broadcast the signed transaction.
+   * @param {number}timeout - optional - default 5 seconds
+   * @param {number}retry - optional - default 5 times
+   */
+  broadcast(timeout = 5, retry = 5): Promise<{
     id: number
     jsonrpc: string
     result: { tx_id: string; status: string }
@@ -72,16 +75,19 @@ export class Transaction {
 export const config: {
   address_prefix: string
   chain_id: string
-  node: string,
-  axiosAdapter: null | 'xhr' | 'http' | any
+  node: string[] | string,
+  axiosAdapter: null | 'xhr' | 'http' | any,
+  timeout: number
+  retry: number
 }
 
 /**
  * Make calls to a hive node
  * @param {string}method - e.g. condenser_api.get_dynamic_global_properties
  * @param {[any]|object}params - array or object
- * @param {number}timeout - optional - default 10 seconds
+ * @param {number}timeout - optional - default 5 seconds
+ * @param {number}retry - optional - default 5 times
  */
-export function call(method: string, params?: any[] | object, timeout?: number): Promise<any>
+export function call(method: string, params?: any[] | object, timeout?: number, retry?: number): Promise<any>
 
 export const Memo: MemoType
