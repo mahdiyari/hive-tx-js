@@ -1,4 +1,4 @@
-import ByteBuffer from 'bytebuffer-hex-custom'
+import { ByteBuffer } from './ByteBuffer.js'
 import { PublicKey } from './PublicKey.js'
 
 const PublicKeyDeserializer = (buf) => {
@@ -6,15 +6,22 @@ const PublicKeyDeserializer = (buf) => {
   return new PublicKey(c)
 }
 
-const UInt64Deserializer = (b) => b.readUint64()
+const UInt64Deserializer = (b) => {
+  b.flip()
+  return b.readUint64()
+}
 
-const UInt32Deserializer = (b) => b.readUint32()
+const UInt32Deserializer = (b) => {
+  b.flip()
+  return b.readUint32()
+}
 
 const BinaryDeserializer = (b) => {
+  b.flip()
   const len = b.readVarint32()
   const bCopy = b.copy(b.offset, b.offset + len)
   b.skip(len)
-  return Buffer.from(bCopy.toBinary(), 'binary')
+  return new Uint8Array(bCopy.toBuffer())
 }
 
 const BufferDeserializer =
@@ -24,10 +31,11 @@ const BufferDeserializer =
       for (const [key, deserializer] of keyDeserializers) {
         try {
         // Decodes a binary encoded string to a ByteBuffer.
-          buf = ByteBuffer.fromBinary(
-            buf.toString('binary'),
+          const temp = new ByteBuffer(
+            ByteBuffer.DEFAULT_CAPACITY,
             ByteBuffer.LITTLE_ENDIAN
           )
+          buf = temp.append(buf)
           obj[key] = deserializer(buf)
         } catch (error) {
           error.message = `${key}: ${error.message}`
@@ -41,9 +49,10 @@ function fixedBuf (b, len) {
   if (!b) {
     throw Error('No buffer found on first parameter')
   } else {
+    b.flip()
     const bCopy = b.copy(b.offset, b.offset + len)
     b.skip(len)
-    return Buffer.from(bCopy.toBinary(), 'binary')
+    return new Uint8Array(bCopy.toBuffer())
   }
 }
 

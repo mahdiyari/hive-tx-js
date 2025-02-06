@@ -1,8 +1,7 @@
-import ByteBuffer from 'bytebuffer-hex-custom'
+import { ByteBuffer } from './ByteBuffer.js'
 import { sha256, sha512 } from './crypto.js'
 import { cbc as AESCBC } from '@noble/ciphers/aes'
 import { secp256k1 } from '@noble/curves/secp256k1'
-const Long = ByteBuffer.Long
 
 export const encrypt = (
   privateKey,
@@ -17,35 +16,33 @@ export const decrypt = async (privateKey, publicKey, nonce, message, checksum) =
 }
 
 /**
- * @arg {Buffer} message - Encrypted or plain text message (see checksum)
+ * @arg {Uint8Array} message - Encrypted or plain text message (see checksum)
  * @arg {number} checksum - shared secret checksum (null to encrypt, non-null to decrypt)
  */
 const crypt = async (privateKey, publicKey, nonce, message, checksum) => {
-  const nonceL = toLongObj(nonce)
+  const nonceL = nonce instanceof BigInt ? nonce : BigInt(nonce)
   const S = privateKey.getSharedSecret(publicKey)
   let ebuf = new ByteBuffer(
     ByteBuffer.DEFAULT_CAPACITY,
     ByteBuffer.LITTLE_ENDIAN
   )
   ebuf.writeUint64(nonceL)
-  ebuf.append(S.toString('binary'), 'binary')
-  ebuf = Buffer.from(ebuf.copy(0, ebuf.offset).toBinary(), 'binary')
+  ebuf.append(S)
+  ebuf.flip()
+
+  ebuf = new Uint8Array(ebuf.toBuffer())
   const encryptionKey = sha512(ebuf)
   const iv = encryptionKey.subarray(32, 48)
   const tag = encryptionKey.subarray(0, 32)
 
   // check if first 64 bit of sha256 hash treated as uint64_t truncated to 32 bits.
   const check = sha256(encryptionKey).subarray(0, 4)
-  const cbuf = ByteBuffer.fromBinary(
-    check.toString('binary'),
+  const cbuf = new ByteBuffer(
     ByteBuffer.DEFAULT_CAPACITY,
     ByteBuffer.LITTLE_ENDIAN
   )
-  ByteBuffer.fromBinary(
-    check.toString('binary'),
-    ByteBuffer.DEFAULT_CAPACITY,
-    ByteBuffer.LITTLE_ENDIAN
-  )
+  cbuf.append(check)
+  cbuf.flip()
   const check32 = cbuf.readUint32()
   if (checksum) {
     if (check32 !== checksum) {
@@ -60,26 +57,28 @@ const crypt = async (privateKey, publicKey, nonce, message, checksum) => {
 
 /**
  * This method does not use a checksum, the returned data must be validated some other way.
- * @arg {string|Buffer} ciphertext - binary format
- * @return {Buffer} the decrypted message
+ * @arg {string|Uint8Array} ciphertext - binary format
+ * @return {Uint8Array} the decrypted message
  */
 const cryptoJsDecrypt = async (message, tag, iv) => {
   let messageBuffer = message
   const decipher = AESCBC(tag, iv)
   messageBuffer = await decipher.decrypt(messageBuffer)
-  return Buffer.from(messageBuffer)
+  // return Uint8Array.from(messageBuffer)
+  return messageBuffer
 }
 
 /**
  * This method does not use a checksum, the returned data must be validated some other way.
- * @arg {string|Buffer} plaintext - binary format
- * @return {Buffer} binary
+ * @arg {string|Uint8Array} plaintext - binary format
+ * @return {Uint8Array} binary
  */
 export const cryptoJsEncrypt = async (message, tag, iv) => {
   let messageBuffer = message
   const cipher = AESCBC(tag, iv)
   messageBuffer = await cipher.encrypt(messageBuffer)
-  return Buffer.from(messageBuffer)
+  // return Uint8Array.from(messageBuffer)
+  return messageBuffer
 }
 
 /** @return {string} unique 64 bit unsigned number string.  Being time based,
@@ -98,10 +97,10 @@ const uniqueNonce = () => {
       (uint8randomArr[0] << 8) | uint8randomArr[1]
     )
   }
-  let long = Long.fromNumber(Date.now())
+  let long = BigInt(Date.now())
   const entropy = ++uniqueNonceEntropy % 0xffff
-  long = long.shiftLeft(16).or(Long.fromNumber(entropy))
-  return long.toString()
+  long = long << BigInt(16) | BigInt(entropy)
+  return long
 }
 
-const toLongObj = (o) => (o ? (Long.isLong(o) ? o : Long.fromString(o)) : o)
+// const toLongObj = (o) => (o ? (Long.isLong(o) ? o : Long.fromString(o)) : o)

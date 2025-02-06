@@ -1,3 +1,5 @@
+import { hexToUint8Array, uint8ArrayToHex } from './uint8Array.js'
+
 /** Buffer wrapper that serializes to a hex-encoded string. */
 export class HexBuffer {
   /** Convenience to create a new HexBuffer, does not copy data if value passed is already a buffer. */
@@ -7,9 +9,9 @@ export class HexBuffer {
     } else if (value instanceof Buffer) {
       return new HexBuffer(value)
     } else if (typeof value === 'string') {
-      return new HexBuffer(Buffer.from(value, 'hex'))
+      return new HexBuffer(hexToUint8Array(value))
     } else {
-      return new HexBuffer(Buffer.from(value))
+      return new HexBuffer(new Uint8Array(value))
     }
   }
 
@@ -18,7 +20,7 @@ export class HexBuffer {
   }
 
   toString (encoding = 'hex') {
-    return this.buffer.toString(encoding)
+    return uint8ArrayToHex(this.buffer)
   }
 
   toJSON () {
