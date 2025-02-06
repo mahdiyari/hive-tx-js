@@ -1,5 +1,6 @@
 import { PublicKey } from './PublicKey.js'
 import { secp256k1 } from '@noble/curves/secp256k1'
+import { hexToUint8Array, uint8ArrayToHex } from './uint8Array.js'
 
 /** ECDSA (secp256k1) signature. */
 export class Signature {
@@ -11,8 +12,8 @@ export class Signature {
 
   static from (string) {
     if (typeof string === 'string') {
-      const temp = Buffer.from(string, 'hex')
-      let recovery = parseInt(temp.subarray(0, 1).toString('hex'), 16) - 31
+      const temp = hexToUint8Array(string)
+      let recovery = parseInt(uint8ArrayToHex(temp.subarray(0, 1)), 16) - 31
       let compressed = true
       // non-compressed signatures have -4
       // https://github.com/bitcoin/bitcoin/blob/95ea54ba089610019a74c1176a2c7c0dba144b1c/src/key.cpp#L257
@@ -28,22 +29,26 @@ export class Signature {
   }
 
   toBuffer () {
-    const buffer = Buffer.alloc(65)
+    const buffer = new Uint8Array(65).fill(0)
+    // const buffer2 = Buffer.alloc(65)
     if (this.compressed) {
-      buffer.writeUInt8(this.recovery + 31, 0)
+      // buffer2.writeUInt8(this.recovery + 31, 0)
+      buffer[0] = (this.recovery + 31) & 0xFF
     } else {
-      buffer.writeUInt8(this.recovery + 27, 0)
+      // buffer2.writeUInt8(this.recovery + 27, 0)
+      buffer[0] = (this.recovery + 27) & 0xFF
     }
-    this.data.copy(buffer, 1)
+    // console.log(buffer, this.recovery, this.compressed)
+    buffer.set(this.data, 1)
     return buffer
   }
 
   customToString () {
-    return this.toBuffer().toString('hex')
+    return uint8ArrayToHex(this.toBuffer())
   }
 
   getPublicKey (message) {
-    if (Buffer.isBuffer(message) && message.length !== 32) {
+    if (message instanceof Uint8Array && message.length !== 32) {
       return new Error('Expected a valid sha256 hash as message')
     }
     if (typeof message === 'string' && message.length !== 64) {
@@ -51,6 +56,6 @@ export class Signature {
     }
     const sig = secp256k1.Signature.fromCompact(this.data)
     const temp = new secp256k1.Signature(sig.r, sig.s, this.recovery)
-    return new PublicKey(Buffer.from(temp.recoverPublicKey(message).toHex(), 'hex'))
+    return new PublicKey(temp.recoverPublicKey(message).toRawBytes())
   }
 }
