@@ -103,7 +103,7 @@ const PublicKeySerializer = (buffer, data) => {
     (typeof data === 'string' &&
       data.slice(-39) === '1111111111111111111111111111111114T1Anm')
   ) {
-    buffer.append(Buffer.alloc(33, 0))
+    buffer.append(new Uint8Array(33).fill(0))
   } else {
     buffer.append(PublicKey.from(data).key)
   }
