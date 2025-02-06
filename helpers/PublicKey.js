@@ -57,14 +57,14 @@ export class PublicKey {
 
 const encodePublic = (key, prefix) => {
   const checksum = ripemd160(key)
-  return prefix + bs58.encode(Buffer.concat([key, checksum.subarray(0, 4)]))
+  return prefix + bs58.encode(new Uint8Array([...key, ...checksum.subarray(0, 4)]))
 }
 
 /** Decode bs58+ripemd160-checksum encoded public key. */
 const decodePublic = encodedKey => {
   const prefix = encodedKey.slice(0, 3)
   encodedKey = encodedKey.slice(3)
-  const buffer = Buffer.from(bs58.decode(encodedKey))
-  const key = buffer.subarray(0, -4)
+  const buffer = bs58.decode(encodedKey)
+  const key = buffer.subarray(0, buffer.length - 4)
   return { key, prefix }
 }

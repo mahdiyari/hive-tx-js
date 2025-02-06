@@ -5,9 +5,9 @@ export type KeyRole = 'owner' | 'active' | 'posting' | 'memo'
 
 /** ECDSA (secp256k1) private key. */
 export class PrivateKey {
-  key: Buffer
+  key: Uint8Array
 
-  constructor(key?: Buffer)
+  constructor(key?: Uint8Array)
 
   /** Derive the public key for this private key. */
   createPublic(prefix?: string): PublicKey
@@ -18,13 +18,13 @@ export class PrivateKey {
    * Sign message.
    * @param message 32-byte message.
    */
-  sign(message: Buffer): Signature
+  sign(message: Uint8Array): Signature
 
   /** Return a WIF-encoded representation of the key. */
   toString(): string
 
-  /** Convenience to create a new instance from WIF string or buffer */
-  static from(value: string | Buffer): PrivateKey
+  /** Convenience to create a new instance from WIF string or Uint8Array */
+  static from(value: string | Uint8Array): PrivateKey
 
   /** Create key from username and password. */
   static fromLogin(
@@ -48,5 +48,5 @@ export class PrivateKey {
   /**
    * Get shared secret for memo cryptography
    */
-  getSharedSecret (publicKey: PublicKey): Buffer
+  getSharedSecret (publicKey: PublicKey): Uint8Array
 }
