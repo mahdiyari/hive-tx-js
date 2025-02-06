@@ -120,7 +120,7 @@ tx.broadcast().then(res => console.log(res))
 Will return the hash and transaction id without broadcasting the transaction.
 ```js
 const digest = tx.digest()
-// { digest: Buffer, txId: string }
+// { digest: Uint8Array, txId: string }
 ```
 
 **Make node call:**
@@ -137,8 +137,8 @@ hiveTx.call('condenser_api.get_accounts', [['mahdiyari']]).then(res => console.l
 
 **Sign message and verify sginature:**
 ```js
-hiveTx.PrivateKey.sign(message: Buffer)
-hiveTx.PublicKey.verify(message: Buffer, signature: Signature)
+hiveTx.PrivateKey.sign(message: Uint8Array)
+hiveTx.PublicKey.verify(message: Uint8Array, signature: Signature)
 ```
 
 Example:
