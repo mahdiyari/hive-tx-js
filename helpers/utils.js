@@ -1,5 +1,5 @@
 import { Serializer } from './serializer.js'
-import ByteBuffer from 'bytebuffer-hex-custom'
+import { ByteBuffer } from './ByteBuffer.js'
 
 /** Return null for a valid username */
 export const validateUsername = (username) => {
