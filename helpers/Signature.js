@@ -30,15 +30,11 @@ export class Signature {
 
   toBuffer () {
     const buffer = new Uint8Array(65).fill(0)
-    // const buffer2 = Buffer.alloc(65)
     if (this.compressed) {
-      // buffer2.writeUInt8(this.recovery + 31, 0)
       buffer[0] = (this.recovery + 31) & 0xFF
     } else {
-      // buffer2.writeUInt8(this.recovery + 27, 0)
       buffer[0] = (this.recovery + 27) & 0xFF
     }
-    // console.log(buffer, this.recovery, this.compressed)
     buffer.set(this.data, 1)
     return buffer
   }
