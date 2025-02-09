@@ -50,13 +50,19 @@ Set or get configs:
 
 ```js
 // default values that are already defined in config.js
-hiveTx.config.node = ['https://api.hive.blog', 'https://api.deathwing.me', 'https://rpc.mahdiyari.info']
+hiveTx.config.node: [
+  'https://api.hive.blog',
+  'https://api.deathwing.me',
+  'https://rpc.mahdiyari.info',
+  'https://techcoderx.com',
+  'https://hiveapi.actifit.io'
+]
 // OR hiveTx.config.node = "https://api.hive.blog"
 hiveTx.config.chain_id = "beeab0de00000000000000000000000000000000000000000000000000000000"
 hiveTx.config.address_prefix = "STM"
 hiveTx.config.axiosAdapter = null
 hiveTx.config.timeout: 5, // 5 seconds
-hiveTx.config.retry: 5
+hiveTx.config.retry: 5 // consecutive retries on one call
 ```
   
 You can define a different adapter if your environment doesn't support 'xhr' or 'http'  
@@ -173,19 +179,19 @@ https://hiveblocks.com/tx/207c06a5448e18b501d15891aed6f3ecbeb96b83
 ```js
 const signature = hiveTx.Signature.from('203dfa2f2620f94a033c424710bbf22c518e1d9aec4170b342789acdc714bf0b483ff1e2ec1fcd5607e5df767ba09751792484a7ac1cf31c94cf55b1e81df6be30')
 const trx = new hiveTx.Transaction({
-    ref_block_num: 30883,
-    ref_block_prefix: 3663302639,
-    expiration: '2023-05-26 07:49:44',
-    operations: [[
-        'vote',
-        {
-            voter: 'mahdiyari',
-            author: 'afa.hb03',
-            permlink: 'esp-engcoastal-sentry-splinterlands-art-contest-week-242-by-afahb03',
-            weight: 2000
-        }
-    ]],
-    extensions: []
+  ref_block_num: 30883,
+  ref_block_prefix: 3663302639,
+  expiration: '2023-05-26 07:49:44',
+  operations: [[
+      'vote',
+      {
+          voter: 'mahdiyari',
+          author: 'afa.hb03',
+          permlink: 'esp-engcoastal-sentry-splinterlands-art-contest-week-242-by-afahb03',
+          weight: 2000
+      }
+  ]],
+  extensions: []
 })
 const { digest } = trx.digest()
 const publicKey = signature.getPublicKey(digest).toString()
