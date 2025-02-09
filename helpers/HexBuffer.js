@@ -6,7 +6,7 @@ export class HexBuffer {
   static from (value) {
     if (value instanceof HexBuffer) {
       return value
-    } else if (value instanceof Buffer) {
+    } else if (value instanceof Uint8Array) {
       return new HexBuffer(value)
     } else if (typeof value === 'string') {
       return new HexBuffer(hexToUint8Array(value))

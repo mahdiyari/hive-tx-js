@@ -15,14 +15,12 @@ module.exports = {
   devtool: 'source-map',
   resolve: {
     fallback: {
-      // buffer: require.resolve('buffer'),
       'process/browser': require.resolve('process/browser')
     }
   },
   plugins: [
     new webpack.ProvidePlugin({
       process: 'process/browser'
-      // Buffer: ['buffer', 'Buffer']
     }),
     new webpack.NormalModuleReplacementPlugin(/node:/, (resource) => {
       resource.request = resource.request.replace(/^node:/, '')
