@@ -17,7 +17,7 @@ export class Transaction {
    * @param {number}timeout - optional - default 5 seconds
    * @param {number}retry - optional - default 5 times
    */
-  broadcast(timeout = 5, retry = 5): Promise<{
+  broadcast(timeout?: number, retry?: number): Promise<{
     id: number
     jsonrpc: string
     result: { tx_id: string; status: string }
@@ -53,7 +53,7 @@ export class Transaction {
 
   /** Return the transaction hash which can be used to verify against a signature */
   digest(): {
-    digest: Buffer,
+    digest: Uint8Array,
     txId: string
   }
 

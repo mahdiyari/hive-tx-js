@@ -5,7 +5,7 @@ import { sha256, sha512 } from './crypto.js'
 import { PublicKey } from './PublicKey.js'
 import { Signature } from './Signature.js'
 
-const NETWORK_ID = Buffer.from([0x80])
+const NETWORK_ID = new Uint8Array([0x80])
 const DEFAULT_ADDRESS_PREFIX = config.address_prefix
 
 /** ECDSA (secp256k1) private key. */
@@ -19,7 +19,7 @@ export class PrivateKey {
     }
   }
 
-  /** Convenience to create a new instance from WIF string or buffer */
+  /** Convenience to create a new instance from WIF string or Uint8Array */
   static from (value) {
     if (typeof value === 'string') {
       return PrivateKey.fromString(value)
@@ -64,7 +64,7 @@ export class PrivateKey {
 
   /** Return a WIF-encoded representation of the key. */
   toString () {
-    return encodePrivate(Buffer.concat([NETWORK_ID, this.key]))
+    return encodePrivate(new Uint8Array([...NETWORK_ID, ...this.key]))
   }
 
   /**
@@ -90,7 +90,7 @@ export class PrivateKey {
    * Might take up to 250ms
    */
   static randomKey () {
-    return new PrivateKey(Buffer.from(secp256k1.utils.randomPrivateKey()))
+    return new PrivateKey(secp256k1.utils.randomPrivateKey())
   }
 }
 
@@ -103,12 +103,12 @@ const doubleSha256 = input => {
 const encodePrivate = key => {
   // assert.equal(key.readUInt8(0), 0x80, 'private key network id mismatch')
   const checksum = doubleSha256(key)
-  return bs58.encode(Buffer.concat([key, checksum.slice(0, 4)]))
+  return bs58.encode(new Uint8Array([...key, ...checksum.slice(0, 4)]))
 }
 
 /** Decode bs58+doubleSha256-checksum encoded private key. */
 const decodePrivate = encodedKey => {
-  const buffer = Buffer.from(bs58.decode(encodedKey))
+  const buffer = bs58.decode(encodedKey)
   // assert.deepEqual(buffer.slice(0, 1), NETWORK_ID, 'private key network id mismatch')
   // const checksum = buffer.slice(-4)
   const key = buffer.slice(0, -4)

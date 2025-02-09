@@ -1,6 +1,6 @@
 {
   "name": "hive-tx",
-  "version": "5.5.0",
+  "version": "6.0.0",
   "description": "Create, sign, and broadcast transactions on Hive blockchain",
   "type": "module",
   "module": "./index.js",
@@ -21,12 +21,11 @@
   "author": "Mahdi Yari",
   "license": "MIT",
   "dependencies": {
-    "@noble/ciphers": "1.1.3",
-    "@noble/curves": "1.7.0",
-    "@noble/hashes": "1.6.1",
+    "@noble/ciphers": "^1.2.1",
+    "@noble/curves": "^1.8.1",
+    "@noble/hashes": "^1.7.1",
     "axios": "^1.7.9",
-    "bs58": "6.0.0",
-    "bytebuffer-hex-custom": "1.0.1"
+    "bs58": "6.0.0"
   },
   "homepage": "https://github.com/mahdiyari/hive-tx-js",
   "repository": {
@@ -34,10 +33,9 @@
     "url": "https://github.com/mahdiyari/hive-tx-js.git"
   },
   "devDependencies": {
-    "buffer": "6.0.3",
     "process": "0.11.10",
     "standard": "17.1.0",
     "webpack": "^5.97.1",
-    "webpack-cli": "5.1.4"
+    "webpack-cli": "^6.0.1"
   }
 }
