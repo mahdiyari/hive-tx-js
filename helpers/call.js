@@ -46,26 +46,59 @@ const callWithTimeout = (url, body, timeout) => {
   if (config.axiosAdapter !== null) {
     conf.adapter = config.axiosAdapter
   }
+  // Create a cancel token
+  const source = axios.CancelToken.source()
   let resolved = 0
+  let timerId
   return new Promise((resolve, reject) => {
     axios
       .post(
         url,
         body,
-        conf
+        { ...conf, cancelToken: source.token }
       )
       .then(res => {
         if (res && res.status === 200) {
           resolved = 1
           resolve(res.data)
+        } else {
+          reject(new Error(`Unexpected response status: ${res.status}`))
         }
       }).catch(e => {
         reject(e)
+      }).finally(() => {
+        if (timerId) {
+          clearTimeout(timerId)
+        }
       })
-    setTimeout(() => {
+    timerId = setTimeout(() => {
       if (!resolved) {
+        source.cancel('Operation canceled by timeout')
         reject(new Error(`Network timeout: ${url}: ${body}`))
       }
     }, timeout * 1000)
   })
+}
+
+// The default axios adapter creates infinite sockets which leads to memory leak in Deno
+// Confirmed to NOT be a problem in nodejs
+// The following fixes the problem in Deno
+if ('Deno' in globalThis) {
+  config.axiosAdapter = async (config) => {
+    const { method, url, headers, data, ...rest } = config
+    const response = await fetch(url, {
+      method,
+      headers: new Headers(headers),
+      body: data,
+      ...rest // Additional configurations if needed
+    })
+    return {
+      data: await response.json(),
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries()),
+      config,
+      request: response
+    }
+  }
 }
