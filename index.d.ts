@@ -93,7 +93,7 @@ export function call(method: string, params?: any[] | object, timeout?: number, 
 
 export const Memo: MemoType
 
-export const Utils = {
+export const utils = {
   makeBitMaskFilter,
   validateUsername,
   operations,
