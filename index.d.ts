@@ -2,6 +2,7 @@ import { PrivateKey as PK } from './helpers/PrivateKey'
 import { PublicKey as PubK } from './helpers/PublicKey'
 import { Signature as Sig } from './helpers/Signature'
 import { Memo as MemoType } from './helpers/memo'
+import {buildWitnessSetProperties, makeBitMaskFilter, validateUsername, operations } from './helpers/utils'
 
 declare module 'hive-tx'
 
@@ -91,3 +92,10 @@ export const config: {
 export function call(method: string, params?: any[] | object, timeout?: number, retry?: number): Promise<any>
 
 export const Memo: MemoType
+
+export const Utils = {
+  makeBitMaskFilter,
+  validateUsername,
+  operations,
+  buildWitnessSetProperties
+}
