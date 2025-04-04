@@ -29,14 +29,11 @@ export const call = async (method, params = [], timeout = config.timeout, retry 
     numTries = 0
     return res
   } catch (e) {
-    nodeIndex++
     numTries++
     if (!Array.isArray(config.node) || numTries > retry) {
       throw e
     }
-    if (nodeIndex > config.node.length - 1) {
-      nodeIndex = 0
-    }
+    await changeNode()
     return call(method, params, timeout, retry)
   }
 }
@@ -102,3 +99,49 @@ if ('Deno' in globalThis) {
     }
   }
 }
+
+/** Validate and use another RPC node */
+const changeNode = async (newNodeIndex = nodeIndex + 1) => {
+  if (!Array.isArray(config.node)) {
+    return
+  }
+  if (newNodeIndex > config.node.length - 1) {
+    newNodeIndex = 0
+  }
+  const body = JSON.stringify({
+    jsonrpc: '2.0',
+    method: 'condenser_api.get_accounts',
+    params: [['mahdiyari']],
+    id: 189
+  })
+  try {
+    const res = await callWithTimeout(config.node[nodeIndex], body, 3)
+    if (res && res.id === 189 && res.result && res.result[0] && res.result[0].name === 'mahdiyari') {
+      nodeIndex = newNodeIndex
+    } else {
+      return changeNode(newNodeIndex + 1)
+    }
+  } catch {
+    return changeNode(newNodeIndex + 1)
+  }
+}
+
+// Periodic healthcheck of the current node every 30s
+setInterval(async () => {
+  const body = JSON.stringify({
+    jsonrpc: '2.0',
+    method: 'condenser_api.get_accounts',
+    params: [['mahdiyari']],
+    id: 88885
+  })
+  try {
+    const res = await callWithTimeout(config.node[nodeIndex], body, 3)
+    if (res && res.id === 88885 && res.result && res.result[0] && res.result[0].name === 'mahdiyari') {
+    // do nothing
+    } else {
+      changeNode()
+    }
+  } catch {
+    changeNode()
+  }
+}, config.healthcheckInterval)
