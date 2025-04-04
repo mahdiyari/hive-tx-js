@@ -128,6 +128,9 @@ const changeNode = async (newNodeIndex = nodeIndex + 1) => {
 
 // Periodic healthcheck of the current node every 30s
 setInterval(async () => {
+  if (!Array.isArray(config.node)) {
+    return
+  }
   const body = JSON.stringify({
     jsonrpc: '2.0',
     method: 'condenser_api.get_accounts',
