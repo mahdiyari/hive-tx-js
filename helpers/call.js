@@ -118,7 +118,7 @@ const changeNode = async (newNodeIndex = nodeIndex + 1, tries = 0) => {
     id: 189
   })
   try {
-    const res = await callWithTimeout(config.node[newNodeIndex], body, 3)
+    const res = await callWithTimeout(config.node[newNodeIndex], body, config.timeout)
     if (res && res.id === 189 && res.result && res.result[0] && res.result[0].name === 'mahdiyari') {
       nodeIndex = newNodeIndex
     } else {
@@ -141,7 +141,7 @@ const healthcheck = setInterval(async () => {
     id: 88885
   })
   try {
-    const res = await callWithTimeout(config.node[nodeIndex], body, 3)
+    const res = await callWithTimeout(config.node[nodeIndex], body, config.timeout)
     if (res && res.id === 88885 && res.result && res.result[0] && res.result[0].name === 'mahdiyari') {
     // do nothing
     } else {
