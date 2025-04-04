@@ -101,9 +101,12 @@ if ('Deno' in globalThis) {
 }
 
 /** Validate and use another RPC node */
-const changeNode = async (newNodeIndex = nodeIndex + 1) => {
+const changeNode = async (newNodeIndex = nodeIndex + 1, tries = 0) => {
   if (!Array.isArray(config.node)) {
     return
+  }
+  if (tries > config.node.length) {
+    throw new Error(`Can't find a working node! Current nodes are: ${config.node.join(', ')}`)
   }
   if (newNodeIndex > config.node.length - 1) {
     newNodeIndex = 0
@@ -115,14 +118,14 @@ const changeNode = async (newNodeIndex = nodeIndex + 1) => {
     id: 189
   })
   try {
-    const res = await callWithTimeout(config.node[nodeIndex], body, 3)
+    const res = await callWithTimeout(config.node[newNodeIndex], body, 3)
     if (res && res.id === 189 && res.result && res.result[0] && res.result[0].name === 'mahdiyari') {
       nodeIndex = newNodeIndex
     } else {
-      return changeNode(newNodeIndex + 1)
+      return changeNode(newNodeIndex + 1, tries + 1)
     }
   } catch {
-    return changeNode(newNodeIndex + 1)
+    return changeNode(newNodeIndex + 1, tries + 1)
   }
 }
 
