@@ -1,6 +1,6 @@
 {
   "name": "hive-tx",
-  "version": "6.0.6",
+  "version": "6.0.7",
   "description": "Create, sign, and broadcast transactions on Hive blockchain",
   "type": "module",
   "module": "./index.js",
@@ -24,7 +24,7 @@
     "@noble/ciphers": "^1.2.1",
     "@noble/curves": "^1.8.1",
     "@noble/hashes": "^1.7.1",
-    "axios": "^1.7.9",
+    "axios": "^1.8.4",
     "bs58": "6.0.0"
   },
   "homepage": "https://github.com/mahdiyari/hive-tx-js",
