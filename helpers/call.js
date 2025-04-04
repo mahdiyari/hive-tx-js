@@ -127,7 +127,7 @@ const changeNode = async (newNodeIndex = nodeIndex + 1) => {
 }
 
 // Periodic healthcheck of the current node every 30s
-setInterval(async () => {
+const healthcheck = setInterval(async () => {
   if (!Array.isArray(config.node)) {
     return
   }
@@ -148,3 +148,6 @@ setInterval(async () => {
     changeNode()
   }
 }, config.healthcheckInterval)
+
+// Don't keep the app active just because of this interval
+healthcheck.unref()
