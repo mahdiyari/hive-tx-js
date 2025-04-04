@@ -55,14 +55,18 @@ hiveTx.config.node: [
   'https://api.deathwing.me',
   'https://rpc.mahdiyari.info',
   'https://techcoderx.com',
-  'https://hiveapi.actifit.io'
+  'https://hiveapi.actifit.io',
+  'https://hive-api.dlux.io',
+  'https://hive-api.arcange.eu',
+  'https://api.c0ff33a.uk'
 ]
 // OR hiveTx.config.node = "https://api.hive.blog"
 hiveTx.config.chain_id = "beeab0de00000000000000000000000000000000000000000000000000000000"
 hiveTx.config.address_prefix = "STM"
 hiveTx.config.axiosAdapter = null
-hiveTx.config.timeout: 5, // 5 seconds
+hiveTx.config.timeout: 5 // 5 seconds
 hiveTx.config.retry: 5 // consecutive retries on one call
+hiveTx.config.healthcheckInterval: 30_000 // in ms
 ```
   
 You can define a different adapter if your environment doesn't support 'xhr' or 'http'  
