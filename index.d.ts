@@ -80,6 +80,7 @@ export const config: {
   axiosAdapter: null | 'xhr' | 'http' | any,
   timeout: number
   retry: number
+  healthcheckInterval: number
 }
 
 /**
