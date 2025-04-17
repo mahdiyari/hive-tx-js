@@ -12,6 +12,23 @@ export class Signature extends Sig {}
 
 /** Transaction for Hive blockchain */
 export class Transaction {
+  transaction: {
+    expiration: string,
+    extensions: any[],
+    operations: any[],
+    ref_block_num: number,
+    ref_block_prefix: number
+  }
+
+  signedTransaction: {
+    expiration: string,
+    extensions: any[],
+    operations: any[],
+    ref_block_num: number,
+    ref_block_prefix: number
+    signatures: string[]
+  } | undefined
+
   constructor(trx?: object)
 
   /** Broadcast the signed transaction.
