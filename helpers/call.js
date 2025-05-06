@@ -153,4 +153,6 @@ const healthcheck = setInterval(async () => {
 }, config.healthcheckInterval)
 
 // Don't keep the app active just because of this interval
-healthcheck.unref()
+if (healthcheck && healthcheck.unref) {
+  healthcheck.unref()
+}
