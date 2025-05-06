@@ -7,11 +7,8 @@ export const createTransaction = async (operations, exp) => {
   const props = await getGlobalProps()
   const refBlockNum = props.head_block_number & 0xffff
   const uintArray = hexToUint8Array(props.head_block_id)
-  const refBlockPrefix =
-    uintArray[4] |
-    (uintArray[5] << 8) |
-    (uintArray[6] << 16) |
-    (uintArray[7] << 24)
+  const dataView = new DataView(uintArray.buffer)
+  const refBlockPrefix = dataView.getUint32(4, true)
   const expiration = new Date(Date.now() + expireTime)
     .toISOString()
     .slice(0, -5)
