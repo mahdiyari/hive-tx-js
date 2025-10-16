@@ -108,7 +108,7 @@ class Transaction {
     if (!this.signedTransaction) {
       this.signedTransaction = { ...this.transaction }
     }
-    if (Array.isArray(this.signedTransaction.signature)) {
+    if (Array.isArray(this.signedTransaction.signatures)) {
       this.signedTransaction.signatures.push(signature)
     } else {
       this.signedTransaction.signatures = [signature]
