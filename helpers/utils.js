@@ -1,5 +1,6 @@
 import { Serializer } from './serializer.js'
 import { ByteBuffer } from './ByteBuffer.js'
+import { uint8ArrayToHex } from './uint8Array.js'
 
 /** Return null for a valid username */
 export const validateUsername = (username) => {
@@ -131,7 +132,7 @@ export const operations = {
   escrow_approved: 89,
   escrow_rejected: 90,
   proxy_cleared: 91,
-  declined_voting_rights: 92
+  declined_voting_rights: 92,
 }
 
 /**
@@ -140,9 +141,7 @@ export const operations = {
 export const makeBitMaskFilter = (allowedOperations) => {
   return allowedOperations
     .reduce(reduceFunction, [BigInt(0), BigInt(0)])
-    .map((value) =>
-      (value !== BigInt(0)) ? value.toString() : null
-    )
+    .map((value) => (value !== BigInt(0) ? value.toString() : null))
 }
 const reduceFunction = ([low, high], allowedOperation) => {
   if (allowedOperation < 64) {
@@ -160,7 +159,7 @@ export const buildWitnessSetProperties = (owner, props) => {
   const data = {
     extensions: [],
     owner,
-    props: []
+    props: [],
   }
   for (const key of Object.keys(props)) {
     let type
@@ -203,5 +202,5 @@ const serialize = (serializer, data) => {
   serializer(buffer, data)
   buffer.flip()
   // `props` values must be hex
-  return buffer.toString('hex')
+  return uint8ArrayToHex(new Uint8Array(buffer.toBuffer()))
 }

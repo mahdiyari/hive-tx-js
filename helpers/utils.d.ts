@@ -56,4 +56,4 @@ interface WitnessProps {
 export function buildWitnessSetProperties(
   owner: string,
   props: WitnessProps
-): string
+): ['witness_set_properties', { extensions: []; owner: string; props: any }]
