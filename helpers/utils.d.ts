@@ -1,7 +1,7 @@
-import { PublicKey } from "./PublicKey.js"
+import { PublicKey } from './PublicKey.js'
 
 /** Return null for a valid username */
-export function validateUsername (username: string): null | string
+export function validateUsername(username: string): null | string
 
 /**
  * Make bitmask filter to be used with get_account_history call
@@ -18,10 +18,10 @@ export function validateUsername (username: string): null | string
  * call('condenser_api.get_account_history', ['mahdiyari', -1, 1, ...filter])
  *  .then(res => console.log(res))
  */
-export function makeBitMaskFilter (allowedOperations: number[]): any[]
+export function makeBitMaskFilter(allowedOperations: number[]): any[]
 
 /** List of operations and their id */
-export const operations: { string: number }
+export const operations: Record<string, number>
 
 interface WitnessProps {
   account_creation_fee?: string
@@ -30,7 +30,7 @@ interface WitnessProps {
   key: PublicKey | string
   maximum_block_size?: number
   new_signing_key?: PublicKey | string | null
-  hbd_exchange_rate?: { base: string, quote: string }
+  hbd_exchange_rate?: { base: string; quote: string }
   hbd_interest_rate?: number
   url?: string
 }
@@ -53,4 +53,7 @@ interface WitnessProps {
  * const witnessOps = buildWitnessSetProperties(owner, props)
  * const trx = new Transaction().create(witnessOps)
  */
-export function buildWitnessSetProperties (owner: string, props: WitnessProps): string
+export function buildWitnessSetProperties(
+  owner: string,
+  props: WitnessProps
+): string
