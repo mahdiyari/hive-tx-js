@@ -401,14 +401,14 @@ OperationSerializers.escrow_release = OperationDataSerializer(29, [
 OperationSerializers.escrow_transfer = OperationDataSerializer(27, [
   ['from', StringSerializer],
   ['to', StringSerializer],
-  ['agent', StringSerializer],
-  ['escrow_id', UInt32Serializer],
   ['hbd_amount', AssetSerializer],
   ['hive_amount', AssetSerializer],
-  ['fee', AssetSerializer],
+  ['escrow_id', UInt32Serializer],
+  ['agent', StringSerializer],
+  ['fee', AssetSerializer],  
+  ['json_meta', StringSerializer],
   ['ratification_deadline', DateSerializer],
   ['escrow_expiration', DateSerializer],
-  ['json_meta', StringSerializer]
 ])
 
 OperationSerializers.feed_publish = OperationDataSerializer(7, [
@@ -657,3 +657,4 @@ export const Serializer = {
   UInt8: UInt8Serializer,
   Void: VoidSerializer
 }
+
