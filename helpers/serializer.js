@@ -598,7 +598,12 @@ OperationSerializers.recurrent_transfer = OperationDataSerializer(49, [
   ['memo', StringSerializer],
   ['recurrence', UInt16Serializer],
   ['executions', UInt16Serializer],
-  ['extensions', ArraySerializer(VoidSerializer)]
+  [
+    'extensions',
+    ArraySerializer(
+      ObjectSerializer([['type', UInt8Serializer],['value', ObjectSerializer([['pair_id', UInt8Serializer]])]])
+    )
+  ]
 ])
 
 const OperationSerializer = (buffer, operation) => {
@@ -657,3 +662,4 @@ export const Serializer = {
   UInt8: UInt8Serializer,
   Void: VoidSerializer
 }
+
