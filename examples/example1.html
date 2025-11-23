@@ -1,49 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <script src="https://cdn.jsdelivr.net/npm/steem-tx/dist/steem-tx.min.js"></script>
-    <title>Test steem-tx</title>
-  </head>
-  <body>
-    <script>
-      // change api
-      steemTx.config.node = 'https://anyx.io'
 
-      const operations = [
-        [
-          'vote',
-          {
-            voter: 'guest123',
-            author: 'guest123',
-            permlink: '20191107t125713486z-post',
-            weight: 9900
-          }
-        ]
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <script src="../dist/hive-tx.min.js"></script>
+  <title>Test hive-tx</title>
+</head>
+
+<body>
+  <script>
+    // change api
+    hiveTx.config.node = 'https://rpc.mahdiyari.info'
+
+    const operations = [
+      [
+        'vote',
+        {
+          voter: 'guest123',
+          author: 'guest123',
+          permlink: '20191107t125713486z-post',
+          weight: 9900
+        }
       ]
-      const myKey = '5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg'
-      const privateKey = steemTx.PrivateKey.from(myKey)
+    ]
+    const myKey = '5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg'
+    const privateKey = hiveTx.PrivateKey.from(myKey)
 
-      const tx = new steemTx.Transaction()
+    const tx = new hiveTx.Transaction()
 
-      // create transaction
-      tx.create(operations).then(() => {
-        console.log('Created transaction:', tx.transaction)
+    // create transaction
+    tx.create(operations).then(() => {
+      console.log('Created transaction:', tx.transaction)
 
-        // sign the transaction
-        tx.sign(privateKey)
-        console.log('Signed transaction:', tx.signedTransaction)
+      // sign the transaction
+      tx.sign(privateKey)
+      console.log('Signed transaction:', tx.signedTransaction)
 
-        // broadcast the transaction
-        tx.broadcast().then(res => console.log('Broadcast result:', res))
-      })
+      // broadcast the transaction
+      tx.broadcast().then(res => console.log('Broadcast result:', res))
+    })
 
-      // get accounts
-      steemTx
-        .call('condenser_api.get_accounts', [['mahdiyari']])
-        .then(res => console.log('Get accounts:', res))
-    </script>
-  </body>
+    // get accounts
+    hiveTx
+      .call('condenser_api.get_accounts', [['mahdiyari']])
+      .then(res => console.log('Get accounts:', res))
+  </script>
+</body>
+
 </html>

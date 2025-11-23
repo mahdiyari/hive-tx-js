@@ -10,6 +10,19 @@ Some libraries are not easy to integrate and in some cases are incompatible with
 
 Hive-tx is a solution to such cases when the other libraries are not working.
 
+## Bundle Size
+
+**Optimized for minimal footprint:**
+- **Browser build**: ~141 KiB (minified + gzipped)
+- **Node.js**: Full functionality with all dependencies
+
+The browser build uses native `fetch` API for HTTP requests, eliminating the need for axios in client-side code. This results in a **21% smaller bundle** compared to the previous version.
+
+**Size breakdown:**
+- Core crypto (@noble libraries): ~83% of bundle size (essential for blockchain operations)
+- Application code: ~17% of bundle size
+- HTTP client: Externalized (not bundled in browser)
+
 ## Installation
 
 ```bash

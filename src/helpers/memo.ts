@@ -1,0 +1,138 @@
+// @ts-nocheck
+import bs58 from 'bs58'
+import { ByteBuffer } from './ByteBuffer'
+import { Serializer } from './serializer'
+import { PrivateKey } from './PrivateKey'
+import * as Aes from './aes'
+import { PublicKey } from './PublicKey'
+import { Deserializer } from './deserializer'
+
+export type Memo = {
+  encode(
+    privateKey: string | PrivateKey,
+    publicKey: string | PublicKey,
+    memo: string,
+    testNonce?: any
+  ): Promise<string>
+  decode(privateKey: string | PrivateKey, memo: string): Promise<string>
+}
+
+/**
+ * Memo/Any message encoding using AES (aes-cbc algorithm)
+ * @param privateKey Private memo key of sender
+ * @param publicKey public memo key of recipient
+ * @param memo message to be encrypted
+ * @param testNonce nonce with high entropy
+ */
+const encode = async (
+  privateKey: string | PrivateKey,
+  publicKey: string | PublicKey,
+  memo: string,
+  testNonce?: bigint
+): Promise<string> => {
+  if (!memo.startsWith('#')) {
+    return memo
+  }
+  memo = memo.substring(1)
+  await checkEncryption()
+  privateKey = toPrivateObj(privateKey)
+  publicKey = toPublicObj(publicKey)
+  const mbuf = new ByteBuffer(
+    ByteBuffer.DEFAULT_CAPACITY,
+    ByteBuffer.LITTLE_ENDIAN
+  )
+  mbuf.writeVString(memo)
+  const memoBuffer = new Uint8Array(mbuf.copy(0, mbuf.offset).toBuffer())
+  const { nonce, message, checksum } = await Aes.encrypt(
+    privateKey,
+    publicKey,
+    memoBuffer,
+    testNonce
+  )
+  const mbuf2 = new ByteBuffer(
+    ByteBuffer.DEFAULT_CAPACITY,
+    ByteBuffer.LITTLE_ENDIAN
+  )
+  Serializer.Memo(mbuf2, {
+    check: checksum,
+    encrypted: message,
+    from: privateKey.createPublic(),
+    nonce,
+    to: publicKey,
+  })
+  mbuf2.flip()
+  const data = new Uint8Array(mbuf2.toBuffer())
+  return '#' + bs58.encode(data)
+}
+
+/**
+ * Encrypted memo/message decryption
+ * @param privateKey Private memo key of recipient
+ * @param memo Encrypted message/memo
+ */
+const decode = async (
+  privateKey: string | PrivateKey,
+  memo: string
+): Promise<string> => {
+  if (!memo.startsWith('#')) {
+    return memo
+  }
+  memo = memo.substring(1)
+  await checkEncryption()
+  privateKey = toPrivateObj(privateKey)
+  // memo = bs58.decode(memo)
+  let memoBuffer = Deserializer.Memo(bs58.decode(memo))
+  const { from, to, nonce, check, encrypted } = memoBuffer
+  const pubkey = privateKey.createPublic().toString()
+  const otherpub =
+    pubkey === new PublicKey(from.key).toString()
+      ? new PublicKey(to.key)
+      : new PublicKey(from.key)
+  memoBuffer = await Aes.decrypt(privateKey, otherpub, nonce, encrypted, check)
+  const mbuf = new ByteBuffer(
+    ByteBuffer.DEFAULT_CAPACITY,
+    ByteBuffer.LITTLE_ENDIAN
+  )
+  mbuf.append(memoBuffer)
+  mbuf.flip()
+  return '#' + mbuf.readVString()
+}
+
+let encodeTest
+const checkEncryption = async () => {
+  if (encodeTest === undefined) {
+    let plaintext
+    encodeTest = true // prevent infinate looping
+    try {
+      const wif = '5JdeC9P7Pbd1uGdFVEsJ41EkEnADbbHGq6p1BwFxm6txNBsQnsw'
+      const pubkey = 'STM8m5UgaFAAYQRuaNejYdS8FVLVp9Ss3K1qAVk5de6F8s3HnVbvA'
+      const cyphertext = await encode(wif, pubkey, '#memo爱')
+      plaintext = await decode(wif, cyphertext)
+    } finally {
+      encodeTest = plaintext === '#memo爱'
+    }
+  }
+  if (encodeTest === false) {
+    throw new Error('This environment does not support encryption.')
+  }
+}
+
+const toPrivateObj = (o: string | PrivateKey): PrivateKey => {
+  if (typeof o === 'string') {
+    return PrivateKey.fromString(o)
+  } else {
+    return o
+  }
+}
+const toPublicObj = (o: string | PublicKey): PublicKey => {
+  if (typeof o === 'string') {
+    return PublicKey.fromString(o)
+  } else {
+    return o
+  }
+}
+
+export const Memo = {
+  decode,
+  encode,
+}
