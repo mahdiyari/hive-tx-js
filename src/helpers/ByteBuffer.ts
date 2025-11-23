@@ -28,7 +28,7 @@ export class ByteBuffer {
 
    */
 
-  static VERSION = '0.0.1'
+  // static VERSION = '0.0.1'
 
   /**
 
@@ -249,8 +249,7 @@ export class ByteBuffer {
 
     this.buffer = capacity === 0 ? EMPTY_BUFFER : new ArrayBuffer(capacity)
 
-    this.view =
-      capacity === 0 ? new DataView(EMPTY_BUFFER) : new DataView(this.buffer)
+    this.view = capacity === 0 ? new DataView(EMPTY_BUFFER) : new DataView(this.buffer)
 
     this.offset = 0
 
@@ -273,9 +272,9 @@ export class ByteBuffer {
 
      */
 
-  static accessor = function () {
-    return DataView
-  }
+  // static accessor = function () {
+  //   return DataView
+  // }
 
   /**
 
@@ -367,10 +366,7 @@ export class ByteBuffer {
         continue
       }
 
-      view.set(
-        new Uint8Array(bi.buffer).subarray(bi.offset, bi.limit),
-        bb.offset
-      )
+      view.set(new Uint8Array(bi.buffer).subarray(bi.offset, bi.limit), bb.offset)
 
       bb.offset += length
     }
@@ -392,9 +388,9 @@ export class ByteBuffer {
 
      */
 
-  static type = function () {
-    return ArrayBuffer
-  }
+  // static type = function () {
+  //   return ArrayBuffer
+  // }
 
   /**
 
@@ -455,10 +451,7 @@ export class ByteBuffer {
 
         bb.limit = buffer.byteLength
 
-        bb.view =
-          buffer.byteLength > 0
-            ? new DataView(buffer)
-            : new DataView(EMPTY_BUFFER)
+        bb.view = buffer.byteLength > 0 ? new DataView(buffer) : new DataView(EMPTY_BUFFER)
       }
     } else if (Object.prototype.toString.call(buffer) === '[object Array]') {
       bb = new ByteBuffer(buffer.length, littleEndian, noAssert)
@@ -489,40 +482,35 @@ export class ByteBuffer {
 
      */
 
-  readBytes(length, offset) {
-    const relative = typeof offset === 'undefined'
+  // readBytes(length, offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (relative) {
-      offset = this.offset
-    }
+  //   if (relative) {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + length > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+' +
-            length +
-            ') <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + length > this.buffer.byteLength) {
+  //       throw RangeError(
+  //         'Illegal offset: 0 <= ' + offset + ' (+' + length + ') <= ' + this.buffer.byteLength
+  //       )
+  //     }
+  //   }
 
-    const slice = this.slice(offset, offset + length)
+  //   const slice = this.slice(offset, offset + length)
 
-    if (relative) {
-      this.offset += length
-    }
+  //   if (relative) {
+  //     this.offset += length
+  //   }
 
-    return slice
-  }
+  //   return slice
+  // }
 
   /**
 
@@ -585,12 +573,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -643,38 +626,38 @@ export class ByteBuffer {
 
      */
 
-  readInt8(offset) {
-    const relative = typeof offset === 'undefined'
+  // readInt8(offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (relative) {
-      offset = this.offset
-    }
+  //   if (relative) {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 1 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+1) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 1 > this.buffer.byteLength) {
+  //       throw RangeError(
+  //         'Illegal offset: 0 <= ' +
+  //           offset +
+  //           ' (+1) <= ' +
+  //           this.buffer.byteLength
+  //       )
+  //     }
+  //   }
 
-    const value = this.view.getInt8(offset)
+  //   const value = this.view.getInt8(offset)
 
-    if (relative) {
-      this.offset += 1
-    }
+  //   if (relative) {
+  //     this.offset += 1
+  //   }
 
-    return value
-  }
+  //   return value
+  // }
 
   /**
 
@@ -690,7 +673,7 @@ export class ByteBuffer {
 
      */
 
-  readByte = this.readInt8
+  // readByte = this.readInt8
 
   /**
 
@@ -727,12 +710,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -800,12 +778,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 1 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+1) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+1) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -873,12 +846,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -937,38 +905,33 @@ export class ByteBuffer {
 
      */
 
-  readInt16(offset) {
-    const relative = typeof offset === 'undefined'
+  // readInt16(offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (typeof offset === 'undefined') {
-      offset = this.offset
-    }
+  //   if (typeof offset === 'undefined') {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 2 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+2) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 2 > this.buffer.byteLength) {
+  //       throw RangeError('Illegal offset: 0 <= ' + offset + ' (+2) <= ' + this.buffer.byteLength)
+  //     }
+  //   }
 
-    const value = this.view.getInt16(offset, this.littleEndian)
+  //   const value = this.view.getInt16(offset, this.littleEndian)
 
-    if (relative) {
-      this.offset += 2
-    }
+  //   if (relative) {
+  //     this.offset += 2
+  //   }
 
-    return value
-  }
+  //   return value
+  // }
 
   /**
 
@@ -988,7 +951,7 @@ export class ByteBuffer {
 
      */
 
-  readShort = this.readInt16
+  // readShort = this.readInt16
 
   /**
 
@@ -1027,12 +990,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -1091,38 +1049,33 @@ export class ByteBuffer {
 
      */
 
-  readUint16(offset) {
-    const relative = typeof offset === 'undefined'
+  // readUint16(offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (relative) {
-      offset = this.offset
-    }
+  //   if (relative) {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 2 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+2) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 2 > this.buffer.byteLength) {
+  //       throw RangeError('Illegal offset: 0 <= ' + offset + ' (+2) <= ' + this.buffer.byteLength)
+  //     }
+  //   }
 
-    const value = this.view.getUint16(offset, this.littleEndian)
+  //   const value = this.view.getUint16(offset, this.littleEndian)
 
-    if (relative) {
-      this.offset += 2
-    }
+  //   if (relative) {
+  //     this.offset += 2
+  //   }
 
-    return value
-  }
+  //   return value
+  // }
 
   /**
 
@@ -1142,7 +1095,7 @@ export class ByteBuffer {
 
      */
 
-  readUInt16 = this.readUint16
+  // readUInt16 = this.readUint16
 
   // types/ints/int32
 
@@ -1179,12 +1132,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -1233,38 +1181,33 @@ export class ByteBuffer {
 
      */
 
-  readInt32(offset) {
-    const relative = typeof offset === 'undefined'
+  // readInt32(offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (relative) {
-      offset = this.offset
-    }
+  //   if (relative) {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 4 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+4) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 4 > this.buffer.byteLength) {
+  //       throw RangeError('Illegal offset: 0 <= ' + offset + ' (+4) <= ' + this.buffer.byteLength)
+  //     }
+  //   }
 
-    const value = this.view.getInt32(offset, this.littleEndian)
+  //   const value = this.view.getInt32(offset, this.littleEndian)
 
-    if (relative) {
-      this.offset += 4
-    }
+  //   if (relative) {
+  //     this.offset += 4
+  //   }
 
-    return value
-  }
+  //   return value
+  // }
 
   /**
 
@@ -1278,7 +1221,7 @@ export class ByteBuffer {
 
      */
 
-  readInt = this.readInt32
+  // readInt = this.readInt32
 
   /**
 
@@ -1313,12 +1256,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -1369,38 +1307,33 @@ export class ByteBuffer {
 
      */
 
-  readUint32(offset) {
-    const relative = typeof offset === 'undefined'
+  // readUint32(offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (relative) {
-      offset = this.offset
-    }
+  //   if (relative) {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 4 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+4) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 4 > this.buffer.byteLength) {
+  //       throw RangeError('Illegal offset: 0 <= ' + offset + ' (+4) <= ' + this.buffer.byteLength)
+  //     }
+  //   }
 
-    const value = this.view.getUint32(offset, this.littleEndian)
+  //   const value = this.view.getUint32(offset, this.littleEndian)
 
-    if (relative) {
-      this.offset += 4
-    }
+  //   if (relative) {
+  //     this.offset += 4
+  //   }
 
-    return value
-  }
+  //   return value
+  // }
 
   /**
 
@@ -1432,52 +1365,52 @@ export class ByteBuffer {
 
      */
 
-  writeFloat32(value, offset) {
-    const relative = typeof offset === 'undefined'
+  // writeFloat32(value, offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (relative) {
-      offset = this.offset
-    }
+  //   if (relative) {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof value !== 'number') {
-        throw TypeError('Illegal value: ' + value + ' (not a number)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof value !== 'number') {
+  //       throw TypeError('Illegal value: ' + value + ' (not a number)')
+  //     }
 
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 0 > this.buffer.byteLength) {
+  //       throw RangeError(
+  //         'Illegal offset: 0 <= ' +
+  //           offset +
+  //           ' (+0) <= ' +
+  //           this.buffer.byteLength
+  //       )
+  //     }
+  //   }
 
-    offset += 4
+  //   offset += 4
 
-    let capacity8 = this.buffer.byteLength
+  //   let capacity8 = this.buffer.byteLength
 
-    if (offset > capacity8) {
-      this.resize((capacity8 *= 2) > offset ? capacity8 : offset)
-    }
+  //   if (offset > capacity8) {
+  //     this.resize((capacity8 *= 2) > offset ? capacity8 : offset)
+  //   }
 
-    offset -= 4
+  //   offset -= 4
 
-    this.view.setFloat32(offset, value, this.littleEndian)
+  //   this.view.setFloat32(offset, value, this.littleEndian)
 
-    if (relative) {
-      this.offset += 4
-    }
+  //   if (relative) {
+  //     this.offset += 4
+  //   }
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -1495,7 +1428,7 @@ export class ByteBuffer {
 
      */
 
-  writeFloat = this.writeFloat32
+  // writeFloat = this.writeFloat32
 
   /**
 
@@ -1509,38 +1442,38 @@ export class ByteBuffer {
 
      */
 
-  readFloat32(offset) {
-    const relative = typeof offset === 'undefined'
+  // readFloat32(offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (relative) {
-      offset = this.offset
-    }
+  //   if (relative) {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 4 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+4) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 4 > this.buffer.byteLength) {
+  //       throw RangeError(
+  //         'Illegal offset: 0 <= ' +
+  //           offset +
+  //           ' (+4) <= ' +
+  //           this.buffer.byteLength
+  //       )
+  //     }
+  //   }
 
-    const value = this.view.getFloat32(offset, this.littleEndian)
+  //   const value = this.view.getFloat32(offset, this.littleEndian)
 
-    if (relative) {
-      this.offset += 4
-    }
+  //   if (relative) {
+  //     this.offset += 4
+  //   }
 
-    return value
-  }
+  //   return value
+  // }
 
   /**
 
@@ -1556,7 +1489,7 @@ export class ByteBuffer {
 
      */
 
-  readFloat = this.readFloat32
+  // readFloat = this.readFloat32
 
   // types/floats/float64
 
@@ -1574,52 +1507,52 @@ export class ByteBuffer {
 
      */
 
-  writeFloat64(value, offset) {
-    const relative = typeof offset === 'undefined'
+  // writeFloat64(value, offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (relative) {
-      offset = this.offset
-    }
+  //   if (relative) {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof value !== 'number') {
-        throw TypeError('Illegal value: ' + value + ' (not a number)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof value !== 'number') {
+  //       throw TypeError('Illegal value: ' + value + ' (not a number)')
+  //     }
 
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 0 > this.buffer.byteLength) {
+  //       throw RangeError(
+  //         'Illegal offset: 0 <= ' +
+  //           offset +
+  //           ' (+0) <= ' +
+  //           this.buffer.byteLength
+  //       )
+  //     }
+  //   }
 
-    offset += 8
+  //   offset += 8
 
-    let capacity9 = this.buffer.byteLength
+  //   let capacity9 = this.buffer.byteLength
 
-    if (offset > capacity9) {
-      this.resize((capacity9 *= 2) > offset ? capacity9 : offset)
-    }
+  //   if (offset > capacity9) {
+  //     this.resize((capacity9 *= 2) > offset ? capacity9 : offset)
+  //   }
 
-    offset -= 8
+  //   offset -= 8
 
-    this.view.setFloat64(offset, value, this.littleEndian)
+  //   this.view.setFloat64(offset, value, this.littleEndian)
 
-    if (relative) {
-      this.offset += 8
-    }
+  //   if (relative) {
+  //     this.offset += 8
+  //   }
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -1637,7 +1570,7 @@ export class ByteBuffer {
 
      */
 
-  writeDouble = this.writeFloat64
+  // writeDouble = this.writeFloat64
 
   /**
 
@@ -1651,38 +1584,38 @@ export class ByteBuffer {
 
      */
 
-  readFloat64(offset) {
-    const relative = typeof offset === 'undefined'
+  // readFloat64(offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (relative) {
-      offset = this.offset
-    }
+  //   if (relative) {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 8 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+8) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 8 > this.buffer.byteLength) {
+  //       throw RangeError(
+  //         'Illegal offset: 0 <= ' +
+  //           offset +
+  //           ' (+8) <= ' +
+  //           this.buffer.byteLength
+  //       )
+  //     }
+  //   }
 
-    const value = this.view.getFloat64(offset, this.littleEndian)
+  //   const value = this.view.getFloat64(offset, this.littleEndian)
 
-    if (relative) {
-      this.offset += 8
-    }
+  //   if (relative) {
+  //     this.offset += 8
+  //   }
 
-    return value
-  }
+  //   return value
+  // }
 
   /**
 
@@ -1698,7 +1631,7 @@ export class ByteBuffer {
 
      */
 
-  readDouble = this.readFloat64
+  // readDouble = this.readFloat64
 
   /**
 
@@ -1741,12 +1674,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -1803,11 +1731,11 @@ export class ByteBuffer {
 
      */
 
-  appendTo(target, offset) {
-    target.append(this, offset)
+  // appendTo(target, offset) {
+  //   target.append(this, offset)
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -1823,11 +1751,11 @@ export class ByteBuffer {
 
      */
 
-  assert(assert) {
-    this.noAssert = !assert
+  // assert(assert) {
+  //   this.noAssert = !assert
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -1839,9 +1767,9 @@ export class ByteBuffer {
 
      */
 
-  capacity() {
-    return this.buffer.byteLength
-  }
+  // capacity() {
+  //   return this.buffer.byteLength
+  // }
 
   /**
 
@@ -1855,15 +1783,15 @@ export class ByteBuffer {
 
      */
 
-  clear() {
-    this.offset = 0
+  // clear() {
+  //   this.offset = 0
 
-    this.limit = this.buffer.byteLength
+  //   this.limit = this.buffer.byteLength
 
-    this.markedOffset = -1
+  //   this.markedOffset = -1
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -1921,80 +1849,75 @@ export class ByteBuffer {
 
      */
 
-  compact(begin, end) {
-    if (typeof begin === 'undefined') {
-      begin = this.offset
-    }
+  // compact(begin, end) {
+  //   if (typeof begin === 'undefined') {
+  //     begin = this.offset
+  //   }
 
-    if (typeof end === 'undefined') {
-      end = this.limit
-    }
+  //   if (typeof end === 'undefined') {
+  //     end = this.limit
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof begin !== 'number' || begin % 1 !== 0) {
-        throw TypeError('Illegal begin: Not an integer')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof begin !== 'number' || begin % 1 !== 0) {
+  //       throw TypeError('Illegal begin: Not an integer')
+  //     }
 
-      begin >>>= 0
+  //     begin >>>= 0
 
-      if (typeof end !== 'number' || end % 1 !== 0) {
-        throw TypeError('Illegal end: Not an integer')
-      }
+  //     if (typeof end !== 'number' || end % 1 !== 0) {
+  //       throw TypeError('Illegal end: Not an integer')
+  //     }
 
-      end >>>= 0
+  //     end >>>= 0
 
-      if (begin < 0 || begin > end || end > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal range: 0 <= ' +
-            begin +
-            ' <= ' +
-            end +
-            ' <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (begin < 0 || begin > end || end > this.buffer.byteLength) {
+  //       throw RangeError(
+  //         'Illegal range: 0 <= ' + begin + ' <= ' + end + ' <= ' + this.buffer.byteLength
+  //       )
+  //     }
+  //   }
 
-    if (begin === 0 && end === this.buffer.byteLength) {
-      return this
-    }
+  //   if (begin === 0 && end === this.buffer.byteLength) {
+  //     return this
+  //   }
 
-    const len = end - begin
+  //   const len = end - begin
 
-    if (len === 0) {
-      this.buffer = EMPTY_BUFFER
+  //   if (len === 0) {
+  //     this.buffer = EMPTY_BUFFER
 
-      this.view = new DataView(EMPTY_BUFFER)
+  //     this.view = new DataView(EMPTY_BUFFER)
 
-      if (this.markedOffset >= 0) {
-        this.markedOffset -= begin
-      }
+  //     if (this.markedOffset >= 0) {
+  //       this.markedOffset -= begin
+  //     }
 
-      this.offset = 0
+  //     this.offset = 0
 
-      this.limit = 0
+  //     this.limit = 0
 
-      return this
-    }
+  //     return this
+  //   }
 
-    const buffer = new ArrayBuffer(len)
+  //   const buffer = new ArrayBuffer(len)
 
-    new Uint8Array(buffer).set(new Uint8Array(this.buffer).subarray(begin, end))
+  //   new Uint8Array(buffer).set(new Uint8Array(this.buffer).subarray(begin, end))
 
-    this.buffer = buffer
+  //   this.buffer = buffer
 
-    this.view = new DataView(buffer)
+  //   this.view = new DataView(buffer)
 
-    if (this.markedOffset >= 0) {
-      this.markedOffset -= begin
-    }
+  //   if (this.markedOffset >= 0) {
+  //     this.markedOffset -= begin
+  //   }
 
-    this.offset = 0
+  //   this.offset = 0
 
-    this.limit = len
+  //   this.limit = len
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -2036,12 +1959,7 @@ export class ByteBuffer {
 
       if (begin < 0 || begin > end || end > this.buffer.byteLength) {
         throw RangeError(
-          'Illegal range: 0 <= ' +
-            begin +
-            ' <= ' +
-            end +
-            ' <= ' +
-            this.buffer.byteLength
+          'Illegal range: 0 <= ' + begin + ' <= ' + end + ' <= ' + this.buffer.byteLength
         )
       }
     }
@@ -2105,24 +2023,17 @@ export class ByteBuffer {
 
     sourceOffset = relative ? this.offset : sourceOffset | 0
 
-    sourceLimit =
-      typeof sourceLimit === 'undefined' ? this.limit : sourceLimit | 0
+    sourceLimit = typeof sourceLimit === 'undefined' ? this.limit : sourceLimit | 0
 
     if (targetOffset < 0 || targetOffset > target.buffer.byteLength) {
       throw RangeError(
-        'Illegal target range: 0 <= ' +
-          targetOffset +
-          ' <= ' +
-          target.buffer.byteLength
+        'Illegal target range: 0 <= ' + targetOffset + ' <= ' + target.buffer.byteLength
       )
     }
 
     if (sourceOffset < 0 || sourceLimit > this.buffer.byteLength) {
       throw RangeError(
-        'Illegal source range: 0 <= ' +
-          sourceOffset +
-          ' <= ' +
-          this.buffer.byteLength
+        'Illegal source range: 0 <= ' + sourceOffset + ' <= ' + this.buffer.byteLength
       )
     }
 
@@ -2198,70 +2109,65 @@ export class ByteBuffer {
 
      */
 
-  fill(value, begin, end) {
-    const relative = typeof begin === 'undefined'
+  // fill(value, begin, end) {
+  //   const relative = typeof begin === 'undefined'
 
-    if (relative) {
-      begin = this.offset
-    }
+  //   if (relative) {
+  //     begin = this.offset
+  //   }
 
-    if (typeof value === 'string' && value.length > 0) {
-      value = value.charCodeAt(0)
-    }
+  //   if (typeof value === 'string' && value.length > 0) {
+  //     value = value.charCodeAt(0)
+  //   }
 
-    if (typeof begin === 'undefined') {
-      begin = this.offset
-    }
+  //   if (typeof begin === 'undefined') {
+  //     begin = this.offset
+  //   }
 
-    if (typeof end === 'undefined') {
-      end = this.limit
-    }
+  //   if (typeof end === 'undefined') {
+  //     end = this.limit
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof value !== 'number' || value % 1 !== 0) {
-        throw TypeError('Illegal value: ' + value + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof value !== 'number' || value % 1 !== 0) {
+  //       throw TypeError('Illegal value: ' + value + ' (not an integer)')
+  //     }
 
-      value |= 0
+  //     value |= 0
 
-      if (typeof begin !== 'number' || begin % 1 !== 0) {
-        throw TypeError('Illegal begin: Not an integer')
-      }
+  //     if (typeof begin !== 'number' || begin % 1 !== 0) {
+  //       throw TypeError('Illegal begin: Not an integer')
+  //     }
 
-      begin >>>= 0
+  //     begin >>>= 0
 
-      if (typeof end !== 'number' || end % 1 !== 0) {
-        throw TypeError('Illegal end: Not an integer')
-      }
+  //     if (typeof end !== 'number' || end % 1 !== 0) {
+  //       throw TypeError('Illegal end: Not an integer')
+  //     }
 
-      end >>>= 0
+  //     end >>>= 0
 
-      if (begin < 0 || begin > end || end > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal range: 0 <= ' +
-            begin +
-            ' <= ' +
-            end +
-            ' <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (begin < 0 || begin > end || end > this.buffer.byteLength) {
+  //       throw RangeError(
+  //         'Illegal range: 0 <= ' + begin + ' <= ' + end + ' <= ' + this.buffer.byteLength
+  //       )
+  //     }
+  //   }
 
-    if (begin >= end) {
-      return this
-    }
+  //   if (begin >= end) {
+  //     return this
+  //   }
 
-    while (begin < end) {
-      this.view.setUint8(begin++, value)
-    }
+  //   while (begin < end) {
+  //     this.view.setUint8(begin++, value)
+  //   }
 
-    if (relative) {
-      this.offset = begin
-    }
+  //   if (relative) {
+  //     this.offset = begin
+  //   }
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -2301,30 +2207,25 @@ export class ByteBuffer {
 
      */
 
-  mark(offset) {
-    offset = typeof offset === 'undefined' ? this.offset : offset
+  // mark(offset) {
+  //   offset = typeof offset === 'undefined' ? this.offset : offset
 
-    if (!this.noAssert) {
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 0 > this.buffer.byteLength) {
+  //       throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
+  //     }
+  //   }
 
-    this.markedOffset = offset
+  //   this.markedOffset = offset
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -2338,17 +2239,17 @@ export class ByteBuffer {
 
      */
 
-  order(littleEndian) {
-    if (!this.noAssert) {
-      if (typeof littleEndian !== 'boolean') {
-        throw TypeError('Illegal littleEndian: Not a boolean')
-      }
-    }
+  // order(littleEndian) {
+  //   if (!this.noAssert) {
+  //     if (typeof littleEndian !== 'boolean') {
+  //       throw TypeError('Illegal littleEndian: Not a boolean')
+  //     }
+  //   }
 
-    this.littleEndian = !!littleEndian
+  //   this.littleEndian = !!littleEndian
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -2362,12 +2263,11 @@ export class ByteBuffer {
 
      */
 
-  LE(littleEndian) {
-    this.littleEndian =
-      typeof littleEndian !== 'undefined' ? !!littleEndian : true
+  // LE(littleEndian) {
+  //   this.littleEndian = typeof littleEndian !== 'undefined' ? !!littleEndian : true
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -2381,11 +2281,11 @@ export class ByteBuffer {
 
      */
 
-  BE(bigEndian) {
-    this.littleEndian = typeof bigEndian !== 'undefined' ? !bigEndian : false
+  // BE(bigEndian) {
+  //   this.littleEndian = typeof bigEndian !== 'undefined' ? !bigEndian : false
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -2415,82 +2315,74 @@ export class ByteBuffer {
 
      */
 
-  prepend(source, offset) {
-    const relative = typeof offset === 'undefined'
+  // prepend(source, offset) {
+  //   const relative = typeof offset === 'undefined'
 
-    if (relative) {
-      offset = this.offset
-    }
+  //   if (relative) {
+  //     offset = this.offset
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof offset !== 'number' || offset % 1 !== 0) {
-        throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof offset !== 'number' || offset % 1 !== 0) {
+  //       throw TypeError('Illegal offset: ' + offset + ' (not an integer)')
+  //     }
 
-      offset >>>= 0
+  //     offset >>>= 0
 
-      if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (offset < 0 || offset + 0 > this.buffer.byteLength) {
+  //       throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
+  //     }
+  //   }
 
-    if (!(source instanceof ByteBuffer)) {
-      source = ByteBuffer.wrap(source)
-    }
+  //   if (!(source instanceof ByteBuffer)) {
+  //     source = ByteBuffer.wrap(source)
+  //   }
 
-    const len = source.limit - source.offset
+  //   const len = source.limit - source.offset
 
-    if (len <= 0) {
-      return this
-    }
+  //   if (len <= 0) {
+  //     return this
+  //   }
 
-    const diff = len - offset
+  //   const diff = len - offset
 
-    if (diff > 0) {
-      const buffer = new ArrayBuffer(this.buffer.byteLength + diff)
+  //   if (diff > 0) {
+  //     const buffer = new ArrayBuffer(this.buffer.byteLength + diff)
 
-      const arrayView = new Uint8Array(buffer)
+  //     const arrayView = new Uint8Array(buffer)
 
-      arrayView.set(
-        new Uint8Array(this.buffer).subarray(offset, this.buffer.byteLength),
-        len
-      )
+  //     arrayView.set(new Uint8Array(this.buffer).subarray(offset, this.buffer.byteLength), len)
 
-      this.buffer = buffer
+  //     this.buffer = buffer
 
-      this.view = new DataView(buffer)
+  //     this.view = new DataView(buffer)
 
-      this.offset += diff
+  //     this.offset += diff
 
-      if (this.markedOffset >= 0) {
-        this.markedOffset += diff
-      }
+  //     if (this.markedOffset >= 0) {
+  //       this.markedOffset += diff
+  //     }
 
-      this.limit += diff
+  //     this.limit += diff
 
-      offset += diff
-    } else {
-      const arrayView = new Uint8Array(this.buffer)
+  //     offset += diff
+  //   } else {
+  //     const arrayView = new Uint8Array(this.buffer)
 
-      arrayView.set(
-        new Uint8Array(source.buffer).subarray(source.offset, source.limit),
-        offset - len
-      )
-    }
+  //     arrayView.set(
+  //       new Uint8Array(source.buffer).subarray(source.offset, source.limit),
+  //       offset - len
+  //     )
+  //   }
 
-    source.offset = source.limit
+  //   source.offset = source.limit
 
-    if (relative) {
-      this.offset -= len
-    }
+  //   if (relative) {
+  //     this.offset -= len
+  //   }
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -2514,11 +2406,11 @@ export class ByteBuffer {
 
      */
 
-  prependTo(target, offset) {
-    target.prepend(this, offset)
+  // prependTo(target, offset) {
+  //   target.prepend(this, offset)
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -2532,9 +2424,9 @@ export class ByteBuffer {
 
      */
 
-  remaining() {
-    return this.limit - this.offset
-  }
+  // remaining() {
+  //   return this.limit - this.offset
+  // }
 
   /**
 
@@ -2552,17 +2444,17 @@ export class ByteBuffer {
 
      */
 
-  reset() {
-    if (this.markedOffset >= 0) {
-      this.offset = this.markedOffset
+  // reset() {
+  //   if (this.markedOffset >= 0) {
+  //     this.offset = this.markedOffset
 
-      this.markedOffset = -1
-    } else {
-      this.offset = 0
-    }
+  //     this.markedOffset = -1
+  //   } else {
+  //     this.offset = 0
+  //   }
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -2622,52 +2514,45 @@ export class ByteBuffer {
 
      */
 
-  reverse(begin, end) {
-    if (typeof begin === 'undefined') {
-      begin = this.offset
-    }
+  // reverse(begin, end) {
+  //   if (typeof begin === 'undefined') {
+  //     begin = this.offset
+  //   }
 
-    if (typeof end === 'undefined') {
-      end = this.limit
-    }
+  //   if (typeof end === 'undefined') {
+  //     end = this.limit
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof begin !== 'number' || begin % 1 !== 0) {
-        throw TypeError('Illegal begin: Not an integer')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof begin !== 'number' || begin % 1 !== 0) {
+  //       throw TypeError('Illegal begin: Not an integer')
+  //     }
 
-      begin >>>= 0
+  //     begin >>>= 0
 
-      if (typeof end !== 'number' || end % 1 !== 0) {
-        throw TypeError('Illegal end: Not an integer')
-      }
+  //     if (typeof end !== 'number' || end % 1 !== 0) {
+  //       throw TypeError('Illegal end: Not an integer')
+  //     }
 
-      end >>>= 0
+  //     end >>>= 0
 
-      if (begin < 0 || begin > end || end > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal range: 0 <= ' +
-            begin +
-            ' <= ' +
-            end +
-            ' <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (begin < 0 || begin > end || end > this.buffer.byteLength) {
+  //       throw RangeError(
+  //         'Illegal range: 0 <= ' + begin + ' <= ' + end + ' <= ' + this.buffer.byteLength
+  //       )
+  //     }
+  //   }
 
-    if (begin === end) {
-      return this
-    }
+  //   if (begin === end) {
+  //     return this
+  //   }
 
-    Array.prototype.reverse.call(
-      new Uint8Array(this.buffer).subarray(begin, end)
-    )
+  //   Array.prototype.reverse.call(new Uint8Array(this.buffer).subarray(begin, end))
 
-    this.view = new DataView(this.buffer)
+  //   this.view = new DataView(this.buffer)
 
-    return this
-  }
+  //   return this
+  // }
 
   /**
 
@@ -2695,12 +2580,7 @@ export class ByteBuffer {
     if (!this.noAssert) {
       if (offset < 0 || offset > this.buffer.byteLength) {
         throw RangeError(
-          'Illegal length: 0 <= ' +
-            this.offset +
-            ' + ' +
-            length +
-            ' <= ' +
-            this.buffer.byteLength
+          'Illegal length: 0 <= ' + this.offset + ' + ' + length + ' <= ' + this.buffer.byteLength
         )
       }
     }
@@ -2724,48 +2604,43 @@ export class ByteBuffer {
 
      */
 
-  slice(begin, end) {
-    if (typeof begin === 'undefined') {
-      begin = this.offset
-    }
+  // slice(begin, end) {
+  //   if (typeof begin === 'undefined') {
+  //     begin = this.offset
+  //   }
 
-    if (typeof end === 'undefined') {
-      end = this.limit
-    }
+  //   if (typeof end === 'undefined') {
+  //     end = this.limit
+  //   }
 
-    if (!this.noAssert) {
-      if (typeof begin !== 'number' || begin % 1 !== 0) {
-        throw TypeError('Illegal begin: Not an integer')
-      }
+  //   if (!this.noAssert) {
+  //     if (typeof begin !== 'number' || begin % 1 !== 0) {
+  //       throw TypeError('Illegal begin: Not an integer')
+  //     }
 
-      begin >>>= 0
+  //     begin >>>= 0
 
-      if (typeof end !== 'number' || end % 1 !== 0) {
-        throw TypeError('Illegal end: Not an integer')
-      }
+  //     if (typeof end !== 'number' || end % 1 !== 0) {
+  //       throw TypeError('Illegal end: Not an integer')
+  //     }
 
-      end >>>= 0
+  //     end >>>= 0
 
-      if (begin < 0 || begin > end || end > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal range: 0 <= ' +
-            begin +
-            ' <= ' +
-            end +
-            ' <= ' +
-            this.buffer.byteLength
-        )
-      }
-    }
+  //     if (begin < 0 || begin > end || end > this.buffer.byteLength) {
+  //       throw RangeError(
+  //         'Illegal range: 0 <= ' + begin + ' <= ' + end + ' <= ' + this.buffer.byteLength
+  //       )
+  //     }
+  //   }
 
-    const bb = this.clone()
+  //   const bb = this.clone()
 
-    bb.offset = begin
+  //   bb.offset = begin
 
-    bb.limit = end
+  //   bb.limit = end
 
-    return bb
-  }
+  //   return bb
+  // }
 
   /**
 
@@ -2800,12 +2675,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -2875,12 +2745,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 8 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+8) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+8) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -2940,12 +2805,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+0) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+0) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -3017,12 +2877,7 @@ export class ByteBuffer {
       offset >>>= 0
 
       if (offset < 0 || offset + 8 > this.buffer.byteLength) {
-        throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+8) <= ' +
-            this.buffer.byteLength
-        )
+        throw RangeError('Illegal offset: 0 <= ' + offset + ' (+8) <= ' + this.buffer.byteLength)
       }
     }
 
@@ -3087,12 +2942,7 @@ export class ByteBuffer {
 
       if (offset < 0 || offset > limit || limit > this.buffer.byteLength) {
         throw RangeError(
-          'Illegal range: 0 <= ' +
-            offset +
-            ' <= ' +
-            limit +
-            ' <= ' +
-            this.buffer.byteLength
+          'Illegal range: 0 <= ' + offset + ' <= ' + limit + ' <= ' + this.buffer.byteLength
         )
       }
     }
@@ -3111,10 +2961,7 @@ export class ByteBuffer {
 
     const buffer = new ArrayBuffer(limit - offset)
 
-    new Uint8Array(buffer).set(
-      new Uint8Array(this.buffer).subarray(offset, limit),
-      0
-    )
+    new Uint8Array(buffer).set(new Uint8Array(this.buffer).subarray(offset, limit), 0)
 
     return buffer
   }
@@ -3153,12 +3000,7 @@ export class ByteBuffer {
       offset >>>= 0
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
         throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+' +
-            0 +
-            ') <= ' +
-            this.buffer.byteLength
+          'Illegal offset: 0 <= ' + offset + ' (+' + 0 + ') <= ' + this.buffer.byteLength
         )
       }
     }
@@ -3194,12 +3036,7 @@ export class ByteBuffer {
       offset >>>= 0
       if (offset < 0 || offset + 1 > this.buffer.byteLength) {
         throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+' +
-            1 +
-            ') <= ' +
-            this.buffer.byteLength
+          'Illegal offset: 0 <= ' + offset + ' (+' + 1 + ') <= ' + this.buffer.byteLength
         )
       }
     }
@@ -3225,7 +3062,7 @@ export class ByteBuffer {
     }
     return {
       value,
-      length: c,
+      length: c
     }
   }
 
@@ -3252,12 +3089,7 @@ export class ByteBuffer {
       offset >>>= 0
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
         throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+' +
-            0 +
-            ') <= ' +
-            this.buffer.byteLength
+          'Illegal offset: 0 <= ' + offset + ' (+' + 0 + ') <= ' + this.buffer.byteLength
         )
       }
     }
@@ -3278,9 +3110,7 @@ export class ByteBuffer {
       }.bind(this)
     )
     if (offset !== start + k + l) {
-      throw RangeError(
-        'Illegal range: Truncated data, ' + offset + ' == ' + (offset + k + l)
-      )
+      throw RangeError('Illegal range: Truncated data, ' + offset + ' == ' + (offset + k + l))
     }
     if (relative) {
       this.offset = offset
@@ -3299,22 +3129,13 @@ export class ByteBuffer {
       offset >>>= 0
       if (offset < 0 || offset + 1 > this.buffer.byteLength) {
         throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+' +
-            1 +
-            ') <= ' +
-            this.buffer.byteLength
+          'Illegal offset: 0 <= ' + offset + ' (+' + 1 + ') <= ' + this.buffer.byteLength
         )
       }
     }
     const start = offset
     const len = this.readVarint32(offset)
-    const str = this.readUTF8String(
-      len.value,
-      ByteBuffer.METRICS_BYTES,
-      (offset += len.length)
-    )
+    const str = this.readUTF8String(len.value, ByteBuffer.METRICS_BYTES, (offset += len.length))
     offset += str.length
     if (relative) {
       this.offset = offset
@@ -3322,7 +3143,7 @@ export class ByteBuffer {
     } else {
       return {
         string: str.string,
-        length: offset - start,
+        length: offset - start
       }
     }
   }
@@ -3346,12 +3167,7 @@ export class ByteBuffer {
       offset >>>= 0
       if (offset < 0 || offset + 0 > this.buffer.byteLength) {
         throw RangeError(
-          'Illegal offset: 0 <= ' +
-            offset +
-            ' (+' +
-            0 +
-            ') <= ' +
-            this.buffer.byteLength
+          'Illegal offset: 0 <= ' + offset + ' (+' + 0 + ') <= ' + this.buffer.byteLength
         )
       }
     }
@@ -3363,9 +3179,7 @@ export class ByteBuffer {
       sd = stringDestination()
       utfx.decodeUTF8(
         function () {
-          return i < length && offset < this.limit
-            ? this.view.getUint8(offset++)
-            : null
+          return i < length && offset < this.limit ? this.view.getUint8(offset++) : null
         }.bind(this),
         function (cp) {
           ++i
@@ -3373,9 +3187,7 @@ export class ByteBuffer {
         }
       )
       if (i !== length) {
-        throw RangeError(
-          'Illegal range: Truncated data, ' + i + ' == ' + length
-        )
+        throw RangeError('Illegal range: Truncated data, ' + i + ' == ' + length)
       }
       if (relative) {
         this.offset = offset
@@ -3383,7 +3195,7 @@ export class ByteBuffer {
       } else {
         return {
           string: sd(),
-          length: offset - start,
+          length: offset - start
         }
       }
     } else if (metrics === ByteBuffer.METRICS_BYTES) {
@@ -3394,12 +3206,7 @@ export class ByteBuffer {
         offset >>>= 0
         if (offset < 0 || offset + length > this.buffer.byteLength) {
           throw RangeError(
-            'Illegal offset: 0 <= ' +
-              offset +
-              ' (+' +
-              length +
-              ') <= ' +
-              this.buffer.byteLength
+            'Illegal offset: 0 <= ' + offset + ' (+' + length + ') <= ' + this.buffer.byteLength
           )
         }
       }
@@ -3412,9 +3219,7 @@ export class ByteBuffer {
         this.noAssert
       )
       if (offset !== k) {
-        throw RangeError(
-          'Illegal range: Truncated data, ' + offset + ' == ' + k
-        )
+        throw RangeError('Illegal range: Truncated data, ' + offset + ' == ' + k)
       }
       if (relative) {
         this.offset = offset
@@ -3422,7 +3227,7 @@ export class ByteBuffer {
       } else {
         return {
           string: sd(),
-          length: offset - start,
+          length: offset - start
         }
       }
     } else {
@@ -3534,11 +3339,8 @@ utfx.decodeUTF8 = function (src, dst) {
       ;((b = src()) === null || (c = src()) === null) && fail([a, b, c])
       dst(((a & 0x0f) << 12) | ((b & 0x3f) << 6) | (c & 0x3f))
     } else if ((a & 0xf8) === 0xf0) {
-      ;((b = src()) === null || (c = src()) === null || (d = src()) === null) &&
-        fail([a, b, c, d])
-      dst(
-        ((a & 0x07) << 18) | ((b & 0x3f) << 12) | ((c & 0x3f) << 6) | (d & 0x3f)
-      )
+      ;((b = src()) === null || (c = src()) === null || (d = src()) === null) && fail([a, b, c, d])
+      dst(((a & 0x07) << 18) | ((b & 0x3f) << 12) | ((c & 0x3f) << 6) | (d & 0x3f))
     } else throw RangeError('Illegal starting byte: ' + a)
   }
 }
