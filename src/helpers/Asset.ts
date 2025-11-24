@@ -6,27 +6,17 @@ export class Asset {
 
   constructor(amount: number, symbol: string) {
     this.amount = amount
-    this.symbol =
-      symbol === 'HIVE' ? 'STEEM' : symbol === 'HBD' ? 'SBD' : symbol
+    this.symbol = symbol === 'HIVE' ? 'STEEM' : symbol === 'HBD' ? 'SBD' : symbol
   }
 
   /** Create a new Asset instance from a string, e.g. `42.000 HIVE`. */
-  static fromString(
-    string: string,
-    expectedSymbol: string | null = null
-  ): Asset {
+  static fromString(string: string, expectedSymbol: string | null = null): Asset {
     const [amountString, symbol] = string.split(' ')
-    if (
-      ['STEEM', 'VESTS', 'SBD', 'TESTS', 'TBD', 'HIVE', 'HBD'].indexOf(
-        symbol
-      ) === -1
-    ) {
+    if (['STEEM', 'VESTS', 'SBD', 'TESTS', 'TBD', 'HIVE', 'HBD'].indexOf(symbol) === -1) {
       throw new Error(`Invalid asset symbol: ${symbol}`)
     }
     if (expectedSymbol && symbol !== expectedSymbol) {
-      throw new Error(
-        `Invalid asset, expected symbol: ${expectedSymbol} got: ${symbol}`
-      )
+      throw new Error(`Invalid asset, expected symbol: ${expectedSymbol} got: ${symbol}`)
     }
     const amount = Number.parseFloat(amountString)
     if (!Number.isFinite(amount)) {
@@ -43,9 +33,7 @@ export class Asset {
   static from(value: number | string | Asset, symbol?: string | null): Asset {
     if (value instanceof Asset) {
       if (symbol && value.symbol !== symbol) {
-        throw new Error(
-          `Invalid asset, expected symbol: ${symbol} got: ${value.symbol}`
-        )
+        throw new Error(`Invalid asset, expected symbol: ${symbol} got: ${value.symbol}`)
       }
       return value
     } else if (typeof value === 'number' && Number.isFinite(value)) {
@@ -71,6 +59,8 @@ export class Asset {
         return 3
       case 'VESTS':
         return 6
+      default:
+        return 3
     }
   }
 

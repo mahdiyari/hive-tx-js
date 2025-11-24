@@ -264,6 +264,20 @@ export class ByteBuffer {
     return this.writeUint32(value, offset)
   }
 
+  readUint32(offset?: number) {
+    const relative = typeof offset === 'undefined'
+    if (relative) offset = this.offset
+    else offset = offset!
+    // offset >>>= 0
+    const value = this.view.getUint32(offset, this.littleEndian)
+    if (relative) {
+      this.offset += 4
+    }
+    return value
+  }
+
+  readUInt32 = this.readUint32
+
   append(source: ByteBuffer | ArrayBuffer | Uint8Array | number[], offset?: number): ByteBuffer {
     const relative = typeof offset === 'undefined'
     if (relative) offset = this.offset
@@ -491,9 +505,9 @@ export class ByteBuffer {
 
   readVarint32(offset?: number): number | { value: number; length: number } {
     const relative = typeof offset === 'undefined'
-    if (relative) offset = this.offset
-    else offset = offset!
-
+    if (typeof offset === 'undefined') {
+      offset = this.offset
+    }
     let c = 0
     let value = 0 >>> 0
     let b: number

@@ -1,6 +1,6 @@
 import { PublicKey } from './PublicKey'
-import { secp256k1 } from '@noble/curves/secp256k1'
-import { hexToUint8Array, uint8ArrayToHex } from './uint8Array'
+import { secp256k1 } from '@noble/curves/secp256k1.js'
+import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 
 /** ECDSA (secp256k1) signature. */
 export class Signature {
@@ -14,10 +14,10 @@ export class Signature {
     this.compressed = compressed ?? true
   }
 
-  static from(string) {
+  static from(string: string) {
     if (typeof string === 'string') {
-      const temp = hexToUint8Array(string)
-      let recovery = parseInt(uint8ArrayToHex(temp.subarray(0, 1)), 16) - 31
+      const temp = hexToBytes(string)
+      let recovery = parseInt(bytesToHex(temp.subarray(0, 1)), 16) - 31
       let compressed = true
       // non-compressed signatures have -4
       // https://github.com/bitcoin/bitcoin/blob/95ea54ba089610019a74c1176a2c7c0dba144b1c/src/key.cpp#L257
@@ -44,7 +44,7 @@ export class Signature {
   }
 
   customToString() {
-    return uint8ArrayToHex(this.toBuffer())
+    return bytesToHex(this.toBuffer())
   }
 
   getPublicKey(message: Uint8Array | string): PublicKey {
@@ -54,8 +54,11 @@ export class Signature {
     ) {
       throw new Error('Expected a valid sha256 hash as message')
     }
-    const sig = secp256k1.Signature.fromCompact(this.data)
+    if (typeof message === 'string') {
+      message = hexToBytes(message)
+    }
+    const sig = secp256k1.Signature.fromBytes(this.data, 'compact')
     const temp = new secp256k1.Signature(sig.r, sig.s, this.recovery)
-    return new PublicKey(temp.recoverPublicKey(message).toRawBytes())
+    return new PublicKey(temp.recoverPublicKey(message).toBytes())
   }
 }

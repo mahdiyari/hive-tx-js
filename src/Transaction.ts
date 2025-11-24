@@ -1,6 +1,6 @@
+import { hexToBytes } from '@noble/hashes/utils.js'
 import { getGlobalProps } from './helpers/globalProps'
 import { PrivateKey } from './helpers/PrivateKey'
-import { hexToUint8Array } from './helpers/uint8Array'
 import { broadcastTransaction } from './transactions/broadcastTransaction'
 import { signTransaction, transactionDigest } from './transactions/signTransaction'
 import { DigestData, Operation, SignedTransaction, TransactionType } from './types'
@@ -116,17 +116,17 @@ export class Transaction {
     return this.signedTransaction
   }
 
-  private createTransaction = async (operations, exp) => {
-    const expireTime = exp ? 1000 * exp : 1000 * 60
+  /** @param expiration Transaction expiration in ms */
+  private createTransaction = async (operations: Operation[], expiration: number = 60_000) => {
     const props = await getGlobalProps()
     const refBlockNum = props.head_block_number & 0xffff
-    const uintArray = hexToUint8Array(props.head_block_id)
+    const uintArray = hexToBytes(props.head_block_id)
     const dataView = new DataView(uintArray.buffer)
     const refBlockPrefix = dataView.getUint32(4, true)
-    const expiration = new Date(Date.now() + expireTime).toISOString().slice(0, -5)
-    const extensions = []
+    const expirationIso = new Date(Date.now() + expiration).toISOString().slice(0, -5)
+    const extensions: any[] = []
     return {
-      expiration,
+      expiration: expirationIso,
       extensions,
       operations,
       ref_block_num: refBlockNum,

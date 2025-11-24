@@ -1,56 +1,46 @@
-// @ts-nocheck
 import { ByteBuffer } from './ByteBuffer'
 import { PublicKey } from './PublicKey'
 
-const PublicKeyDeserializer = (buf) => {
+const PublicKeyDeserializer = (buf: ByteBuffer) => {
   const c = fixedBuf(buf, 33)
   return new PublicKey(c)
 }
 
-const UInt64Deserializer = (b) => {
-  b.flip()
+const UInt64Deserializer = (b: ByteBuffer) => {
   return b.readUint64()
 }
 
-const UInt32Deserializer = (b) => {
-  b.flip()
+const UInt32Deserializer = (b: ByteBuffer) => {
   return b.readUint32()
 }
 
-const BinaryDeserializer = (b) => {
-  b.flip()
-  const len = b.readVarint32()
+const BinaryDeserializer = (b: ByteBuffer) => {
+  const len = <number>b.readVarint32()
   const bCopy = b.copy(b.offset, b.offset + len)
   b.skip(len)
   return new Uint8Array(bCopy.toBuffer())
 }
 
-const BufferDeserializer =
-  (keyDeserializers) =>
-    (buf) => {
-      const obj = {}
-      for (const [key, deserializer] of keyDeserializers) {
-        try {
-        // Decodes a binary encoded string to a ByteBuffer.
-          const temp = new ByteBuffer(
-            ByteBuffer.DEFAULT_CAPACITY,
-            ByteBuffer.LITTLE_ENDIAN
-          )
-          buf = temp.append(buf)
-          obj[key] = deserializer(buf)
-        } catch (error) {
-          error.message = `${key}: ${error.message}`
-          throw error
-        }
-      }
-      return obj
+const BufferDeserializer = (keyDeserializers: any) => (buf: Uint8Array) => {
+  const obj: any = {}
+  const buffer = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
+  buffer.append(buf)
+  buffer.flip()
+  for (const [key, deserializer] of keyDeserializers) {
+    try {
+      obj[key] = deserializer(buffer)
+    } catch (error: any) {
+      error.message = `${key}: ${error.message}`
+      throw error
     }
+  }
+  return obj
+}
 
-function fixedBuf (b, len) {
+function fixedBuf(b: ByteBuffer, len: number) {
   if (!b) {
     throw Error('No buffer found on first parameter')
   } else {
-    b.flip()
     const bCopy = b.copy(b.offset, b.offset + len)
     b.skip(len)
     return new Uint8Array(bCopy.toBuffer())

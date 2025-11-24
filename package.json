@@ -1,6 +1,6 @@
 {
   "name": "hive-tx",
-  "version": "6.1.9",
+  "version": "7.0.0-beta.2",
   "description": "Create, sign, and broadcast transactions on Hive blockchain",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -14,8 +14,10 @@
   "scripts": {
     "build": "tsc && npm run build:browser",
     "prepublishOnly": "npm run build",
-    "build:browser": "webpack --config webpack.config.cjs --mode=production",
-    "format": "prettier --write 'src/**/*.{js,ts}'"
+    "build:browser": "webpack --mode=production",
+    "build:clean": "rm -rf dist",
+    "format": "prettier --write 'src/**/*.{js,ts}'",
+    "test": "node dist/tests/test.js"
   },
   "keywords": [
     "hive",
@@ -43,9 +45,12 @@
   "devDependencies": {
     "@types/bs58": "^4.0.4",
     "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.6",
+    "pg": "^8.16.3",
     "prettier": "^3.6.2",
+    "ts-loader": "^9.5.4",
     "typescript": "^5.9.3",
-    "webpack": "^5.102.1",
+    "webpack": "^5.103.0",
     "webpack-cli": "^6.0.1"
   }
 }

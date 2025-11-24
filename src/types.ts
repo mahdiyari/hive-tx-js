@@ -157,15 +157,6 @@ export interface CustomJsonOperation {
   json: string
 }
 
-export interface CustomBinaryOperation {
-  required_owner_auths: string[]
-  required_active_auths: string[]
-  required_posting_auths: string[]
-  required_auths: Authority[]
-  id: string
-  data: Uint8Array | string
-}
-
 export interface ClaimAccountOperation {
   creator: string
   fee: Asset | string
@@ -414,121 +405,6 @@ export interface RemoveProposalOperation {
   extensions: []
 }
 
-export interface ReportOverProductionOperation {
-  reporter: string
-  first_block: SignedBlockHeader
-  second_block: SignedBlockHeader
-}
-
-export interface PowOperation {
-  worker: string
-  nonce: number
-  work: PowWork
-  props: ChainProperties
-}
-
-export interface Pow2Operation {
-  work: Pow2Work
-  new_owner_key: string | PublicKey
-  props: ChainProperties
-}
-
-// Supporting types for pow operations
-export interface SignedBlockHeader {
-  previous: string
-  timestamp: string | Date
-  witness: string
-  transaction_merkle_root: string
-  extensions: []
-  witness_signature: string
-}
-
-export interface PowWork {
-  worker: string
-  input: string
-  signature: string
-  work: string
-}
-
-export interface Pow2Work {
-  type: number
-  value: Pow2Value | Pow2Input
-}
-
-export interface Pow2Value {
-  worker: string
-  input: Pow2Input
-  pow2: PowSummary
-}
-
-export interface Pow2Input {
-  worker_account: string
-  prev_block: string
-  nonce: string
-}
-
-export interface PowSummary {
-  worker: string
-  input: string
-  signature: string
-  work: PowWork
-}
-
-// Virtual operations (read-only, used for parsing)
-export interface CurationRewardOperation {
-  curator: string
-  reward: Asset | string
-  author: string
-  permlink: string
-}
-
-export interface AuthorRewardOperation {
-  author: string
-  permlink: string
-  hbd_payout: Asset | string
-  hive_payout: Asset | string
-  vesting_payout: Asset | string
-}
-
-export interface CommentRewardOperation {
-  author: string
-  permlink: string
-  payout: Asset | string
-}
-
-export interface FillConvertRequestOperation {
-  owner: string
-  requestid: number
-  amount_in: Asset | string
-  amount_out: Asset | string
-}
-
-export interface InterestOperation {
-  owner: string
-  interest: Asset | string
-}
-
-export interface FillVestingWithdrawOperation {
-  from_account: string
-  to_account: string
-  withdrawn: Asset | string
-  deposited: Asset | string
-}
-
-export interface FillOrderOperation {
-  current_owner: string
-  current_orderid: number
-  current_pays: Asset | string
-  open_owner: string
-  open_orderid: number
-  open_pays: Asset | string
-}
-
-export interface LiquidityRewardOperation {
-  owner: string
-  payout: Asset | string
-}
-
 // Operation Union Type
 export type Operation =
   | ['vote', VoteOperation]
@@ -546,7 +422,6 @@ export type Operation =
   | ['collateralized_convert', CollateralizedConvertOperation]
   | ['custom', CustomOperation]
   | ['custom_json', CustomJsonOperation]
-  | ['custom_binary', CustomBinaryOperation]
   | ['claim_account', ClaimAccountOperation]
   | ['create_claimed_account', CreateClaimedAccountOperation]
   | ['claim_reward_balance', ClaimRewardBalanceOperation]
@@ -578,18 +453,6 @@ export type Operation =
   | ['update_proposal', UpdateProposalOperation]
   | ['update_proposal_votes', UpdateProposalVotesOperation]
   | ['remove_proposal', RemoveProposalOperation]
-  | ['report_over_production', ReportOverProductionOperation]
-  | ['pow', PowOperation]
-  | ['pow2', Pow2Operation]
-  // Virtual operations
-  | ['author_reward', AuthorRewardOperation]
-  | ['curation_reward', CurationRewardOperation]
-  | ['comment_reward', CommentRewardOperation]
-  | ['fill_convert_request', FillConvertRequestOperation]
-  | ['interest', InterestOperation]
-  | ['fill_vesting_withdraw', FillVestingWithdrawOperation]
-  | ['fill_order', FillOrderOperation]
-  | ['liquidity_reward', LiquidityRewardOperation]
 
 // Transaction Types
 export interface TransactionType {

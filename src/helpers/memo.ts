@@ -1,4 +1,3 @@
-// @ts-nocheck
 import bs58 from 'bs58'
 import { ByteBuffer } from './ByteBuffer'
 import { Serializer } from './serializer'
@@ -21,44 +20,33 @@ export type Memo = {
  * Memo/Any message encoding using AES (aes-cbc algorithm)
  * @param privateKey Private memo key of sender
  * @param publicKey public memo key of recipient
- * @param memo message to be encrypted
- * @param testNonce nonce with high entropy
+ * @param memo message to be encrypted - Must start with #
+ * @param testNonce optional nonce with high entropy
  */
-const encode = async (
+const encode = (
   privateKey: string | PrivateKey,
   publicKey: string | PublicKey,
   memo: string,
-  testNonce?: bigint
-): Promise<string> => {
+  testNonce?: any
+): string => {
   if (!memo.startsWith('#')) {
     return memo
   }
   memo = memo.substring(1)
-  await checkEncryption()
+  checkEncryption()
   privateKey = toPrivateObj(privateKey)
   publicKey = toPublicObj(publicKey)
-  const mbuf = new ByteBuffer(
-    ByteBuffer.DEFAULT_CAPACITY,
-    ByteBuffer.LITTLE_ENDIAN
-  )
+  const mbuf = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
   mbuf.writeVString(memo)
   const memoBuffer = new Uint8Array(mbuf.copy(0, mbuf.offset).toBuffer())
-  const { nonce, message, checksum } = await Aes.encrypt(
-    privateKey,
-    publicKey,
-    memoBuffer,
-    testNonce
-  )
-  const mbuf2 = new ByteBuffer(
-    ByteBuffer.DEFAULT_CAPACITY,
-    ByteBuffer.LITTLE_ENDIAN
-  )
+  const { nonce, message, checksum } = Aes.encrypt(privateKey, publicKey, memoBuffer, testNonce)
+  const mbuf2 = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
   Serializer.Memo(mbuf2, {
     check: checksum,
     encrypted: message,
     from: privateKey.createPublic(),
     nonce,
-    to: publicKey,
+    to: publicKey
   })
   mbuf2.flip()
   const data = new Uint8Array(mbuf2.toBuffer())
@@ -68,46 +56,38 @@ const encode = async (
 /**
  * Encrypted memo/message decryption
  * @param privateKey Private memo key of recipient
- * @param memo Encrypted message/memo
+ * @param memo Encrypted message/memo - Must start with #
  */
-const decode = async (
-  privateKey: string | PrivateKey,
-  memo: string
-): Promise<string> => {
+const decode = (privateKey: string | PrivateKey, memo: string): string => {
   if (!memo.startsWith('#')) {
     return memo
   }
   memo = memo.substring(1)
-  await checkEncryption()
+  checkEncryption()
   privateKey = toPrivateObj(privateKey)
   // memo = bs58.decode(memo)
   let memoBuffer = Deserializer.Memo(bs58.decode(memo))
   const { from, to, nonce, check, encrypted } = memoBuffer
   const pubkey = privateKey.createPublic().toString()
   const otherpub =
-    pubkey === new PublicKey(from.key).toString()
-      ? new PublicKey(to.key)
-      : new PublicKey(from.key)
-  memoBuffer = await Aes.decrypt(privateKey, otherpub, nonce, encrypted, check)
-  const mbuf = new ByteBuffer(
-    ByteBuffer.DEFAULT_CAPACITY,
-    ByteBuffer.LITTLE_ENDIAN
-  )
+    pubkey === new PublicKey(from.key).toString() ? new PublicKey(to.key) : new PublicKey(from.key)
+  memoBuffer = Aes.decrypt(privateKey, otherpub, nonce, encrypted, check)
+  const mbuf = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
   mbuf.append(memoBuffer)
   mbuf.flip()
   return '#' + mbuf.readVString()
 }
 
-let encodeTest
-const checkEncryption = async () => {
+let encodeTest: boolean | undefined
+const checkEncryption = () => {
   if (encodeTest === undefined) {
     let plaintext
     encodeTest = true // prevent infinate looping
     try {
       const wif = '5JdeC9P7Pbd1uGdFVEsJ41EkEnADbbHGq6p1BwFxm6txNBsQnsw'
       const pubkey = 'STM8m5UgaFAAYQRuaNejYdS8FVLVp9Ss3K1qAVk5de6F8s3HnVbvA'
-      const cyphertext = await encode(wif, pubkey, '#memo爱')
-      plaintext = await decode(wif, cyphertext)
+      const cyphertext = encode(wif, pubkey, '#memo爱')
+      plaintext = decode(wif, cyphertext)
     } finally {
       encodeTest = plaintext === '#memo爱'
     }
@@ -134,5 +114,5 @@ const toPublicObj = (o: string | PublicKey): PublicKey => {
 
 export const Memo = {
   decode,
-  encode,
+  encode
 }

@@ -1,8 +1,7 @@
-// @ts-nocheck
 import { Serializer } from './serializer'
 import { ByteBuffer } from './ByteBuffer'
-import { uint8ArrayToHex } from './uint8Array'
 import { PublicKey } from './PublicKey'
+import { bytesToHex } from '@noble/hashes/utils.js'
 
 export interface WitnessProps {
   account_creation_fee?: string
@@ -146,7 +145,7 @@ export const operations = {
   escrow_approved: 89,
   escrow_rejected: 90,
   proxy_cleared: 91,
-  declined_voting_rights: 92,
+  declined_voting_rights: 92
 }
 
 /**
@@ -175,14 +174,11 @@ const reduceFunction = (
 export const buildWitnessSetProperties = (
   owner: string,
   props: WitnessProps
-): [
-  'witness_set_properties',
-  { extensions: []; owner: string; props: any }
-] => {
+): ['witness_set_properties', { extensions: never[]; owner: string; props: any }] => {
   const data = {
     extensions: [],
     owner,
-    props: [],
+    props: <any>[]
   }
   for (const key of Object.keys(props)) {
     let type
@@ -213,17 +209,14 @@ export const buildWitnessSetProperties = (
     }
     data.props.push([key, serialize(type, props[key])])
   }
-  data.props.sort((a, b) => a[0].localeCompare(b[0]))
+  data.props.sort((a: any, b: any) => a[0].localeCompare(b[0]))
   return ['witness_set_properties', data]
 }
 
-const serialize = (serializer, data) => {
-  const buffer = new ByteBuffer(
-    ByteBuffer.DEFAULT_CAPACITY,
-    ByteBuffer.LITTLE_ENDIAN
-  )
+const serialize = (serializer: any, data: any) => {
+  const buffer = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
   serializer(buffer, data)
   buffer.flip()
   // `props` values must be hex
-  return uint8ArrayToHex(new Uint8Array(buffer.toBuffer()))
+  return bytesToHex(new Uint8Array(buffer.toBuffer()))
 }

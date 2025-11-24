@@ -1,7 +1,7 @@
-import { ripemd160 } from './crypto'
+import { ripemd160 } from '@noble/hashes/legacy.js'
 import bs58 from 'bs58'
 import { config } from '../config'
-import { secp256k1 } from '@noble/curves/secp256k1'
+import { secp256k1 } from '@noble/curves/secp256k1.js'
 import { Signature } from './Signature'
 
 const DEFAULT_ADDRESS_PREFIX = config.address_prefix
@@ -58,9 +58,7 @@ export class PublicKey {
 
 const encodePublic = (key: Uint8Array, prefix: string): string => {
   const checksum = ripemd160(key)
-  return (
-    prefix + bs58.encode(new Uint8Array([...key, ...checksum.subarray(0, 4)]))
-  )
+  return prefix + bs58.encode(new Uint8Array([...key, ...checksum.subarray(0, 4)]))
 }
 
 /** Decode bs58+ripemd160-checksum encoded public key. */
