@@ -12,12 +12,13 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc && npm run build:browser",
+    "build": "npm run build:node && npm run build:browser",
     "prepublishOnly": "npm run build",
+    "build:node": "tsc",
     "build:browser": "webpack --mode=production",
     "build:clean": "rm -rf dist",
     "format": "prettier --write 'src/**/*.{js,ts}'",
-    "test": "node dist/tests/test.js"
+    "test": "npm run build:node && node dist/tests/test.js"
   },
   "keywords": [
     "hive",
