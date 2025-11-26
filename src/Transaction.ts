@@ -26,7 +26,7 @@ export class Transaction {
    * @param expiration Optional - Default 60 seconds
    */
   async create(operations: Operation[], expiration = 60): Promise<TransactionType> {
-    this.transaction = await this.createTransaction(operations, expiration)
+    this.transaction = await this.createTransaction(operations, expiration * 1000)
     this.created = true
     return <TransactionType>this.transaction
   }
