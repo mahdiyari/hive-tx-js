@@ -20,9 +20,9 @@ const OPERATION_IDS = {
   witness_update: 11,
   account_witness_vote: 12,
   account_witness_proxy: 13,
-  pow: 14,
+  // pow: 14,
   custom: 15,
-  report_over_production: 16,
+  // report_over_production: 16,
   delete_comment: 17,
   custom_json: 18,
   comment_options: 19,
@@ -36,12 +36,12 @@ const OPERATION_IDS = {
   escrow_transfer: 27,
   escrow_dispute: 28,
   escrow_release: 29,
-  pow2: 30,
+  // pow2: 30,
   escrow_approve: 31,
   transfer_to_savings: 32,
   transfer_from_savings: 33,
   cancel_transfer_from_savings: 34,
-  custom_binary: 35,
+  // custom_binary: 35,
   decline_voting_rights: 36,
   reset_account: 37,
   set_reset_account: 38,
@@ -248,14 +248,14 @@ const PriceSerializer = ObjectSerializer([
   ['quote', AssetSerializer]
 ])
 
-const SignedBlockHeaderSerializer = ObjectSerializer([
-  ['previous', BinarySerializer(20)],
-  ['timestamp', DateSerializer],
-  ['witness', StringSerializer],
-  ['transaction_merkle_root', BinarySerializer(20)],
-  ['extensions', ArraySerializer(VoidSerializer)],
-  ['witness_signature', BinarySerializer(65)]
-])
+// const SignedBlockHeaderSerializer = ObjectSerializer([
+//   ['previous', BinarySerializer(20)],
+//   ['timestamp', DateSerializer],
+//   ['witness', StringSerializer],
+//   ['transaction_merkle_root', BinarySerializer(20)],
+//   ['extensions', ArraySerializer(VoidSerializer)],
+//   ['witness_signature', BinarySerializer(65)]
+// ])
 
 const ChainPropertiesSerializer = ObjectSerializer([
   ['account_creation_fee', AssetSerializer],
@@ -412,14 +412,15 @@ OperationSerializers.custom = OperationDataSerializer(OPERATION_IDS.custom, [
   ['data', VariableBinarySerializer]
 ])
 
-OperationSerializers.custom_binary = OperationDataSerializer(OPERATION_IDS.custom_binary, [
-  ['required_owner_auths', ArraySerializer(StringSerializer)],
-  ['required_active_auths', ArraySerializer(StringSerializer)],
-  ['required_posting_auths', ArraySerializer(StringSerializer)],
-  ['required_auths', ArraySerializer(AuthoritySerializer)],
-  ['id', StringSerializer],
-  ['data', VariableBinarySerializer]
-])
+// Not used on chain
+// OperationSerializers.custom_binary = OperationDataSerializer(OPERATION_IDS.custom_binary, [
+//   ['required_owner_auths', ArraySerializer(StringSerializer)],
+//   ['required_active_auths', ArraySerializer(StringSerializer)],
+//   ['required_posting_auths', ArraySerializer(StringSerializer)],
+//   ['required_auths', ArraySerializer(AuthoritySerializer)],
+//   ['id', StringSerializer],
+//   ['data', VariableBinarySerializer]
+// ])
 
 OperationSerializers.custom_json = OperationDataSerializer(OPERATION_IDS.custom_json, [
   ['required_auths', ArraySerializer(StringSerializer)],
@@ -535,14 +536,15 @@ OperationSerializers.recover_account = OperationDataSerializer(OPERATION_IDS.rec
   ['extensions', ArraySerializer(VoidSerializer)]
 ])
 
-OperationSerializers.report_over_production = OperationDataSerializer(
-  OPERATION_IDS.report_over_production,
-  [
-    ['reporter', StringSerializer],
-    ['first_block', SignedBlockHeaderSerializer],
-    ['second_block', SignedBlockHeaderSerializer]
-  ]
-)
+// Not used on chain
+// OperationSerializers.report_over_production = OperationDataSerializer(
+//   OPERATION_IDS.report_over_production,
+//   [
+//     ['reporter', StringSerializer],
+//     ['first_block', SignedBlockHeaderSerializer],
+//     ['second_block', SignedBlockHeaderSerializer]
+//   ]
+// )
 
 OperationSerializers.request_account_recovery = OperationDataSerializer(
   OPERATION_IDS.request_account_recovery,
