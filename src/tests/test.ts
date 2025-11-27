@@ -349,13 +349,12 @@ const skipOperations = [
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const testOperation = async (opType: string, opData: any, index: number) => {
+const testOperation = async (opType: any, opData: any, index: number) => {
   console.log(`Testing operation ${index + 1}: ${opType}`)
 
   try {
-    const operation: any = [opType as any, opData]
     const trx = new Transaction()
-    await trx.create([operation])
+    await trx.addOperation(opType, opData)
 
     // Get transaction hex from API node
     const { digest: apiDigest, txId: apiTxId } = await getTransactionHex(trx.transaction!)
