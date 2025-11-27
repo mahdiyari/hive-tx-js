@@ -454,16 +454,17 @@ export type Operation =
   | ['update_proposal_votes', UpdateProposalVotesOperation]
   | ['remove_proposal', RemoveProposalOperation]
 
+// Extract operation names and body types for conditional typing
+export type OperationName = Operation[0]
+export type OperationBody<O extends OperationName> = Extract<Operation, [O, any]>[1]
+
 // Transaction Types
 export interface TransactionType {
   expiration: string
   extensions: Extension[]
-  operations: Operation[]
+  operations: [OperationName, OperationBody<OperationName>][]
   ref_block_num: number
   ref_block_prefix: number
-}
-
-export interface SignedTransaction extends TransactionType {
   signatures: string[]
 }
 
