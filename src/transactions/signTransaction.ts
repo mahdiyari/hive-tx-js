@@ -2,7 +2,7 @@ import { ByteBuffer } from '../helpers/ByteBuffer'
 import { config } from '../config'
 import { Serializer } from '../helpers/serializer'
 import { PrivateKey } from '../helpers/PrivateKey'
-import { TransactionType, SignedTransaction } from '../types'
+import { TransactionType } from '../types'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { sha256 } from '@noble/hashes/sha2.js'
 
@@ -14,14 +14,11 @@ const CHAIN_ID = hexToBytes(config.chain_id)
  * @param keys - Array of keys<Buffer>
  */
 export const signTransaction = (
-  transaction: TransactionType | SignedTransaction,
+  transaction: TransactionType,
   keys: PrivateKey | PrivateKey[]
-): { signedTransaction: SignedTransaction; txId: string } => {
+): { signedTransaction: TransactionType; txId: string } => {
   const { digest, txId } = transactionDigest(transaction, CHAIN_ID)
-  const signedTransaction = { ...transaction } as SignedTransaction
-  if (!signedTransaction.signatures) {
-    signedTransaction.signatures = []
-  }
+  const signedTransaction = { ...transaction }
   if (!Array.isArray(keys)) {
     keys = [keys]
   }
