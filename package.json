@@ -14,7 +14,9 @@
   "scripts": {
     "build": "npm run build:node && npm run build:browser",
     "prepublishOnly": "npm run build",
-    "build:node": "tsc",
+    "build:node": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:browser": "webpack --mode=production",
     "build:clean": "rm -rf dist",
     "format": "prettier --write 'src/**/*.{js,ts}'",
