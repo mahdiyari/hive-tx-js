@@ -3,65 +3,122 @@ import { getGlobalProps } from './helpers/globalProps'
 import { PrivateKey } from './helpers/PrivateKey'
 import { broadcastTransaction } from './transactions/broadcastTransaction'
 import { signTransaction, transactionDigest } from './transactions/signTransaction'
-import { DigestData, Operation, SignedTransaction, TransactionType } from './types'
+import { DigestData, OperationName, OperationBody, TransactionType } from './types'
 
-/** Transaction for Hive blockchain */
+interface TransactionOptions {
+  transaction?: TransactionType | Transaction
+  /**
+   * Transaction expiration in milliseconds (ms) - max 86400000 (24 hours)
+   * @default 60_000
+   */
+  expiration?: number
+}
+
+/**
+ * Represents a Hive blockchain transaction with operations, signing, and broadcasting capabilities.
+ * Supports both single and multi-signature transactions.
+ *
+ * @example
+ * ```typescript
+ * const tx = new Transaction();
+ * await tx.addOperation('transfer', {
+ *   from: 'alice',
+ *   to: 'bob',
+ *   amount: '1.000 HIVE',
+ *   memo: 'Payment'
+ * });
+ * tx.sign(privateKey);
+ * const result = await tx.broadcast();
+ * ```
+ */
 export class Transaction {
-  created: boolean
-  transaction: TransactionType | null
-  signedTransaction: SignedTransaction | null = null
-  txId?: string
-
-  /** A transaction object could be passed or created later
-   * @param {{}} trx Object of transaction - Optional
+  /**
+   * The underlying transaction data structure containing operations, signatures, and metadata.
+   * Undefined until the transaction is created.
    */
-  constructor(trx: TransactionType | SignedTransaction | null = null) {
-    this.created = !!trx
-    this.transaction = trx && !('signatures' in trx) ? trx : null
-    this.signedTransaction = trx && 'signatures' in trx ? trx : null
-  }
+  transaction?: TransactionType
 
-  /** Create the transaction by operations
-   * @param operations
-   * @param expiration Optional - Default 60 seconds
-   */
-  async create(operations: Operation[], expiration = 60): Promise<TransactionType> {
-    this.transaction = await this.createTransaction(operations, expiration * 1000)
-    this.created = true
-    return <TransactionType>this.transaction
-  }
+  /** Transaction expiration time in milliseconds from creation. Default is 60 seconds. */
+  expiration: number = 60_000
 
-  /** Sign the transaction by key or keys[] (supports multi signature).
-   * It is also possible to sign with one key at a time for multi signature.
-   * @param keys single key or multiple keys in array
+  private txId?: string
+
+  /**
+   * Creates a new Transaction instance.
+   * @param options Configuration options for the transaction
+   * @param options.transaction Optional existing transaction to initialize with
+   * @param options.expiration Optional expiration time in milliseconds (default: 60000)
+   * @throws Error if a Transaction instance is provided but has an invalid transaction
    */
-  sign(keys: PrivateKey | PrivateKey[]): SignedTransaction {
-    if (!this.created) {
-      throw new Error('First create a transaction by .create(operations)')
+  constructor(options?: TransactionOptions) {
+    if (options?.transaction) {
+      if (options.transaction instanceof Transaction) {
+        this.transaction = options.transaction.transaction
+        this.expiration = options.transaction.expiration
+      } else {
+        this.transaction = options.transaction
+      }
     }
-    if (this.signedTransaction) {
-      const { signedTransaction, txId } = signTransaction(this.signedTransaction, keys)
-      this.signedTransaction = signedTransaction
-      this.txId = txId
-    } else if (this.transaction) {
+    if (options?.expiration) {
+      this.expiration = options.expiration
+    }
+  }
+
+  /**
+   * Adds an operation to the transaction. If no transaction exists, creates one first.
+   * @template O Operation name type for type safety
+   * @param operationName The name/type of the operation to add (e.g., 'transfer', 'vote', 'comment')
+   * @param operationBody The operation data/body for the specified operation type
+   * @returns Promise that resolves when the operation is added
+   * @throws Error if transaction creation fails or global properties cannot be retrieved
+   */
+  async addOperation<O extends OperationName>(
+    operationName: O,
+    operationBody: OperationBody<O>
+  ): Promise<void> {
+    if (!this.transaction) {
+      await this.createTransaction(this.expiration)
+    }
+    this.transaction!.operations.push([operationName, operationBody])
+  }
+
+  /**
+   * Signs the transaction with the provided key(s), supporting both single and multi-signature transactions.
+   * For multi-signature, you can sign with all keys at once or sign individually by calling this method multiple times.
+   * @param keys Single PrivateKey or array of PrivateKeys to sign the transaction with
+   * @returns The signed transaction
+   * @throws Error if no transaction exists to sign
+   */
+  sign(keys: PrivateKey | PrivateKey[]): TransactionType {
+    if (!this.transaction) {
+      throw new Error('First create a transaction by .addOperation()')
+    }
+    if (this.transaction) {
       const { signedTransaction, txId } = signTransaction(this.transaction, keys)
-      this.signedTransaction = signedTransaction
+      this.transaction = signedTransaction
       this.txId = txId
+      return signedTransaction
     } else {
       throw new Error('No transaction to sign')
     }
-    return this.signedTransaction
   }
 
-  /** Broadcast the signed transaction. */
+  /**
+   * Broadcasts the signed transaction to the Hive network.
+   * Automatically handles retries and duplicate transaction detection.
+   * @param timeout Timeout in seconds for each broadcast attempt (default: 5)
+   * @param retry Number of retry attempts if broadcast fails (default: 5)
+   * @returns Promise resolving to broadcast result or error response
+   * @throws Error if no transaction exists or transaction is not signed
+   */
   async broadcast(timeout = 5, retry = 5) {
-    if (!this.created) {
-      throw new Error('First create a transaction by .create(operations)')
+    if (!this.transaction) {
+      throw new Error('First create a transaction by .addOperation()')
     }
-    if (!this.signedTransaction) {
+    if (this.transaction.signatures.length === 0) {
       throw new Error('First sign the transaction by .sign(keys)')
     }
-    const result = await broadcastTransaction(this.signedTransaction, timeout, retry)
+    const result = await broadcastTransaction(this.transaction, timeout, retry)
     if (result.error) {
       // When we retry, we might have already broadcasted the transaction
       // So catch duplicate trx error and return trx id
@@ -84,20 +141,28 @@ export class Transaction {
     }
   }
 
-  /** Return the transaction id and hash which can be used to verify against a signature */
+  /**
+   * Returns the transaction digest containing the transaction ID and hash.
+   * The digest can be used to verify signatures and for transaction identification.
+   * @returns DigestData containing transaction ID and hash
+   * @throws Error if no transaction exists
+   */
   digest(): DigestData {
-    if (!this.created || !this.transaction) {
-      throw new Error('First create a transaction by .create(operations)')
+    if (!this.transaction) {
+      throw new Error('First create a transaction by .addOperation()')
     }
     return transactionDigest(this.transaction)
   }
 
   /**
-   * Add a signature to already created transaction. You can add multiple signatures to one transaction but one at a time.
-   * This method is used when you sign your transaction with other tools instead of built-in .sign() method.
+   * Adds a signature to an already created transaction. Useful when signing with external tools.
+   * Multiple signatures can be added one at a time for multi-signature transactions.
+   * @param signature The signature string in hex format (must be exactly 130 characters)
+   * @returns The transaction with the added signature
+   * @throws Error if no transaction exists or signature format is invalid
    */
-  addSignature(signature: string): SignedTransaction {
-    if (!this.created || !this.transaction) {
+  addSignature(signature: string): TransactionType {
+    if (!this.transaction) {
       throw new Error('First create a transaction by .create(operations)')
     }
     if (typeof signature !== 'string') {
@@ -106,31 +171,28 @@ export class Transaction {
     if (signature.length !== 130) {
       throw new Error('Signature must be 130 characters long')
     }
-    if (!this.signedTransaction) {
-      this.signedTransaction = {
-        ...this.transaction,
-        signatures: []
-      }
-    }
-    this.signedTransaction.signatures.push(signature)
-    return this.signedTransaction
+    this.transaction.signatures.push(signature)
+    return this.transaction
   }
 
-  /** @param expiration Transaction expiration in ms */
-  private createTransaction = async (operations: Operation[], expiration: number = 60_000) => {
+  /**
+   * Creates the transaction structure and initializes it with blockchain data.
+   * Retrieves current head block information and sets up reference block data.
+   * @private
+   * @param expiration Transaction expiration in milliseconds
+   */
+  private createTransaction = async (expiration: number) => {
     const props = await getGlobalProps()
-    const refBlockNum = props.head_block_number & 0xffff
-    const uintArray = hexToBytes(props.head_block_id)
-    const dataView = new DataView(uintArray.buffer)
-    const refBlockPrefix = dataView.getUint32(4, true)
+    const bytes = hexToBytes(props.head_block_id)
+    const refBlockPrefix = bytes[4] | (bytes[5] << 8) | (bytes[6] << 16) | (bytes[7] << 24)
     const expirationIso = new Date(Date.now() + expiration).toISOString().slice(0, -5)
-    const extensions: any[] = []
-    return {
+    this.transaction = {
       expiration: expirationIso,
-      extensions,
-      operations,
-      ref_block_num: refBlockNum,
-      ref_block_prefix: refBlockPrefix
+      extensions: [],
+      operations: [],
+      ref_block_num: props.head_block_number & 0xffff,
+      ref_block_prefix: refBlockPrefix,
+      signatures: []
     }
   }
 }
