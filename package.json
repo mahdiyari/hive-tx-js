@@ -1,6 +1,6 @@
 {
   "name": "hive-tx",
-  "version": "7.0.0-beta.4",
+  "version": "7.0.0-beta.5",
   "description": "A complete TypeScript SDK for Hive blockchain operations. Create, sign, and broadcast transactions with full type safety, cryptographic utilities, and serialization support.",
   "author": "Mahdi Yari",
   "license": "MIT",
@@ -8,15 +8,13 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
-    "./package.json": "./package.json"
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.cts",
-  "browser": "./dist/index.iife.js",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "browser": "./dist/browser/hive-tx.min.js",
   "files": [
     "dist"
   ],
@@ -25,10 +23,10 @@
     "build:node": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:browser": "webpack --mode=production",
+    "build:browser": "webpack",
     "build:clean": "rm -rf dist",
     "format": "prettier --write 'src/**/*.{js,ts}'",
-    "test": "tsx src/tests/test.ts",
+    "test": "npm run build:node && tsx tests/test.ts",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -63,6 +61,7 @@
     "@types/pg": "^8.15.6",
     "pg": "^8.16.3",
     "prettier": "^3.7.1",
+    "ts-loader": "^9.5.4",
     "tsdown": "^0.16.8",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
