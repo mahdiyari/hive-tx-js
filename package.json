@@ -1,38 +1,56 @@
 {
   "name": "hive-tx",
-  "version": "7.0.0-beta.3",
-  "description": "Create, sign, and broadcast transactions on Hive blockchain",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "version": "7.0.0-beta.4",
+  "description": "A complete TypeScript SDK for Hive blockchain operations. Create, sign, and broadcast transactions with full type safety, cryptographic utilities, and serialization support.",
+  "author": "Mahdi Yari",
+  "license": "MIT",
+  "type": "module",
   "sideEffects": false,
   "exports": {
-    "default": "./dist/index.js"
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "browser": "./dist/index.iife.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "npm run build:node && npm run build:browser",
-    "prepublishOnly": "npm run build",
+    "build": "npm run build:clean && npm run build:node && npm run build:browser",
     "build:node": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:browser": "webpack --mode=production",
     "build:clean": "rm -rf dist",
     "format": "prettier --write 'src/**/*.{js,ts}'",
-    "test": "npm run build:node && node dist/tests/test.js"
+    "test": "tsx src/tests/test.ts",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "hive",
-    "tx",
+    "blockchain",
     "transaction",
     "sign",
     "broadcast",
-    "blockchain",
-    "hive-tx"
+    "crypto",
+    "web3"
   ],
-  "author": "Mahdi Yari",
-  "license": "MIT",
+  "homepage": "https://github.com/mahdiyari/hive-tx-js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahdiyari/hive-tx-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mahdiyari/hive-tx-js/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@noble/ciphers": "^2.0.1",
     "@noble/curves": "^2.0.1",
@@ -40,18 +58,13 @@
     "bs58": "6.0.0",
     "ofetch": "^1.5.1"
   },
-  "homepage": "https://github.com/mahdiyari/hive-tx-js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mahdiyari/hive-tx-js.git"
-  },
   "devDependencies": {
-    "@types/bs58": "^4.0.4",
     "@types/node": "^24.10.1",
     "@types/pg": "^8.15.6",
     "pg": "^8.16.3",
-    "prettier": "^3.6.2",
-    "ts-loader": "^9.5.4",
+    "prettier": "^3.7.1",
+    "tsdown": "^0.16.8",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "webpack": "^5.103.0",
     "webpack-cli": "^6.0.1"
