@@ -264,11 +264,11 @@ export class ByteBuffer {
     return this.writeUint32(value, offset)
   }
 
-  readUint32(offset?: number) {
+  readUint32(offset?: number): number {
     const relative = typeof offset === 'undefined'
     if (relative) offset = this.offset
     else offset = offset!
-    // offset >>>= 0
+
     const value = this.view.getUint32(offset, this.littleEndian)
     if (relative) {
       this.offset += 4
@@ -572,14 +572,10 @@ export class ByteBuffer {
     const lenLength = lenResult.length
 
     offset += lenLength
-    const end = offset + lenValue
 
-    // Check bounds roughly? TextDecoder will throw or handle it.
-    // slice works on ArrayBuffer safely.
-
-    const strBuffer = this.buffer.slice(offset, end)
-    const str = textDecoder.decode(strBuffer)
-    offset = end
+    // TextDecoder can take Uint8Array view directly
+    const str = textDecoder.decode(new Uint8Array(this.buffer, offset, lenValue))
+    offset += lenValue
 
     if (relative) {
       this.offset = offset
