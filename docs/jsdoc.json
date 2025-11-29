@@ -1,0 +1,46 @@
+{
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "source": {
+    "include": ["src", "README.md"],
+    "includePattern": ".js$|.ts$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": true
+    },
+    "applicationName": "Hive Transaction Library",
+    "disqus": "",
+    "googleAnalytics": "",
+    "openGraph": {
+      "title": "Hive Transaction Library Documentation",
+      "type": "website",
+      "image": "",
+      "site_name": "Hive Transaction Library",
+      "url": ""
+    },
+    "meta": {
+      "title": "Hive Transaction Library Documentation",
+      "description": "Complete TypeScript SDK for Hive blockchain operations. Create, sign, and broadcast transactions with full type safety, cryptographic utilities, and serialization support.",
+      "keyword": "hive, blockchain, transaction, sign, broadcast, crypto, web3, typescript"
+    },
+    "linenums": true
+  },
+  "markdown": {
+    "parser": "gfm",
+    "hardwrap": false
+  },
+  "opts": {
+    "destination": "./docs/jsdoc",
+    "encoding": "utf8",
+    "private": false,
+    "recurse": true,
+    "template": "node_modules/docdash"
+  }
+}
