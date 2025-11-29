@@ -1,6 +1,6 @@
 {
   "name": "hive-tx",
-  "version": "7.0.0-beta.5",
+  "version": "7.0.0-beta.6",
   "description": "A complete TypeScript SDK for Hive blockchain operations. Create, sign, and broadcast transactions with full type safety, cryptographic utilities, and serialization support.",
   "author": "Mahdi Yari",
   "license": "MIT",
@@ -26,7 +26,7 @@
     "build:browser": "webpack",
     "build:clean": "rm -rf dist",
     "format": "prettier --write 'src/**/*.{js,ts}'",
-    "test": "npm run build:node && tsx tests/test.ts",
+    "test": "npm run build:esm && tsx tests/test.ts",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
