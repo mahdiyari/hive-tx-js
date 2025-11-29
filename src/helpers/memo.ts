@@ -7,21 +7,32 @@ import { PublicKey } from './PublicKey'
 import { Deserializer } from './deserializer'
 
 export type Memo = {
+  /**
+   * Encrypts a memo for secure private messaging
+   */
   encode(
     privateKey: string | PrivateKey,
     publicKey: string | PublicKey,
     memo: string,
     testNonce?: any
-  ): Promise<string>
-  decode(privateKey: string | PrivateKey, memo: string): Promise<string>
+  ): string
+
+  /**
+   * Decrypts a memo message
+   */
+  decode(privateKey: string | PrivateKey, memo: string): string
 }
 
 /**
- * Memo/Any message encoding using AES (aes-cbc algorithm)
- * @param privateKey Private memo key of sender
- * @param publicKey public memo key of recipient
- * @param memo message to be encrypted - Must start with #
- * @param testNonce optional nonce with high entropy
+ * Encodes a memo using AES encryption for secure private messaging on Hive.
+ * Messages must start with '#' to be encrypted. Plain text messages are returned unchanged.
+ *
+ * @param privateKey - Sender's private memo key (string WIF format or PrivateKey instance)
+ * @param publicKey - Recipient's public memo key (string or PublicKey instance)
+ * @param memo - Message to encrypt (must start with '#' for encryption)
+ * @param testNonce - Optional nonce for testing (advanced usage)
+ * @returns Encrypted memo string prefixed with '#'
+ * @throws Error if encryption is not supported in current environment
  */
 const encode = (
   privateKey: string | PrivateKey,
@@ -54,9 +65,13 @@ const encode = (
 }
 
 /**
- * Encrypted memo/message decryption
- * @param privateKey Private memo key of recipient
- * @param memo Encrypted message/memo - Must start with #
+ * Decrypts an encrypted memo using AES decryption.
+ * Messages must start with '#' to be decrypted. Plain text messages are returned unchanged.
+ *
+ * @param privateKey - Recipient's private memo key (string WIF format or PrivateKey instance)
+ * @param memo - Encrypted memo string (must start with '#' for decryption)
+ * @returns Decrypted memo content with '#' prefix
+ * @throws Error if decryption fails or encryption not supported in current environment
  */
 const decode = (privateKey: string | PrivateKey, memo: string): string => {
   if (!memo.startsWith('#')) {
@@ -112,6 +127,25 @@ const toPublicObj = (o: string | PublicKey): PublicKey => {
   }
 }
 
+/**
+ * Memo utilities for encrypting and decrypting private messages between Hive users.
+ * Uses AES encryption with ECDH key exchange for secure communication.
+ *
+ * Messages must start with '#' to be encrypted/decrypted.
+ * Plain text messages (without '#') are returned unchanged.
+ *
+ * @example
+ * ```typescript
+ * import { Memo, PrivateKey, PublicKey } from 'hive-tx'
+ *
+ * // Encrypt a message
+ * const encrypted = Memo.encode(senderPrivateKey, recipientPublicKey, '#Hello World')
+ *
+ * // Decrypt a message
+ * const decrypted = Memo.decode(recipientPrivateKey, encrypted)
+ * console.log(decrypted) // '#Hello World'
+ * ```
+ */
 export const Memo = {
   decode,
   encode

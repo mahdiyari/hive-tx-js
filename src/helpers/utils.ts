@@ -51,6 +51,19 @@ export const validateUsername = (username: string): null | string => {
   return null
 }
 
+/**
+ * Hive blockchain operation type constants.
+ * Use with makeBitMaskFilter() to filter account history by operation type.
+ *
+ * Regular operations (0-49): User-initiated transactions
+ * Virtual operations (50+): System-generated events
+ *
+ * @example
+ * ```typescript
+ * // Filter for only transfers and votes
+ * makeBitMaskFilter([operations.transfer, operations.vote])
+ * ```
+ */
 export const operations = {
   vote: 0,
   comment: 1,
@@ -168,8 +181,23 @@ const reduceFunction = (
 }
 
 /**
- * Needed for witness_set_properties operation
- * Example in utils.d.ts
+ * Builds a witness_set_properties operation for updating witness parameters.
+ * Serializes properties to the correct blockchain format.
+ *
+ * @param owner Witness username
+ * @param props Witness properties to update (see WitnessProps interface)
+ * @returns Formatted operation ready for transaction
+ *
+ * @example
+ * ```typescript
+ * const operation = buildWitnessSetProperties('witness-name', {
+ *   url: 'https://my-witness.com',
+ *   account_creation_fee: '3.000 HIVE',
+ *   maximum_block_size: 65536
+ * })
+ *
+ * await tx.addOperation(...operation)
+ * ```
  */
 export const buildWitnessSetProperties = (
   owner: string,

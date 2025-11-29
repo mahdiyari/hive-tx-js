@@ -41,28 +41,81 @@ export interface WitnessProps {
   url?: string
 }
 
-// Operation Types
+/**
+ * Vote on content operation.
+ * @example
+ * ```typescript
+ * const vote: VoteOperation = {
+ *   voter: 'alice',
+ *   author: 'bob',
+ *   permlink: 'my-post',
+ *   weight: 10000 // 100%
+ * }
+ * ```
+ */
 export interface VoteOperation {
+  /** Account casting the vote */
   voter: string
+  /** Author of the content */
   author: string
+  /** Permalink of the content */
   permlink: string
+  /** Vote weight (-10000 to 10000, 10000 = 100%) */
   weight: number
 }
 
+/**
+ * Create or update content operation.
+ * @example
+ * ```typescript
+ * const comment: CommentOperation = {
+ *   parent_author: '',
+ *   parent_permlink: 'hive-123456',
+ *   author: 'alice',
+ *   permlink: 'my-post-title',
+ *   title: 'My Post Title',
+ *   body: 'Content goes here...',
+ *   json_metadata: JSON.stringify({ tags: ['hive', 'tutorial'] })
+ * }
+ * ```
+ */
 export interface CommentOperation {
+  /** Parent author (empty for top-level posts) */
   parent_author: string
+  /** Parent permlink (category for top-level posts) */
   parent_permlink: string
+  /** Author account */
   author: string
+  /** Post permlink (URL-friendly identifier) */
   permlink: string
+  /** Post title */
   title: string
+  /** Post content */
   body: string
+  /** JSON metadata (tags, app info, etc.) */
   json_metadata: string
 }
 
+/**
+ * Transfer tokens between accounts.
+ * @example
+ * ```typescript
+ * const transfer: TransferOperation = {
+ *   from: 'alice',
+ *   to: 'bob',
+ *   amount: '1.000 HIVE',
+ *   memo: 'Payment for services'
+ * }
+ * ```
+ */
 export interface TransferOperation {
+  /** Sending account */
   from: string
+  /** Receiving account */
   to: string
+  /** Amount to transfer */
   amount: Asset | string
+  /** Optional memo message */
   memo: string
 }
 
@@ -501,19 +554,50 @@ export interface BroadcastResult {
 }
 
 // Digest type
+/**
+ * Transaction digest for signing and identification.
+ * Contains the cryptographic hash and transaction ID.
+ *
+ * @example
+ * ```typescript
+ * const digest = tx.digest()
+ * console.log(digest.txId) // 'abc123...'
+ * console.log(digest.digest) // Uint8Array(32) // SHA256 hash
+ * ```
+ */
 export interface DigestData {
+  /** SHA256 digest of transaction data */
   digest: Uint8Array
+  /** Transaction ID (first 40 hex chars of digest) */
   txId: string
 }
 
 // Configuration Types
+/**
+ * Library configuration options.
+ * Customize network endpoints, timeouts, and other behaviors.
+ *
+ * @example
+ * ```typescript
+ * import { config } from 'hive-tx'
+ *
+ * config.node = ['https://api.hive.blog']
+ * config.timeout = 10
+ * config.retry = 3
+ * ```
+ */
 export interface Config {
+  /** Address prefix for keys (STM for mainnet) */
   address_prefix: string
+  /** Blockchain chain ID for transaction signing */
   chain_id: string
-  node: string | string[]
-  axiosAdapter?: null | 'xhr' | 'http' | any
+  /** RPC node endpoints for API calls */
+  node: string[]
+  /** Request timeout in seconds */
   timeout: number
+  /** Number of retry attempts for failed requests */
   retry: number
+  /** Health check interval in milliseconds */
   healthcheckInterval: number
 }
 

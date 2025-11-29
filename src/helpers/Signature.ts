@@ -2,18 +2,53 @@ import { PublicKey } from './PublicKey'
 import { secp256k1 } from '@noble/curves/secp256k1.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 
-/** ECDSA (secp256k1) signature. */
+/**
+ * ECDSA (secp256k1) signature for Hive blockchain transactions.
+ * Handles signature creation, recovery, and public key extraction.
+ *
+ * Signatures are 65 bytes (130 hex characters) and include recovery information
+ * to allow recovery of the public key that created the signature.
+ *
+ * @example
+ * ```typescript
+ * // From hex string (130 characters)
+ * const sig = Signature.fromString('1f2a3b...') // 130 char hex string
+ *
+ * // Get hex representation
+ * const hexSig = sig.customToString()
+ *
+ * // Recover public key from message
+ * const pubKey = sig.getPublicKey(messageHash)
+ * ```
+ */
 export class Signature {
+  /** Raw signature data (64 bytes: r + s) */
   data: Uint8Array
+
+  /** Recovery byte (0-3) for public key recovery */
   recovery: number
+
+  /** Whether this is a compressed signature */
   private compressed: boolean
 
+  /**
+   * Creates a new Signature instance.
+   * @param data Raw signature data (64 bytes)
+   * @param recovery Recovery byte (0-3)
+   * @param compressed Whether signature is compressed (default: true)
+   */
   constructor(data: Uint8Array, recovery: number, compressed?: boolean) {
     this.data = data
     this.recovery = recovery
     this.compressed = compressed ?? true
   }
 
+  /**
+   * Creates a Signature from a hex string.
+   * @param string 130-character hex string containing signature and recovery data
+   * @returns New Signature instance
+   * @throws Error if input is not a string
+   */
   static from(string: string) {
     if (typeof string === 'string') {
       const temp = hexToBytes(string)
@@ -32,6 +67,10 @@ export class Signature {
     }
   }
 
+  /**
+   * Converts signature to 65-byte buffer format.
+   * @returns 65-byte buffer containing recovery byte + signature data
+   */
   toBuffer() {
     const buffer = new Uint8Array(65).fill(0)
     if (this.compressed) {
@@ -43,10 +82,20 @@ export class Signature {
     return buffer
   }
 
+  /**
+   * Returns signature as 130-character hex string.
+   * @returns Hex string representation of signature
+   */
   customToString() {
     return bytesToHex(this.toBuffer())
   }
 
+  /**
+   * Recovers the public key from this signature and message.
+   * @param message 32-byte message hash (Uint8Array) or 64-character hex string
+   * @returns PublicKey that created this signature
+   * @throws Error if message is not a valid 32-byte SHA256 hash
+   */
   getPublicKey(message: Uint8Array | string): PublicKey {
     if (
       (message instanceof Uint8Array && message.length !== 32) ||

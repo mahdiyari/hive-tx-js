@@ -9,7 +9,31 @@ export type KeyRole = 'owner' | 'active' | 'posting' | 'memo'
 
 const NETWORK_ID = new Uint8Array([0x80])
 
-/** ECDSA (secp256k1) private key. */
+/**
+ * ECDSA (secp256k1) private key for signing and encryption operations.
+ * Handles key generation, derivation from seeds/passwords, and cryptographic operations.
+ *
+ * All private keys are stored internally as Uint8Array and can be converted to/from
+ * Wallet Import Format (WIF) strings for storage and transmission.
+ *
+ * @example
+ * ```typescript
+ * // From WIF string
+ * const key = PrivateKey.from('5JdeC9P7Pbd1uGdFVEsJ41EkEnADbbHGq6p1BwFxm6txNBsQnsw')
+ *
+ * // Generate random key
+ * const randomKey = PrivateKey.randomKey()
+ *
+ * // From username and password
+ * const loginKey = PrivateKey.fromLogin('username', 'password')
+ *
+ * // Sign a message
+ * const signature = key.sign(someHash)
+ *
+ * // Get public key
+ * const pubKey = key.createPublic()
+ * ```
+ */
 export class PrivateKey {
   key: Uint8Array
 
@@ -22,7 +46,14 @@ export class PrivateKey {
     }
   }
 
-  /** Convenience to create a new instance from WIF string or Uint8Array */
+  /**
+   * Creates a PrivateKey instance from a WIF string or raw Uint8Array.
+   * Automatically detects the input type and uses the appropriate method.
+   *
+   * @param value - WIF formatted string or raw 32-byte key as Uint8Array
+   * @returns New PrivateKey instance
+   * @throws Error if the key format is invalid
+   */
   static from(value: string | Uint8Array): PrivateKey {
     if (typeof value === 'string') {
       return PrivateKey.fromString(value)
@@ -31,12 +62,24 @@ export class PrivateKey {
     }
   }
 
-  /** Create a new instance from a WIF-encoded key. */
+  /**
+   * Creates a PrivateKey from a Wallet Import Format (WIF) encoded string.
+   *
+   * @param wif - WIF encoded private key string
+   * @returns New PrivateKey instance
+   * @throws Error if WIF format is invalid or checksum fails
+   */
   static fromString(wif: string): PrivateKey {
     return new PrivateKey(decodePrivate(wif).subarray(1))
   }
 
-  /** Create a new instance from a seed. */
+  /**
+   * Creates a PrivateKey from a seed string or Uint8Array.
+   * The seed is hashed with SHA256 to produce the private key.
+   *
+   * @param seed - Seed string (converted to bytes) or raw byte array
+   * @returns New PrivateKey instance derived from seed
+   */
   static fromSeed(seed: string | Uint8Array): PrivateKey {
     if (typeof seed === 'string') {
       seed = hexToBytes(seed)
@@ -44,15 +87,26 @@ export class PrivateKey {
     return new PrivateKey(sha256(seed))
   }
 
-  /** Create key from username and password. */
+  /**
+   * Derives a PrivateKey from username, password, and role using Hive's key derivation scheme.
+   * This generates the same keys that the Hive wallet uses for login-based keys.
+   *
+   * @param username - Hive username
+   * @param password - Master password (or seed phrase)
+   * @param role - Key role ('owner', 'active', 'posting', 'memo')
+   * @returns New PrivateKey instance for the specified role
+   */
   static fromLogin(username: string, password: string, role: KeyRole = 'active'): PrivateKey {
     const seed = username + role + password
     return PrivateKey.fromSeed(seed)
   }
 
   /**
-   * Sign message.
-   * @param message 32-byte message.
+   * Signs a 32-byte message hash using ECDSA and returns a recoverable signature.
+   * The signature includes recovery information to allow public key recovery.
+   *
+   * @param message - 32-byte message hash to sign (Uint8Array)
+   * @returns Signature object containing the signature data
    */
   sign(message: Uint8Array): Signature {
     const rv = secp256k1.sign(message, this.key, {
@@ -64,19 +118,32 @@ export class PrivateKey {
     return Signature.from((recovery + 31).toString(16) + bytesToHex(rv.subarray(1)))
   }
 
-  /** Derive the public key for this private key. */
+  /**
+   * Derives the corresponding public key for this private key.
+   *
+   * @param prefix - Optional address prefix (defaults to config.address_prefix)
+   * @returns PublicKey instance derived from this private key
+   */
   createPublic(prefix?: string): PublicKey {
     return new PublicKey(secp256k1.getPublicKey(this.key), prefix)
   }
 
-  /** Return a WIF-encoded representation of the key. */
+  /**
+   * Returns the private key as a Wallet Import Format (WIF) encoded string.
+   * This includes network ID and checksum for safe storage/transmission.
+   *
+   * @returns WIF encoded private key string
+   */
   toString(): string {
     return encodePrivate(new Uint8Array([...NETWORK_ID, ...this.key]))
   }
 
   /**
-   * Does not show the full key.
-   * To get the full encoded key you need to explicitly call toString.
+   * Returns a masked representation of the private key for debugging/logging.
+   * Shows only the first and last 6 characters to avoid accidental exposure.
+   * Use toString() to get the full key for export/serialization.
+   *
+   * @returns Masked key representation for safe logging
    */
   inspect(): string {
     const key = this.toString()
@@ -84,7 +151,11 @@ export class PrivateKey {
   }
 
   /**
-   * Get shared secret for memo cryptography
+   * Computes a shared secret using ECDH key exchange for memo encryption.
+   * The shared secret is used as a key for AES encryption/decryption.
+   *
+   * @param publicKey - Other party's public key
+   * @returns 64-byte shared secret as Uint8Array
    */
   getSharedSecret(publicKey: PublicKey): Uint8Array {
     const s = secp256k1.getSharedSecret(this.key, publicKey.key)
@@ -93,8 +164,11 @@ export class PrivateKey {
   }
 
   /**
-   * Returns a randomly generated instance of PrivateKey
-   * Might take up to 250ms
+   * Generates a new cryptographically secure random private key.
+   * Uses the secp256k1 key generation algorithm for security.
+   * This method may take up to 250ms due to entropy collection.
+   *
+   * @returns New randomly generated PrivateKey instance
    */
   static randomKey(): PrivateKey {
     return new PrivateKey(secp256k1.keygen().secretKey)
