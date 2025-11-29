@@ -1,9 +1,14 @@
-import { hexToBytes } from '@noble/hashes/utils.js'
+import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { getGlobalProps } from './helpers/globalProps'
 import { PrivateKey } from './helpers/PrivateKey'
-import { broadcastTransaction } from './transactions/broadcastTransaction'
-import { signTransaction, transactionDigest } from './transactions/signTransaction'
 import { DigestData, OperationName, OperationBody, TransactionType } from './types'
+import { ByteBuffer } from './helpers/ByteBuffer'
+import { Serializer } from './helpers/serializer'
+import { sha256 } from '@noble/hashes/sha2.js'
+import { config } from './config'
+import { call } from './helpers/call'
+
+const chainId = hexToBytes(config.chain_id)
 
 interface TransactionOptions {
   transaction?: TransactionType | Transaction
@@ -58,6 +63,7 @@ export class Transaction {
       } else {
         this.transaction = options.transaction
       }
+      this.txId = this.digest().txId
     }
     if (options?.expiration) {
       this.expiration = options.expiration
@@ -94,10 +100,16 @@ export class Transaction {
       throw new Error('First create a transaction by .addOperation()')
     }
     if (this.transaction) {
-      const { signedTransaction, txId } = signTransaction(this.transaction, keys)
-      this.transaction = signedTransaction
+      const { digest, txId } = this.digest()
+      if (!Array.isArray(keys)) {
+        keys = [keys]
+      }
+      for (const key of keys) {
+        const signature = key.sign(digest)
+        this.transaction.signatures.push(signature.customToString())
+      }
       this.txId = txId
-      return signedTransaction
+      return this.transaction
     } else {
       throw new Error('No transaction to sign')
     }
@@ -118,11 +130,16 @@ export class Transaction {
     if (this.transaction.signatures.length === 0) {
       throw new Error('First sign the transaction by .sign(keys)')
     }
-    const result = await broadcastTransaction(this.transaction, timeout, retry)
-    if (result.error) {
+    const result = await call(
+      'condenser_api.broadcast_transaction',
+      [this.transaction],
+      timeout,
+      retry
+    )
+    if (result?.error) {
       // When we retry, we might have already broadcasted the transaction
       // So catch duplicate trx error and return trx id
-      if (result.error.message.includes('Duplicate transaction check failed')) {
+      if (result.error?.message?.includes('Duplicate transaction check failed')) {
         return {
           id: 1,
           jsonrpc: '2.0',
@@ -151,7 +168,18 @@ export class Transaction {
     if (!this.transaction) {
       throw new Error('First create a transaction by .addOperation()')
     }
-    return transactionDigest(this.transaction)
+    const buffer = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
+    const temp = { ...this.transaction }
+    try {
+      Serializer.Transaction(buffer, temp)
+    } catch (cause) {
+      throw new Error('Unable to serialize transaction: ' + cause)
+    }
+    buffer.flip()
+    const transactionData = new Uint8Array(buffer.toBuffer())
+    const txId = bytesToHex(sha256(transactionData)).slice(0, 40)
+    const digest = sha256(new Uint8Array([...chainId, ...transactionData]))
+    return { digest, txId }
   }
 
   /**
