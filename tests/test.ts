@@ -351,7 +351,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const testOperation = async (opType: any, opData: any, index: number) => {
   console.log(`Testing operation ${index + 1}: ${opType}`)
-
+  let passed = true
   try {
     const trx = new Transaction()
     await trx.addOperation(opType, opData)
@@ -365,6 +365,7 @@ const testOperation = async (opType: any, opData: any, index: number) => {
     if (bytesToHex(localDigest.digest) === bytesToHex(apiDigest)) {
       console.log(`  ✅ Digest match for ${opType}`)
     } else {
+      passed = false
       console.log(`  ❌ Digest mismatch for ${opType}`)
       console.log(`    Local:  ${bytesToHex(localDigest.digest)}`)
       console.log(`    API:    ${bytesToHex(apiDigest)}`)
@@ -373,15 +374,16 @@ const testOperation = async (opType: any, opData: any, index: number) => {
     if (localDigest.txId === apiTxId) {
       console.log(`  ✅ TxId match for ${opType}`)
     } else {
+      passed = false
       console.log(`  ❌ TxId mismatch for ${opType}`)
       console.log(`    Local:  ${localDigest.txId}`)
       console.log(`    API:    ${apiTxId}`)
     }
-
-    // Rate limiting sleep
-    await sleep(100)
   } catch (error) {
+    passed = false
     console.log(`  ❌ Error testing ${opType}:`, error)
+  } finally {
+    return passed
   }
 }
 
@@ -396,15 +398,24 @@ const runAllTests = async () => {
     testedOps[value.name] = false
   })
 
+  let passedCount = 0
+
   for (let i = 0; i < opTypes.length; i++) {
     const opType = opTypes[i]
     const opData = operationSamples[opType]
-    await testOperation(opType, opData, i)
+    const passed = await testOperation(opType, opData, i)
+    if (passed) {
+      passedCount++
+    }
+    // Rate limiting sleep
+    await sleep(100)
     // Mark tested
     const opName = `hive::protocol::${opType}_operation`
     testedOps[opName] = true
   }
   console.log('\nAll tests completed!')
+  console.log(`Passed tests:${passedCount}`)
+  console.log(`Failed tests:${opTypes.length - passedCount}`)
 
   for (const key in testedOps) {
     if (!testedOps[key]) {
