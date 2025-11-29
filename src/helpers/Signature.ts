@@ -2,33 +2,9 @@ import { PublicKey } from './PublicKey'
 import { secp256k1 } from '@noble/curves/secp256k1.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 
-/**
- * ECDSA (secp256k1) signature for Hive blockchain transactions.
- * Handles signature creation, recovery, and public key extraction.
- *
- * Signatures are 65 bytes (130 hex characters) and include recovery information
- * to allow recovery of the public key that created the signature.
- *
- * @example
- * ```typescript
- * // From hex string (130 characters)
- * const sig = Signature.fromString('1f2a3b...') // 130 char hex string
- *
- * // Get hex representation
- * const hexSig = sig.customToString()
- *
- * // Recover public key from message
- * const pubKey = sig.getPublicKey(messageHash)
- * ```
- */
 export class Signature {
-  /** Raw signature data (64 bytes: r + s) */
   data: Uint8Array
-
-  /** Recovery byte (0-3) for public key recovery */
   recovery: number
-
-  /** Whether this is a compressed signature */
   private compressed: boolean
 
   /**

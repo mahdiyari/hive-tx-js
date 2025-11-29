@@ -6,33 +6,8 @@ import { Signature } from './Signature'
 
 const DEFAULT_ADDRESS_PREFIX = config.address_prefix
 
-/**
- * ECDSA (secp256k1) public key for Hive blockchain operations.
- * Handles key validation, signature verification, and string encoding.
- *
- * Public keys are used to verify signatures and as recipients for encrypted memos.
- * They can be stored as strings (e.g., "STM8m5UgaFAAYQRuaNejYdS8FVLVp9Ss3K1qAVk5de6F8s3HnVbvA").
- *
- * @example
- * ```typescript
- * // From string
- * const pubKey = PublicKey.fromString('STM8m5UgaFAAYQRuaNejYdS8FVLVp9Ss3K1qAVk5de6F8s3HnVbvA')
- *
- * // From private key
- * const pubKey = privateKey.createPublic()
- *
- * // Verify a signature
- * const isValid = pubKey.verify(messageHash, signature)
- *
- * // Convert to string for storage
- * const keyString = pubKey.toString()
- * ```
- */
 export class PublicKey {
-  /** Raw public key bytes (33 bytes, compressed format) */
   key: Uint8Array
-
-  /** Address prefix (e.g., "STM" for Hive mainnet) */
   prefix: string
 
   /**

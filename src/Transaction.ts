@@ -19,42 +19,13 @@ interface TransactionOptions {
   expiration?: number
 }
 
-/**
- * Represents a Hive blockchain transaction with operations, signing, and broadcasting capabilities.
- * Supports both single and multi-signature transactions.
- *
- * @example
- * ```typescript
- * const tx = new Transaction();
- * await tx.addOperation('transfer', {
- *   from: 'alice',
- *   to: 'bob',
- *   amount: '1.000 HIVE',
- *   memo: 'Payment'
- * });
- * tx.sign(privateKey);
- * const result = await tx.broadcast();
- * ```
- */
 export class Transaction {
-  /**
-   * The underlying transaction data structure containing operations, signatures, and metadata.
-   * Undefined until the transaction is created.
-   */
   transaction?: TransactionType
 
-  /** Transaction expiration time in milliseconds from creation. Default is 60 seconds. */
   expiration: number = 60_000
 
   private txId?: string
 
-  /**
-   * Creates a new Transaction instance.
-   * @param options Configuration options for the transaction
-   * @param options.transaction Optional existing transaction to initialize with
-   * @param options.expiration Optional expiration time in milliseconds (default: 60000)
-   * @throws Error if a Transaction instance is provided but has an invalid transaction
-   */
   constructor(options?: TransactionOptions) {
     if (options?.transaction) {
       if (options.transaction instanceof Transaction) {
