@@ -212,7 +212,7 @@ export class Transaction {
   private createTransaction = async (expiration: number) => {
     const props = await getGlobalProps()
     const bytes = hexToBytes(props.head_block_id)
-    const refBlockPrefix = bytes[4] | (bytes[5] << 8) | (bytes[6] << 16) | (bytes[7] << 24)
+    const refBlockPrefix = Number(new Uint32Array(bytes.buffer, bytes.byteOffset + 4, 1)[0])
     const expirationIso = new Date(Date.now() + expiration).toISOString().slice(0, -5)
     this.transaction = {
       expiration: expirationIso,
