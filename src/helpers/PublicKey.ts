@@ -48,11 +48,17 @@ export class PublicKey {
   /**
    * Verifies a signature against a message hash.
    * @param message 32-byte message hash to verify
-   * @param signature Signature object to verify
+   * @param signature Signature to verify
    * @returns True if signature is valid, false otherwise
    */
-  verify(message: Uint8Array, signature: Signature): boolean {
-    return secp256k1.verify(signature.data, message, this.key)
+  verify(message: Uint8Array, signature: Signature | string): boolean {
+    if (typeof signature === 'string') {
+      signature = Signature.from(signature)
+    }
+    return secp256k1.verify(signature.data, message, this.key, {
+      prehash: false,
+      format: 'compact'
+    })
   }
 
   /**
