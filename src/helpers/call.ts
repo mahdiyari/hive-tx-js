@@ -1,8 +1,18 @@
 import { config } from '../config'
-import { ofetch } from 'ofetch'
+// import { CallParams, MethodName } from '../types/apiTypes'
+// import { TransactionType } from '../types/operationTypes'
 
 let nodeIndex = 0
 let numTries = 0
+
+// function call<M extends MethodName>(
+//   method: M,
+//   params: CallParams<M>,
+//   timeout?: number,
+//   retry?: number
+// ): Promise<any> {
+//   return callImpl(method as string, params, timeout, retry)
+// }
 
 /**
  * Makes API calls to Hive blockchain nodes with automatic retry and failover support.
@@ -13,8 +23,8 @@ let numTries = 0
  *
  * @param method - The API method name (e.g., 'condenser_api.get_accounts')
  * @param params - Parameters for the API method as array or object
- * @param timeout - Request timeout in seconds (default: config.timeout)
- * @param retry - Number of retry attempts before failing (default: config.retry)
+ * @param timeout - Request timeout in milliseconds (default: config.timeout)
+ * @param retry - Number of retry attempts before throwing an error (default: config.retry)
  * @returns Promise resolving to the API response
  * @throws Error if all retry attempts fail or network connectivity issues occur
  *
@@ -25,26 +35,18 @@ let numTries = 0
  * // Get account information
  * const accounts = await call('condenser_api.get_accounts', [['alice']])
  *
- * // Get blockchain properties
- * const props = await call('condenser_api.get_dynamic_global_properties')
- *
  * // Custom timeout and retry settings
- * const data = await call('condenser_api.get_content', ['alice', 'test-post'], 10, 3)
+ * const data = await call('condenser_api.get_content', ['alice', 'test-post'], 10_000, 8)
  * ```
  */
-export const call = async (
+const call = async (
   method: string,
   params: any[] | object = [],
   timeout = config.timeout,
   retry = config.retry
 ): Promise<any> => {
-  let node = ''
-  const configNode = config.node
-  if (Array.isArray(configNode)) {
-    node = configNode[nodeIndex]
-  } else {
-    node = configNode
-  }
+  // TODO: check for id missmatch
+  const node = config.node[nodeIndex]
   const body = {
     jsonrpc: '2.0',
     method,
@@ -52,13 +54,30 @@ export const call = async (
     id: 1
   }
   try {
-    const res = await ofetch(node, {
-      method: 'POST',
-      body,
-      timeout: timeout * 1000
-    })
-    numTries = 0
-    return res
+    if (typeof AbortSignal !== 'undefined') {
+      const res = await fetch(node, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(timeout)
+      })
+      numTries = 0
+      return await res.json()
+    } else {
+      // Fallback for environments without AbortController
+      const res = await Promise.race([
+        fetch(node, {
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers: { 'Content-Type': 'application/json' }
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Request timeout')), timeout)
+        )
+      ])
+      numTries = 0
+      return await res.json()
+    }
   } catch (e) {
     numTries++
     if (!Array.isArray(config.node) || numTries > retry) {
@@ -69,6 +88,8 @@ export const call = async (
   }
 }
 
+export { call }
+
 /** Validate and use another RPC node */
 const changeNode = async (newNodeIndex = nodeIndex + 1) => {
   if (!Array.isArray(config.node)) {
@@ -78,26 +99,4 @@ const changeNode = async (newNodeIndex = nodeIndex + 1) => {
     newNodeIndex = 0
   }
   nodeIndex = newNodeIndex
-}
-
-// Periodic healthcheck of the current node every 30s
-const healthcheck = setInterval(async () => {
-  if (!Array.isArray(config.node)) {
-    return
-  }
-  try {
-    const res = await call('condenser_api.get_accounts', [['mahdiyari']])
-    if (res && res.result && res.result[0] && res.result[0].name === 'mahdiyari') {
-      // do nothing
-    } else {
-      changeNode()
-    }
-  } catch {
-    changeNode()
-  }
-}, config.healthcheckInterval)
-
-// Don't keep the app active just because of this interval
-if (healthcheck && healthcheck.unref) {
-  healthcheck.unref()
 }
