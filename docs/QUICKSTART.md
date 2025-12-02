@@ -40,6 +40,7 @@ await tx.addOperation('vote', {
   weight: 9500 // 95% upvote
 })
 
+// Private posting key
 const myKey = '5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg'
 const privateKey = PrivateKey.from(myKey)
 // Sign
@@ -49,6 +50,7 @@ const result = await tx.broadcast()
 
 console.log('Vote successful:', result.result.tx_id)
 ```
+Note: You must use the appropirate key with each type of operation. If an operation requires posting key, you can not use active key. You must use posting key. When mixing different operations with different requirements, for example a transfer and a vote, you must sign with both posting and active keys.
 
 ## Making API Calls
 
