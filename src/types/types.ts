@@ -33,14 +33,5 @@ export interface DigestData {
   txId: string
 }
 
-export interface Config {
-  address_prefix: string
-  chain_id: string
-  node: string[]
-  timeout: number
-  retry: number
-  healthcheckInterval: number
-}
-
 // export * from './apiTypes'
 export * from './operationTypes'
