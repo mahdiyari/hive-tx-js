@@ -1,18 +1,6 @@
 /**
  * Configuration object for customizing hive-tx library behavior.
- * Modify these values to change the default node endpoints, timeouts, and other settings.
- *
- * @example
- * ```typescript
- * import { config } from 'hive-tx'
- *
- * // Use a specific node instead of the default array
- * config.node = ['https://api.hive.blog']
- *
- * // Custom timeout and retry settings
- * config.timeout = 10
- * config.retry = 3
- * ```
+ * Modify these values to change the default node endpoints, timeout, and other settings.
  */
 export const config = {
   /**
@@ -22,11 +10,10 @@ export const config = {
   node: [
     'https://api.hive.blog',
     'https://api.deathwing.me',
+    'https://api.openhive.network',
     'https://rpc.mahdiyari.info',
     'https://techcoderx.com',
     'https://hiveapi.actifit.io',
-    'https://hive-api.dlux.io',
-    'https://hive-api.arcange.eu',
     'https://api.c0ff33a.uk'
   ],
 
@@ -43,20 +30,14 @@ export const config = {
   address_prefix: 'STM',
 
   /**
-   * Timeout in seconds for individual API calls.
-   * @default 5
+   * Timeout in milliseconds for individual API calls.
+   * @default 10000
    */
-  timeout: 5,
+  timeout: 10_000,
 
   /**
-   * Number of retry attempts for failed API calls.
-   * @default 5
+   * Number of retry attempts for failed API calls before throwing an error.
+   * @default 8
    */
-  retry: 5,
-
-  /**
-   * Interval in milliseconds for periodic node health checks.
-   * @default 30000
-   */
-  healthcheckInterval: 30_000
+  retry: 8
 }
