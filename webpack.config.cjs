@@ -1,7 +1,5 @@
 const path = require('path')
-const webpack = require('webpack')
 
-// We define two separate configurations to run simultaneously
 module.exports = [
   {
     entry: './src/index.ts',
