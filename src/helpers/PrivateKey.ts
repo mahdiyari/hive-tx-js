@@ -82,7 +82,13 @@ export class PrivateKey {
    */
   static fromSeed(seed: string | Uint8Array): PrivateKey {
     if (typeof seed === 'string') {
-      seed = hexToBytes(seed)
+      const isHex = /^[0-9a-fA-F]+$/.test(seed)
+      if (isHex) {
+        seed = hexToBytes(seed)
+      } else {
+        // Convert non-hex string to Uint8Array using UTF-8 encoding
+        seed = new TextEncoder().encode(seed)
+      }
     }
     return new PrivateKey(sha256(seed))
   }
