@@ -1,12 +1,13 @@
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { getGlobalProps } from './helpers/globalProps'
 import { PrivateKey } from './helpers/PrivateKey'
-import { DigestData, OperationName, OperationBody, TransactionType } from './types'
+import { OperationName, OperationBody, TransactionType } from './types/operationTypes'
 import { ByteBuffer } from './helpers/ByteBuffer'
 import { Serializer } from './helpers/serializer'
 import { sha256 } from '@noble/hashes/sha2.js'
 import { config } from './config'
 import { call } from './helpers/call'
+import { DigestData } from './types/types'
 
 const chainId = hexToBytes(config.chain_id)
 
@@ -96,10 +97,14 @@ export class Transaction {
    */
   async broadcast(timeout = 5, retry = 5) {
     if (!this.transaction) {
-      throw new Error('First create a transaction by .addOperation()')
+      throw new Error(
+        'Attempted to broadcast an empty transaction. Add operations by .addOperation()'
+      )
     }
     if (this.transaction.signatures.length === 0) {
-      throw new Error('First sign the transaction by .sign(keys)')
+      throw new Error(
+        'Attempted to broadcast a transaction with no signatures. Sign using .sign(keys)'
+      )
     }
     const result = await call(
       'condenser_api.broadcast_transaction',
