@@ -62,7 +62,7 @@ async function transferHive() {
 ### Sign and verify a transaction
 
 ```typescript
-import { Transaction, PrivateKey } from 'hive-tx'
+import { Transaction, PrivateKey, Signature } from 'hive-tx'
 
 async function signAndVerify() {
   const tx = new Transaction()
