@@ -13,12 +13,14 @@ import { call, Transaction, PrivateKey } from 'hive-tx'
 ```
 
 The library has two build outputs:
+
 - ES Module (esm)
 - CommonJS (cjs)
 
 Your application will automatically pick the right build for your environment but you can also import either of them directly from `hive-tx/esm` and `hive-tx/cjs`.
 
 There is also a browser build which you can use like this:
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/hive-tx@7/dist/browser/hive-tx.min.js"></script>
 <!-- hiveTx will be available globbaly -->
@@ -50,6 +52,7 @@ const result = await tx.broadcast()
 
 console.log('Vote successful:', result.result.tx_id)
 ```
+
 Note: You must use the appropirate key with each type of operation. If an operation requires posting key, you can not use active key. You must use posting key. When mixing different operations with different requirements, for example a transfer and a vote, you must sign with both posting and active keys.
 
 ## Making API Calls
@@ -61,7 +64,7 @@ async function getAccountInfo() {
   try {
     const result = await call('condenser_api.get_accounts', [['mahdiyari']])
     const account = result.result[0]
-    
+
     console.log('Account:', account.name)
     console.log('HIVE Balance:', account.balance)
     console.log('HBD Balance:', account.hbd_balance)
