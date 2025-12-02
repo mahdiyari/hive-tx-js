@@ -1,8 +1,6 @@
 import { sha256 } from '@noble/hashes/sha2.js'
-import { call } from '../dist/esm/index'
+import { call, config, TransactionType } from 'hive-tx'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
-import { config } from '../dist/esm/index'
-import { TransactionType } from '../dist/esm/types/types'
 const CHAIN_ID = hexToBytes(config.chain_id)
 
 export const getTransactionHex = async (transaction: TransactionType) => {
