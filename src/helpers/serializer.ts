@@ -2,7 +2,7 @@ import { PublicKey } from './PublicKey'
 import { Asset } from './Asset'
 import { HexBuffer } from './HexBuffer'
 import { ByteBuffer } from './ByteBuffer'
-import { Operation } from '../types'
+import { Operation } from '../types/operationTypes'
 
 // Operation ID constants for better maintainability
 const OPERATION_IDS = {
