@@ -1,13 +1,4 @@
-import {
-  Transaction,
-  PrivateKey,
-  PublicKey,
-  Signature,
-  Memo,
-  utils,
-  call,
-  config
-} from '../dist/esm/index'
+import { Transaction, PrivateKey, PublicKey, Signature, Memo, utils, call, config } from 'hive-tx'
 
 // Test data
 const testPrivateKey = '5JdeC9P7Pbd1uGdFVEsJ41EkEnADbbHGq6p1BwFxm6txNBsQnsw'
