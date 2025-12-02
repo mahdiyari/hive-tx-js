@@ -90,12 +90,12 @@ export class Transaction {
   /**
    * Broadcasts the signed transaction to the Hive network.
    * Automatically handles retries and duplicate transaction detection.
-   * @param timeout Timeout in seconds for each broadcast attempt (default: 5)
-   * @param retry Number of retry attempts if broadcast fails (default: 5)
+   * @param timeout Timeout in milliseconds for each broadcast attempt (default: config.timeout)
+   * @param retry Number of retry attempts if broadcast fails (default: config.retry)
    * @returns Promise resolving to broadcast result or error response
    * @throws Error if no transaction exists or transaction is not signed
    */
-  async broadcast(timeout = 5, retry = 5) {
+  async broadcast(timeout = config.timeout, retry = config.retry) {
     if (!this.transaction) {
       throw new Error(
         'Attempted to broadcast an empty transaction. Add operations by .addOperation()'
