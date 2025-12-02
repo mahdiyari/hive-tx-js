@@ -29,7 +29,7 @@ config.retry = 3
 
 ## 1. Signing and Broadcasting Transactions
 
-### Simple Transfer Transaction
+### Simple transfer transaction
 
 ```typescript
 import { Transaction, PrivateKey } from 'hive-tx'
@@ -59,12 +59,12 @@ async function transferHive() {
 }
 ```
 
-### Vote Transaction
+### Sign and verify a transaction
 
 ```typescript
 import { Transaction, PrivateKey } from 'hive-tx'
 
-async function voteForPost() {
+async function signAndVerify() {
   const tx = new Transaction()
 
   // Add vote operation (weight: 10000 = 100% upvote)
@@ -76,16 +76,29 @@ async function voteForPost() {
   })
 
   // Private posting key
-  const privateKey = PrivateKey.fromString('5J...posting-key')
+  const privateKey = PrivateKey.fromString('5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg')
 
   tx.sign(privateKey)
-  const result = await tx.broadcast()
 
-  console.log('Vote broadcasted:', result.result.tx_id)
+  const signature = tx.transaction!.signatures[0]
+
+  // Get transaction digest
+  const digest = tx.digest().digest
+
+  // There are two ways to validate the signature
+  // #1
+  const isValid1 = privateKey.createPublic().verify(digest, signature)
+
+  // #2
+  const isValid2 =
+    Signature.from(signature).getPublicKey(digest).toString() ===
+    privateKey.createPublic().toString()
+
+  console.log('Is signature valid?:', isValid1, isValid2)
 }
 ```
 
-## 2. API Calls
+## 2. API calls
 
 All Hive API definitions are here to some degeree: https://developers.hive.io/apidefinitions/
 And https://rpc.mahdiyari.info/?urls.primaryName=Legacy+Hive+JSON-RPC+API
@@ -103,7 +116,7 @@ async function getAccountInfo() {
 }
 ```
 
-### Get Account History with Filtered Operations
+### Get account history with filtered operations
 
 ```typescript
 import { call, utils } from 'hive-tx'
@@ -126,9 +139,9 @@ async function getFilteredHistory() {
 ```
 
 
-## 3. Memo Encryption/Decryption
+## 3. Memo encryption/decryption
 
-### Encrypt a Memo
+### Encrypt a memo
 
 ```typescript
 import { Memo, PrivateKey, PublicKey } from 'hive-tx'
@@ -148,7 +161,7 @@ async function encryptMemo() {
 }
 ```
 
-### Decrypt a Memo
+### Decrypt a memo
 
 ```typescript
 import { Memo, PrivateKey } from 'hive-tx'
@@ -169,7 +182,7 @@ function decryptMemo() {
 
 ## 4. Utilities
 
-### Validate Username
+### Validate username
 
 ```typescript
 import { utils } from 'hive-tx'
@@ -188,7 +201,9 @@ function validateUsernames() {
 }
 ```
 
-### Build Witness Set Properties
+### Build witness set properties
+
+This is the only operation that needs a helper function
 
 ```typescript
 import { utils, Transaction } from 'hive-tx'
@@ -213,9 +228,9 @@ function buildWitnessProperties() {
 }
 ```
 
-## 5. Working with Keys
+## 5. Working with keys
 
-### Generate Keys
+### Generate keys
 
 ```typescript
 import { PrivateKey } from 'hive-tx'
@@ -232,7 +247,7 @@ function generateKeys() {
 }
 ```
 
-### Import and Convert Keys
+### Import and convert keys
 
 ```typescript
 import { PrivateKey, PublicKey } from 'hive-tx'
@@ -248,4 +263,5 @@ function workWithKeys() {
   const memoPrivateKey = privateKey.fromLogin('username', 'master password or seed phrase', 'memo')
 }
 ```
+
 
