@@ -22,12 +22,14 @@ import { call, Transaction, PrivateKey } from 'hive-tx'
 ```
 
 The library has two build outputs:
+
 - ES Module (esm)
 - CommonJS (cjs)
 
 Your application will automatically pick the right build for your environment but you can also import either of them directly from `hive-tx/esm` and `hive-tx/cjs`.
 
 There is also a browser build which you can use like this:
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/hive-tx@7/dist/browser/hive-tx.min.js"></script>
 <!-- hiveTx will be available globbaly -->
@@ -106,25 +108,39 @@ const key4 = PrivateKey.fromSeed('my-secret-seed')
 import { config } from 'hive-tx'
 
 // Configure API nodes with failover
+// Default nodes that are already set:
 config.node = [
   'https://api.hive.blog',
   'https://api.deathwing.me',
-  'https://rpc.mahdiyari.info'
+  'https://api.openhive.network',
+  'https://rpc.mahdiyari.info',
+  'https://techcoderx.com',
+  'https://hiveapi.actifit.io',
+  'https://api.c0ff33a.uk'
 ]
 
 // Custom timeout and retry settings
-config.timeout = 10 // 10 seconds
-config.retry = 3     // 3 retry attempts
+config.timeout = 10_000 // 10 seconds
+config.retry = 8 // 8 retry attempts before throwing an error
 ```
 
 ### Breaking Changes in v7
-- `tx.create()` => `await tx.addOperation()`
+
+- `tx.create()` => `await tx.addOperation(opName, opBody)`
+- All timeout values are now in millisecond
+- All expiration values are in millisecond
+- `new Transaction(transaction)` => `new Transaction({transaction, expiration})`
+- Removed `Transaction.signedTransaction`. Signatures are available on `Transaction.transaction`
+- Removed `config.healthcheckInterval`
 
 ### What's new in v7
-- Added full IDE intellisense for operations and API calls
-- Full support for the new REST APIs
+
 - Codebase reworked in TypeScript
-- Added tests to make sure operations are up to date with hived
+- All methods now have good JSDoc documentation
+- Added full IDE intellisense for operations
+- Added tests including operation tests to keep them up to date with hived
+- Added docs/EXAMPLES.md and docs/QUICKSTART.md
+- Output 3 builds: ESM, CJS, UMD minified .js for browser
 
 ## License
 
