@@ -20,11 +20,20 @@ import { Transaction, PrivateKey, PublicKey, Memo, call, utils } from 'hive-tx'
 import { config } from 'hive-tx'
 
 // Change node configuration
-config.node = ['https://api.hive.blog', 'https://rpc.mahdiyari.info']
+// Default values are:
+config.node = [
+  'https://api.hive.blog',
+  'https://api.deathwing.me',
+  'https://api.openhive.network',
+  'https://rpc.mahdiyari.info',
+  'https://techcoderx.com',
+  'https://hiveapi.actifit.io',
+  'https://api.c0ff33a.uk'
+]
 
 // Adjust timeout and retry settings
-config.timeout = 10 // seconds
-config.retry = 3
+config.timeout = 10_000 // 10 seconds
+config.retry = 8
 ```
 
 ## 1. Signing and Broadcasting Transactions
@@ -138,7 +147,6 @@ async function getFilteredHistory() {
 }
 ```
 
-
 ## 3. Memo encryption/decryption
 
 ### Encrypt a memo
@@ -190,7 +198,7 @@ import { utils } from 'hive-tx'
 function validateUsernames() {
   const usernames = ['alice', 'bad-user-name', 'hiveio', 'a', 'verylongusernamethatexceedslimits']
 
-  usernames.forEach(username => {
+  usernames.forEach((username) => {
     const error = utils.validateUsername(username)
     if (error) {
       console.log(`${username}: ${error}`)
@@ -218,7 +226,7 @@ function buildWitnessProperties() {
     hbd_interest_rate: 0, // optional
     hbd_exchange_rate: { base: '0.250 HBD', quote: '1.000 HIVE' }, // optional
     url: 'https://testurl', // optional
-    new_signing_key: 'STM1111111111111111111111111111111114T1Anm', // optional
+    new_signing_key: 'STM1111111111111111111111111111111114T1Anm' // optional
   }
 
   const operation = utils.buildWitnessSetProperties('mywitness', props)
@@ -257,11 +265,21 @@ function workWithKeys() {
   const privateKey = PrivateKey.fromString('5J...wif-key')
 
   // Get different types of private keys from master password
-  const ownerPrivateKey = privateKey.fromLogin('username', 'master password or seed phrase', 'owner')
-  const activePrivateKey = privateKey.fromLogin('username', 'master password or seed phrase', 'active')
-  const postingPrivateKey = privateKey.fromLogin('username', 'master password or seed phrase', 'posting')
+  const ownerPrivateKey = privateKey.fromLogin(
+    'username',
+    'master password or seed phrase',
+    'owner'
+  )
+  const activePrivateKey = privateKey.fromLogin(
+    'username',
+    'master password or seed phrase',
+    'active'
+  )
+  const postingPrivateKey = privateKey.fromLogin(
+    'username',
+    'master password or seed phrase',
+    'posting'
+  )
   const memoPrivateKey = privateKey.fromLogin('username', 'master password or seed phrase', 'memo')
 }
 ```
-
-
