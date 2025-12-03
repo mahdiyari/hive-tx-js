@@ -325,13 +325,13 @@ export const coverageTests = async () => {
   await runTest('call() failover', async () => {
     const temp = config.node
     try {
-      config.node = ['https://bad-url-very-very-bad-url', 'https://another-bad-url', ...temp]
+      config.nodes = ['https://bad-url-very-very-bad-url', 'https://another-bad-url', ...temp]
       const res = await call('condenser_api.get_accounts', [['mahdiyari']])
       return res.result[0].name === 'mahdiyari'
     } catch {
       return false
     } finally {
-      config.node = temp
+      config.nodes = temp
     }
   })
 
