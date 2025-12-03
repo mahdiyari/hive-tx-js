@@ -1,13 +1,13 @@
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { getGlobalProps } from './helpers/globalProps'
 import { PrivateKey } from './helpers/PrivateKey'
-import { OperationName, OperationBody, TransactionType } from './types/operationTypes'
+import { OperationName, OperationBody, TransactionType } from './types'
 import { ByteBuffer } from './helpers/ByteBuffer'
 import { Serializer } from './helpers/serializer'
 import { sha256 } from '@noble/hashes/sha2.js'
 import { config } from './config'
-import { call } from './helpers/call'
-import { DigestData } from './types/types'
+import { callRPC } from './helpers/call'
+import { DigestData } from './types'
 
 const chainId = hexToBytes(config.chain_id)
 
@@ -106,7 +106,7 @@ export class Transaction {
         'Attempted to broadcast a transaction with no signatures. Sign using .sign(keys)'
       )
     }
-    const result = await call(
+    const result = await callRPC(
       'condenser_api.broadcast_transaction',
       [this.transaction],
       timeout,
