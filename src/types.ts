@@ -1,3 +1,6 @@
+import { Asset } from './helpers/Asset'
+import { PublicKey } from './helpers/PublicKey'
+
 // Asset types
 export type AssetSymbol = 'HIVE' | 'HBD' | 'VESTS' | 'STEEM' | 'SBD' | 'TESTS' | 'TBD'
 
@@ -470,5 +473,70 @@ export interface TransactionType {
   signatures: string[]
 }
 
-import { Asset } from '../helpers/Asset'
-import { PublicKey } from '../helpers/PublicKey'
+// API Response Types
+export interface BroadcastResponse {
+  id: number
+  jsonrpc: string
+  result: BroadcastResult
+}
+
+export interface BroadcastError {
+  id: number
+  jsonrpc: string
+  error: {
+    code: number
+    message: string
+    data?: any
+  }
+}
+
+export type CallResponse<T = any> =
+  | {
+      id: number
+      jsonrpc: string
+      result: T
+    }
+  | BroadcastError
+
+export interface BroadcastResult {
+  tx_id: string
+  status: string
+}
+
+export interface DigestData {
+  digest: Uint8Array
+  txId: string
+}
+
+import type { paths as balancePaths } from './type_generators/balance'
+import type { paths as hafahPaths } from './type_generators/hafah'
+import type { paths as hafbePaths } from './type_generators/hafbe'
+import type { paths as hivemindPaths } from './type_generators/hivemind'
+import type { paths as hivesensePaths } from './type_generators/hivesense'
+import type { paths as reputationPaths } from './type_generators/reputation'
+import type { paths as nfttrackerPaths } from './type_generators/nft-tracker'
+import type { paths as hafsqlPaths } from './type_generators/hafsql'
+import type { paths as statusPaths } from './type_generators/status'
+
+export type APIMethods =
+  | 'balance'
+  | 'hafah'
+  | 'hafbe'
+  | 'hivemind'
+  | 'hivesense'
+  | 'reputation'
+  | 'nft-tracker'
+  | 'hafsql'
+  | 'status'
+
+export interface APIPaths {
+  balance: balancePaths
+  hafah: hafahPaths
+  hafbe: hafbePaths
+  hivemind: hivemindPaths
+  hivesense: hivesensePaths
+  reputation: reputationPaths
+  'nft-tracker': nfttrackerPaths
+  hafsql: hafsqlPaths
+  status: statusPaths
+}
