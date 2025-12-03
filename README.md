@@ -12,6 +12,7 @@ Library size: ~28KB minified+gzipped (including all the dependencies)
 ## Installation
 
 ```bash
+# Require nodejs +20
 npm install hive-tx --save
 ```
 
@@ -109,7 +110,7 @@ import { config } from 'hive-tx'
 
 // Configure API nodes with failover
 // Default nodes that are already set:
-config.node = [
+config.nodes = [
   'https://api.hive.blog',
   'https://api.deathwing.me',
   'https://api.openhive.network',
@@ -130,14 +131,17 @@ config.retry = 8 // 8 retry attempts before throwing an error
 - All timeout values are now in millisecond
 - All expiration values are in millisecond
 - `new Transaction(transaction)` => `new Transaction({transaction, expiration})`
-- Removed `Transaction.signedTransaction`. Signatures are available on `Transaction.transaction`
-- Removed `config.healthcheckInterval`
+- `Transaction.signedTransaction` removed. Signatures are available on `Transaction.transaction`
+- `config.healthcheckInterval` removed.
+- `config.node` => `config.nodes` and only accepts array
+- `call(): {id:1, jsonrpc:'2.0', result: result}` => `callRPC():result` (different return value)
 
 ### What's new in v7
 
 - Codebase reworked in TypeScript
 - All methods now have good JSDoc documentation
-- Added full IDE intellisense for operations
+- Added types for all operations
+- Added `callREST()` with full typing for new REST APIs
 - Added tests including operation tests to keep them up to date with hived
 - Added docs/EXAMPLES.md and docs/QUICKSTART.md
 - Output 3 builds: ESM, CJS, UMD minified .js for browser
