@@ -1,13 +1,19 @@
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
-import { getGlobalProps } from './helpers/globalProps'
 import { PrivateKey } from './helpers/PrivateKey'
-import { OperationName, OperationBody, TransactionType } from './types'
+import {
+  OperationName,
+  OperationBody,
+  TransactionType,
+  TransactionStatus,
+  BroadcastResult
+} from './types'
 import { ByteBuffer } from './helpers/ByteBuffer'
 import { Serializer } from './helpers/serializer'
 import { sha256 } from '@noble/hashes/sha2.js'
 import { config } from './config'
-import { callRPC } from './helpers/call'
+import { callRPC, RPCError } from './helpers/call'
 import { DigestData } from './types'
+import { sleep } from './helpers/sleep'
 
 const chainId = hexToBytes(config.chain_id)
 
@@ -90,12 +96,14 @@ export class Transaction {
   /**
    * Broadcasts the signed transaction to the Hive network.
    * Automatically handles retries and duplicate transaction detection.
-   * @param timeout Timeout in milliseconds for each broadcast attempt (default: config.timeout)
-   * @param retry Number of retry attempts if broadcast fails (default: config.retry)
-   * @returns Promise resolving to broadcast result or error response
-   * @throws Error if no transaction exists or transaction is not signed
+   * @param checkStatus By default (false) the transaction is not guaranteed to be included in a block.
+   * For example the transaction can expire while waiting in mempool.
+   * If you pass true here, the function will wait for the transaction to be either included or dropped
+   * before returning a result.
+   * @returns Promise resolving to broadcast result
+   * @throws Error if no transaction exists or transaction is not signed or transaction got rejected
    */
-  async broadcast(timeout = config.timeout, retry = config.retry) {
+  async broadcast(checkStatus = false): Promise<BroadcastResult> {
     if (!this.transaction) {
       throw new Error(
         'Attempted to broadcast an empty transaction. Add operations by .addOperation()'
@@ -106,32 +114,34 @@ export class Transaction {
         'Attempted to broadcast a transaction with no signatures. Sign using .sign(keys)'
       )
     }
-    const result = await callRPC(
-      'condenser_api.broadcast_transaction',
-      [this.transaction],
-      timeout,
-      retry
-    )
-    if (result?.error) {
-      // When we retry, we might have already broadcasted the transaction
-      // So catch duplicate trx error and return trx id
-      if (result.error?.message?.includes('Duplicate transaction check failed')) {
-        return {
-          id: 1,
-          jsonrpc: '2.0',
-          result: { tx_id: this.txId, status: 'unkown' }
-        }
+    try {
+      await callRPC('condenser_api.broadcast_transaction', [this.transaction])
+    } catch (e) {
+      if (e instanceof RPCError && e.message.includes('Duplicate transaction check failed')) {
+        // ignore duplicate transaction error as this can happen when we retry the broadcast
+      } else {
+        throw e
       }
-      return result
     }
     if (!this.txId) {
       this.txId = this.digest().txId
     }
-    return {
-      id: 1,
-      jsonrpc: '2.0',
-      result: { tx_id: this.txId, status: 'unkown' }
+    if (!checkStatus) {
+      return { tx_id: this.txId, status: 'unknown' }
     }
+    await sleep(1000)
+    let status = await this.checkStatus()
+    let i = 1
+    while (
+      status?.status !== 'within_irreversible_block' &&
+      status?.status !== 'expired_irreversible' &&
+      status?.status !== 'too_old'
+    ) {
+      await sleep(1000 + i * 300)
+      status = await this.checkStatus()
+      i++
+    }
+    return { tx_id: this.txId, status: status.status }
   }
 
   /**
@@ -179,6 +189,17 @@ export class Transaction {
     return this.transaction
   }
 
+  /** Get status of this transaction. Usually called internally after broadcasting. */
+  async checkStatus(): Promise<TransactionStatus> {
+    if (!this.txId) {
+      this.txId = this.digest().txId
+    }
+    return callRPC('transaction_status_api.find_transaction', {
+      transaction_id: this.txId,
+      expiration: this.transaction?.expiration
+    })
+  }
+
   /**
    * Creates the transaction structure and initializes it with blockchain data.
    * Retrieves current head block information and sets up reference block data.
@@ -186,7 +207,7 @@ export class Transaction {
    * @param expiration Transaction expiration in milliseconds
    */
   private createTransaction = async (expiration: number) => {
-    const props = await getGlobalProps()
+    const props = await callRPC('condenser_api.get_dynamic_global_properties', [])
     const bytes = hexToBytes(props.head_block_id)
     const refBlockPrefix = Number(new Uint32Array(bytes.buffer, bytes.byteOffset + 4, 1)[0])
     const expirationIso = new Date(Date.now() + expiration).toISOString().slice(0, -5)
