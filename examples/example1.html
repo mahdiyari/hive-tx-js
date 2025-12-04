@@ -38,7 +38,7 @@
 
     // get accounts
     hiveTx
-      .call('condenser_api.get_accounts', [['mahdiyari']])
+      .callRPC('condenser_api.get_accounts', [['mahdiyari']])
       .then(res => console.log('Get accounts:', res))
   </script>
 </body>
