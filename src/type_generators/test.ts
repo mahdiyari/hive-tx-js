@@ -1,4 +1,4 @@
-// To generate types to be used for api calls using call() method from openapi specs
+// To generate types to be used for api calls using callRPC() method from openapi specs
 // Currently some specs are wrong so just testing
 // Ignore for now
 
@@ -7,7 +7,7 @@ import * as fs from 'fs/promises'
 async function generateMethodParams(schemaUrl: string): Promise<string> {
   const res = await fetch(schemaUrl)
   if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
-  const schema = await res.json()
+  const schema = (await res.json()) as any
 
   function resolveRef(ref: string): any {
     const parts = ref.replace(/^#\//, '').split('/')
