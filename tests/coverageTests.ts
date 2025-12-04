@@ -1,4 +1,14 @@
-import { Transaction, PrivateKey, PublicKey, Signature, Memo, utils, call, config } from 'hive-tx'
+import {
+  Transaction,
+  PrivateKey,
+  PublicKey,
+  Signature,
+  Memo,
+  utils,
+  callREST,
+  config,
+  callRPC
+} from 'hive-tx'
 
 // Test data
 const testPrivateKey = '5JdeC9P7Pbd1uGdFVEsJ41EkEnADbbHGq6p1BwFxm6txNBsQnsw'
@@ -313,25 +323,51 @@ export const coverageTests = async () => {
 
   console.log('Testing API calls...')
 
-  await runTest('call(condenser_api.get_accounts)', async () => {
+  await runTest('callRPC(condenser_api.get_accounts)', async () => {
     try {
-      const res = await call('condenser_api.get_accounts', [['mahdiyari']])
-      return res.result[0].name === 'mahdiyari'
+      const res = await callRPC('condenser_api.get_accounts', [['mahdiyari']])
+      return res[0].name === 'mahdiyari'
     } catch {
       return false
     }
   })
 
-  await runTest('call() failover', async () => {
-    const temp = config.node
+  await runTest('callRPC() failover', async () => {
+    const temp = config.nodes
     try {
       config.nodes = ['https://bad-url-very-very-bad-url', 'https://another-bad-url', ...temp]
-      const res = await call('condenser_api.get_accounts', [['mahdiyari']])
-      return res.result[0].name === 'mahdiyari'
+      const res = await callRPC('condenser_api.get_accounts', [['mahdiyari']])
+      return res[0].name === 'mahdiyari'
     } catch {
       return false
     } finally {
       config.nodes = temp
+    }
+  })
+
+  await runTest('callREST(hafbe, /accounts/{account-name})', async () => {
+    try {
+      const res = await callREST('hafbe', '/accounts/{account-name}', {
+        'account-name': 'mahdiyari'
+      })
+      return res.name === 'mahdiyari'
+    } catch {
+      return false
+    }
+  })
+
+  await runTest('callREST() failover', async () => {
+    const temp = config.restNodes
+    try {
+      config.restNodes = ['https://bad-url-very-very-bad-url', 'https://another-bad-url', ...temp]
+      const res = await callREST('hafbe', '/accounts/{account-name}', {
+        'account-name': 'mahdiyari'
+      })
+      return res.name === 'mahdiyari'
+    } catch {
+      return false
+    } finally {
+      config.restNodes = temp
     }
   })
 
