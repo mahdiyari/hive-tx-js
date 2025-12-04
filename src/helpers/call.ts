@@ -8,13 +8,71 @@ let restTries = 0
 
 export class RPCError extends Error {
   name = 'RPCError'
-  data: object
+  data?: any
   code: number
   stack: undefined = undefined
-  constructor(rpcError: { message: string; data: object; code: number }) {
+  constructor(rpcError: { message: string; code: number; data?: any }) {
     super(rpcError.message)
-    this.data = rpcError.data
     this.code = rpcError.code
+    if ('data' in rpcError) {
+      this.data = rpcError.data
+    }
+  }
+}
+
+/** shoudRetry is false by default - i.e. no retry
+ * on true, retry one more time
+ */
+const jsonRPCCall = async (
+  url: string,
+  method: string,
+  params: any,
+  timeout = config.timeout,
+  shoudRetry = false
+) => {
+  const id = Math.floor(Math.random() * 100_000_000)
+  const body = {
+    jsonrpc: '2.0',
+    method,
+    params,
+    id
+  }
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(timeout)
+    })
+    const result = (await res.json()) as CallResponse
+    if (
+      !result ||
+      typeof result.id === 'undefined' ||
+      result.id !== id ||
+      result.jsonrpc !== '2.0'
+    ) {
+      throw new Error('JSONRPC id missmatch')
+    }
+    if ('result' in result) {
+      return result.result
+    }
+    if ('error' in result) {
+      const e = result.error
+      if ('message' in e && 'code' in e) {
+        throw new RPCError(e)
+      }
+      throw result.error
+    }
+    // No result and no error?
+    throw result
+  } catch (e) {
+    if (e instanceof RPCError) {
+      throw e
+    }
+    if (shoudRetry) {
+      return jsonRPCCall(url, method, params, timeout, false)
+    }
+    throw e
   }
 }
 
@@ -53,48 +111,19 @@ export const callRPC = async <T = any>(
     throw new Error('config.nodes is not an array')
   }
   const node = config.nodes[rpcIndex]
-  const id = Math.floor(Math.random() * 100_000_000)
-  const body = {
-    jsonrpc: '2.0',
-    method,
-    params,
-    id
-  }
   try {
-    const res = await fetch(node, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(timeout)
-    })
-    const result = (await res.json()) as CallResponse<T>
-    if (
-      !result ||
-      typeof result.id === 'undefined' ||
-      result.id !== id ||
-      result.jsonrpc !== '2.0'
-    ) {
-      throw new Error('JSONRPC id missmatch')
-    }
-    if ('result' in result) {
-      rpcTries = 0
-      return result.result
-    }
-    if ('error' in result) {
-      throw result.error
-    }
-    // Had valid id but no result or error?
-    throw result
+    const res = await jsonRPCCall(node, method, params, timeout)
+    return res as T
   } catch (e: any) {
     // Throw on actual RPC errors
-    if ('message' in e && 'data' in e && 'code' in e) {
-      throw new RPCError(e)
+    if (e instanceof RPCError) {
+      throw e
     }
     rpcTries++
     if (rpcTries > retry) {
       throw e
     }
-    await changeRPCNode()
+    changeRPCNode()
     return callRPC(method, params, timeout, retry)
   }
 }
@@ -223,19 +252,84 @@ export async function callREST<Api extends APIMethods, P extends keyof APIPaths[
     if (restTries > retry) {
       throw e
     }
-    await changeRESTNode()
+    changeRESTNode()
     return callREST(api, endpoint, params, timeout, retry)
   }
 }
 
-const changeRPCNode = async (newNodeIndex = rpcIndex + 1) => {
+/**
+ * Make a JSONRPC call with quorum. The method will cross-check the result
+ * with `quorum` number of nodes before returning the result.
+ * @param method - The API method name (e.g., 'condenser_api.get_accounts')
+ * @param params - Parameters for the API method as array or object
+ * @param quorum - Default: 2 (recommended)
+ */
+export const callWithQuorum = async <T = any>(
+  method: string,
+  params: any[] | object = [],
+  quorum = 2
+): Promise<T> => {
+  if (!Array.isArray(config.nodes)) {
+    throw new Error('config.nodes is not an Array')
+  }
+  if (quorum > config.nodes.length) {
+    throw new Error('quorum > config.nodes.length')
+  }
+  // We call random nodes for better security
+  const shuffleNodes = (arr: string[]) => [...arr].sort(() => Math.random() - 0.5)
+  let allNodes = shuffleNodes(config.nodes)
+  let currentBatchSize = Math.min(quorum, allNodes.length)
+  let allResults: any[] = []
+  while (currentBatchSize > 0 && allNodes.length > 0) {
+    // Take next batch of nodes
+    const batchNodes = allNodes.splice(0, currentBatchSize)
+    const promises: Promise<any>[] = []
+    const batchResults: any[] = []
+    // Launch batch calls in parallel
+    for (let i = 0; i < batchNodes.length; i++) {
+      promises.push(
+        jsonRPCCall(batchNodes[i], method, params, undefined, true)
+          .then((data) => batchResults.push(data))
+          .catch(() => {})
+      )
+    }
+    await Promise.all(promises)
+    allResults.push(...batchResults)
+    // Check for consensus in successful results
+    const consensusResult = findConsensus(allResults, quorum)
+    if (consensusResult) {
+      return consensusResult
+    }
+    // Prepare next batch
+    currentBatchSize = Math.min(quorum, allNodes.length)
+    if (currentBatchSize === 0) {
+      throw new Error('No more nodes available.')
+    }
+  }
+  throw new Error("Couldn't reach quorum.")
+}
+
+function findConsensus(results: any[], quorum: number) {
+  const resultGroups = new Map<string, any[]>()
+  for (const result of results) {
+    const key = JSON.stringify(result.data)
+    if (!resultGroups.has(key)) {
+      resultGroups.set(key, [])
+    }
+    resultGroups.get(key)!.push(result)
+  }
+  const consensusGroup = Array.from(resultGroups.values()).find((group) => group.length >= quorum)
+  return consensusGroup ? consensusGroup[0] : null
+}
+
+const changeRPCNode = (newNodeIndex = rpcIndex + 1) => {
   if (newNodeIndex > config.nodes.length - 1) {
     newNodeIndex = 0
   }
   rpcIndex = newNodeIndex
 }
 
-const changeRESTNode = async (newNodeIndex = restIndex + 1) => {
+const changeRESTNode = (newNodeIndex = restIndex + 1) => {
   if (newNodeIndex > config.restNodes.length - 1) {
     newNodeIndex = 0
   }
