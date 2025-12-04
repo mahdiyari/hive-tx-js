@@ -30,6 +30,8 @@
     "build:clean": "rm -rf dist",
     "format": "prettier --write 'src/**/*.{js,ts}'",
     "test": "npm run build:esm && tsx tests/test.ts",
+    "test:more": "npx nve 20,22,23,24,25 npm test",
+    "generate:types": "tsx src/type_generators/index.ts",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
