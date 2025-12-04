@@ -7,7 +7,8 @@ import {
   utils,
   callREST,
   config,
-  callRPC
+  callRPC,
+  callWithQuorum
 } from 'hive-tx'
 
 // Test data
@@ -337,6 +338,34 @@ export const coverageTests = async () => {
     try {
       config.nodes = ['https://bad-url-very-very-bad-url', 'https://another-bad-url', ...temp]
       const res = await callRPC('condenser_api.get_accounts', [['mahdiyari']])
+      return res[0].name === 'mahdiyari'
+    } catch {
+      return false
+    } finally {
+      config.nodes = temp
+    }
+  })
+
+  await runTest('callWithQuorum(condenser_api.get_accounts)', async () => {
+    try {
+      const res = await callWithQuorum('condenser_api.get_accounts', [['mahdiyari']])
+      return res[0].name === 'mahdiyari'
+    } catch {
+      return false
+    }
+  })
+
+  await runTest('callWithQuorum() failover', async () => {
+    const temp = config.nodes
+    try {
+      config.nodes = [
+        'https://bad-url-very-very-bad-url',
+        'https://another-bad-urla',
+        'https://another-bad-urlb',
+        'https://another-bad-urlc',
+        ...temp
+      ]
+      const res = await callWithQuorum('condenser_api.get_accounts', [['mahdiyari']])
       return res[0].name === 'mahdiyari'
     } catch {
       return false
