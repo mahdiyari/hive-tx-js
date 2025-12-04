@@ -474,11 +474,11 @@ export interface TransactionType {
 }
 
 // API Response Types
-export interface BroadcastResponse {
-  id: number
-  jsonrpc: string
-  result: BroadcastResult
-}
+// export interface BroadcastResponse {
+//   id: number
+//   jsonrpc: string
+//   result: BroadcastResult
+// }
 
 export interface BroadcastError {
   id: number
@@ -500,7 +500,7 @@ export type CallResponse<T = any> =
 
 export interface BroadcastResult {
   tx_id: string
-  status: string
+  status: 'unknown' | 'within_irreversible_block' | 'expired_irreversible' | 'too_old'
 }
 
 export interface DigestData {
@@ -508,15 +508,15 @@ export interface DigestData {
   txId: string
 }
 
-import type { paths as balancePaths } from './type_generators/balance'
-import type { paths as hafahPaths } from './type_generators/hafah'
-import type { paths as hafbePaths } from './type_generators/hafbe'
-import type { paths as hivemindPaths } from './type_generators/hivemind'
-import type { paths as hivesensePaths } from './type_generators/hivesense'
-import type { paths as reputationPaths } from './type_generators/reputation'
-import type { paths as nfttrackerPaths } from './type_generators/nft-tracker'
-import type { paths as hafsqlPaths } from './type_generators/hafsql'
-import type { paths as statusPaths } from './type_generators/status'
+import type { paths as balancePaths } from './type_generators/types/balance'
+import type { paths as hafahPaths } from './type_generators/types/hafah'
+import type { paths as hafbePaths } from './type_generators/types/hafbe'
+import type { paths as hivemindPaths } from './type_generators/types/hivemind'
+import type { paths as hivesensePaths } from './type_generators/types/hivesense'
+import type { paths as reputationPaths } from './type_generators/types/reputation'
+import type { paths as nfttrackerPaths } from './type_generators/types/nft-tracker'
+import type { paths as hafsqlPaths } from './type_generators/types/hafsql'
+import type { paths as statusPaths } from './type_generators/types/status'
 
 export type APIMethods =
   | 'balance'
@@ -539,4 +539,15 @@ export interface APIPaths {
   'nft-tracker': nfttrackerPaths
   hafsql: hafsqlPaths
   status: statusPaths
+}
+
+export interface TransactionStatus {
+  status:
+    | 'unknown'
+    | 'within_mempool'
+    | 'within_reversible_block'
+    | 'within_irreversible_block'
+    | 'expired_reversible'
+    | 'expired_irreversible'
+    | 'too_old'
 }
