@@ -135,6 +135,7 @@ config.retry = 8 // 8 retry attempts before throwing an error
 - `tx.create()` => `await tx.addOperation(opName, opBody)`
 - `call(): {id:1, jsonrpc:'2.0', result: result}` => `callRPC():result` (different return value)
 - `callRPC()` won't return RPC erros like the previous call() method in { error }. It will throw RPCError.
+- `Transaction.broadcast(timeout?, retry?)` => `Transaction.broadcast(checkStatus?)` if checkStatus=true, waits for transaction to be included in a block.
 - All timeout values are now in millisecond
 - All expiration values are in millisecond
 - `new Transaction(transaction)` => `new Transaction({transaction, expiration})`
