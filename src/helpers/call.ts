@@ -6,6 +6,18 @@ let restIndex = 0
 let rpcTries = 0
 let restTries = 0
 
+export class RPCError extends Error {
+  name = 'RPCError'
+  data: object
+  code: number
+  stack: undefined = undefined
+  constructor(rpcError: { message: string; data: object; code: number }) {
+    super(rpcError.message)
+    this.data = rpcError.data
+    this.code = rpcError.code
+  }
+}
+
 /**
  * Makes API calls to Hive blockchain nodes with automatic retry and failover support.
  * Automatically switches between multiple nodes.
@@ -18,7 +30,7 @@ let restTries = 0
  * @param timeout - Request timeout in milliseconds (default: config.timeout)
  * @param retry - Number of retry attempts before throwing an error (default: config.retry)
  * @returns Promise resolving to the API response
- * @throws Error if all retry attempts fail or network connectivity issues occur
+ * @throws Error if all retry attempts fail or on RPCError
  *
  * @example
  * ```typescript
@@ -73,7 +85,11 @@ export const callRPC = async <T = any>(
     }
     // Had valid id but no result or error?
     throw result
-  } catch (e) {
+  } catch (e: any) {
+    // Throw on actual RPC errors
+    if ('message' in e && 'data' in e && 'code' in e) {
+      throw new RPCError(e)
+    }
     rpcTries++
     if (rpcTries > retry) {
       throw e
@@ -99,14 +115,14 @@ type GetResponse<T> = T extends {
   responses: { '200'?: { content: { 'application/json': infer R } } }
 }
   ? R
-  : never
-type SafeGet<T> = T extends { get: infer G } ? G : never
+  : undefined
+type SafeGet<T> = T extends { get: infer G } ? G : undefined
 type SafePathParams<T> =
   SafeGet<T> extends {
     parameters: { path: infer P }
   }
     ? P
-    : {}
+    : undefined
 type SafeQueryParams<T> =
   SafeGet<T> extends {
     parameters: { query: infer Q }
@@ -118,8 +134,10 @@ type SafeQueryParams<T> =
           }
         }
       ? Q
-      : {}
-type ParamsForEndpoint<T> = SafePathParams<T> & SafeQueryParams<T>
+      : undefined
+type ParamsForEndpoint<T> = SafePathParams<T> & SafeQueryParams<T> extends undefined
+  ? SafePathParams<T>
+  : SafePathParams<T> & SafeQueryParams<T>
 
 /**
  * Makes REST API calls to Hive blockchain REST endpoints with automatic retry and failover support.
@@ -138,7 +156,7 @@ type ParamsForEndpoint<T> = SafePathParams<T> & SafeQueryParams<T>
  * @param retry - Number of retry attempts before throwing an error (default: config.retry)
  *
  * @returns Promise resolving to the API response data with proper typing
- * @throws Error if all retry attempts fail, network connectivity issues occur, or HTTP errors are encountered
+ * @throws Error if all retry attempts fail
  *
  * @example
  * ```typescript
@@ -190,11 +208,17 @@ export async function callREST<Api extends APIMethods, P extends keyof APIPaths[
       }
     }
   })
+  let response
   try {
-    const response = await fetch(url.toString())
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    response = await fetch(url.toString())
+    if (response?.status === 404) {
+      throw new Error(`HTTP 404 - Hint: can happen on wrong params`)
+    }
     return response.json() as any
   } catch (e) {
+    if (response?.status === 404) {
+      throw e
+    }
     restTries++
     if (restTries > retry) {
       throw e
