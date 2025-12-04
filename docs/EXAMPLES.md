@@ -125,6 +125,24 @@ async function getAccountInfo() {
 }
 ```
 
+### callWithQuorum
+
+You can use `callWithQuorum` instead of `callRPC` to cross-check the result with multiple nodes.
+
+```typescript
+import { callWithQuorum } from 'hive-tx'
+
+async function getAccountInfo() {
+  try {
+    // cross-check the result with 2 nodes
+    const accounts = await callWithQuorum('condenser_api.get_accounts', [['hiveio']], 2)
+    console.log(accounts)
+  } catch (error) {
+    console.error('Error fetching account:', error)
+  }
+}
+```
+
 ### Get account history with filtered operations
 
 ```typescript
