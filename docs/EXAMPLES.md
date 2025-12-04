@@ -21,7 +21,7 @@ import { config } from 'hive-tx'
 
 // Change node configuration
 // Default values are:
-config.node = [
+config.nodes = [
   'https://api.hive.blog',
   'https://api.deathwing.me',
   'https://api.openhive.network',
@@ -113,11 +113,11 @@ All Hive API definitions are here to some degeree: https://developers.hive.io/ap
 And https://rpc.mahdiyari.info/?urls.primaryName=Legacy+Hive+JSON-RPC+API
 
 ```typescript
-import { call } from 'hive-tx'
+import { callRPC } from 'hive-tx'
 
 async function getAccountInfo() {
   try {
-    const accounts = await call('condenser_api.get_accounts', [['hiveio']])
+    const accounts = await callRPC('condenser_api.get_accounts', [['hiveio']])
     console.log(accounts)
   } catch (error) {
     console.error('Error fetching account:', error)
@@ -128,7 +128,7 @@ async function getAccountInfo() {
 ### Get account history with filtered operations
 
 ```typescript
-import { call, utils } from 'hive-tx'
+import { callRPC, utils } from 'hive-tx'
 
 async function getFilteredHistory() {
   // Get only transfer and vote operations
@@ -137,7 +137,7 @@ async function getFilteredHistory() {
     utils.operations.vote,
     utils.operations.comment
   ])
-  const history = await call('condenser_api.get_account_history', [
+  const history = await callRPC('condenser_api.get_account_history', [
     'myaccount', // account
     -1, // start (latest)
     100, // limit
@@ -145,6 +145,20 @@ async function getFilteredHistory() {
   ])
   console.log('Recent transfers and votes:', history)
 }
+```
+
+### REST APIs
+
+These are new APIs which are not supported by all public RPC nodes. `config.restNodes` holds the nodes that support these apis.
+You can view these APIs on https://rpc.mahdiyari.info or any API node that supports them.
+
+```typescript
+import { callREST } from 'hive-tx'
+
+const balance = await callREST('balance', '/accounts/{account-name}/balances', {
+  'account-name': 'alice'
+})
+console.log(balance)
 ```
 
 ## 3. Memo encryption/decryption
