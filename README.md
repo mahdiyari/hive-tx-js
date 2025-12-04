@@ -80,7 +80,7 @@ console.log('Transfer successful!', result.result.tx_id)
 ### API Calls
 
 ```js
-import { callRPC, callREST } from 'hive-tx'
+import { callRPC, callREST, callWithQuorum } from 'hive-tx'
 
 // Get account information
 const accounts = await callRPC('condenser_api.get_accounts', [['username']])
@@ -94,6 +94,10 @@ const balance = await callREST('balance', '/accounts/{account-name}/balances', {
   'account-name': 'alice'
 })
 console.log(balance)
+
+// Cross-check the result of the call with 2 nodes
+const accounts = await callWithQuorum('condenser_api.get_accounts', [['username']], 2)
+console.log('Account:', result[0])
 ```
 
 ### Key Management
@@ -148,6 +152,7 @@ config.retry = 8 // 8 retry attempts before throwing an error
 - Codebase reworked in TypeScript
 - All methods now have good JSDoc documentation
 - Added types for all operations
+- Added `callWithQuorum()` - JSONRPC call that cross-checks the result with multiple nodes
 - Added `callREST()` with full typing for new REST APIs
 - Added tests including operation tests to keep them up to date with hived
 - Added docs/EXAMPLES.md and docs/QUICKSTART.md
