@@ -58,12 +58,12 @@ Note: You must use the appropirate key with each type of operation. If an operat
 ## Making API Calls
 
 ```javascript
-import { call } from 'hive-tx'
+import { callRPC } from 'hive-tx'
 
 async function getAccountInfo() {
   try {
-    const result = await call('condenser_api.get_accounts', [['mahdiyari']])
-    const account = result.result[0]
+    const result = await callRPC('condenser_api.get_accounts', [['mahdiyari']])
+    const account = result[0]
 
     console.log('Account:', account.name)
     console.log('HIVE Balance:', account.balance)
