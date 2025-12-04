@@ -80,15 +80,20 @@ console.log('Transfer successful!', result.result.tx_id)
 ### API Calls
 
 ```js
-import { call } from 'hive-tx'
+import { callRPC, callREST } from 'hive-tx'
 
 // Get account information
-const accounts = await call('condenser_api.get_accounts', [['username']])
-console.log('Account:', accounts.result[0])
+const accounts = await callRPC('condenser_api.get_accounts', [['username']])
+console.log('Account:', result[0])
 
 // Get blockchain properties
-const props = await call('condenser_api.get_dynamic_global_properties')
-console.log('Head block:', props.result.head_block_number)
+const props = await callRPC('condenser_api.get_dynamic_global_properties')
+console.log('Head block:', props.head_block_number)
+
+const balance = await callREST('balance', '/accounts/{account-name}/balances', {
+  'account-name': 'alice'
+})
+console.log(balance)
 ```
 
 ### Key Management
@@ -128,13 +133,14 @@ config.retry = 8 // 8 retry attempts before throwing an error
 ### Breaking Changes in v7
 
 - `tx.create()` => `await tx.addOperation(opName, opBody)`
+- `call(): {id:1, jsonrpc:'2.0', result: result}` => `callRPC():result` (different return value)
+- `callRPC()` won't return RPC erros like the previous call() method in { error }. It will throw RPCError.
 - All timeout values are now in millisecond
 - All expiration values are in millisecond
 - `new Transaction(transaction)` => `new Transaction({transaction, expiration})`
 - `Transaction.signedTransaction` removed. Signatures are available on `Transaction.transaction`
 - `config.healthcheckInterval` removed.
 - `config.node` => `config.nodes` and only accepts array
-- `call(): {id:1, jsonrpc:'2.0', result: result}` => `callRPC():result` (different return value)
 
 ### What's new in v7
 
