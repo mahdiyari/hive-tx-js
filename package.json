@@ -1,6 +1,6 @@
 {
   "name": "hive-tx",
-  "version": "7.0.0-beta.16",
+  "version": "7.0.0",
   "description": "Lightweight and complete TypeScript SDK for Hive blockchain operations. Create, sign, and broadcast transactions with full type safety, cryptographic utilities, and serialization support. Features multi-signature transactions, memo encryption, automatic retry/failover, and comprehensive TypeScript definitions.",
   "author": "Mahdi Yari",
   "license": "MIT",
@@ -17,9 +17,10 @@
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "browser": "./dist/browser/hive-tx.min.js",
-  "types": "./dist/esm/types/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "npm run build:clean && npm run build:node && npm run build:browser",
@@ -71,7 +72,7 @@
     "@types/pg": "^8.15.6",
     "openapi-typescript": "^7.10.1",
     "pg": "^8.16.3",
-    "prettier": "^3.7.3",
+    "prettier": "^3.7.4",
     "ts-loader": "^9.5.4",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
