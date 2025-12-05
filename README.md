@@ -1,5 +1,11 @@
 # hive-tx
 
+[![npm version](https://badge.fury.io/js/hive-tx.svg)](https://www.npmjs.com/package/hive-tx)
+[![npm downloads](https://img.shields.io/npm/dm/hive-tx.svg)](https://www.npmjs.com/package/hive-tx)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/mahdiyari/hive-tx-js/blob/master/LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-green.svg)](https://nodejs.org/)
+
 The most lightweight library for Hive blockchain while being a complete library. Regularly maintained to support the latest features of the blockchain. For Web and NodeJS.
 
 Library size: ~28KB minified+gzipped (including all the dependencies)
@@ -19,7 +25,7 @@ npm install hive-tx --save
 ## Usage
 
 ```js
-import { call, Transaction, PrivateKey } from 'hive-tx'
+import { Transaction, PrivateKey, callRPC } from 'hive-tx'
 ```
 
 The library has two build outputs:
@@ -33,7 +39,7 @@ There is also a browser build which you can use like this:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/hive-tx@7/dist/browser/hive-tx.min.js"></script>
-<!-- hiveTx will be available globbaly -->
+<!-- hiveTx will be available globally -->
 ```
 
 ## Quick Usage Examples
@@ -136,16 +142,49 @@ config.retry = 8 // 8 retry attempts before throwing an error
 
 ### Breaking Changes in v7
 
+v7 is a complete TypeScript rewrite with significant API improvements. See [CHANGELOG.md](CHANGELOG.md) for full details.
+
+**Key Breaking Changes:**
+
 - `tx.create()` => `await tx.addOperation(opName, opBody)`
-- `call(): {id:1, jsonrpc:'2.0', result: result}` => `callRPC():result` (different return value)
-- `callRPC()` won't return RPC erros like the previous call() method in { error }. It will throw RPCError.
-- `Transaction.broadcast(timeout?, retry?)` => `Transaction.broadcast(checkStatus?)` if checkStatus=true, waits for transaction to be included in a block.
-- All timeout values are now in millisecond
-- All expiration values are in millisecond
+- `call()` => `callRPC()` - Returns result directly, throws RPCError on errors
+- `Transaction.broadcast(timeout?, retry?)` => `Transaction.broadcast(checkStatus?)`
+- All timeout/expiration values now in milliseconds (was seconds)
 - `new Transaction(transaction)` => `new Transaction({transaction, expiration})`
-- `Transaction.signedTransaction` removed. Signatures are available on `Transaction.transaction`
-- `config.healthcheckInterval` removed.
-- `config.node` => `config.nodes` and only accepts array
+- `Transaction.signedTransaction` removed - Use `Transaction.transaction`
+- `config.node` (string) => `config.nodes` (array)
+- `config.healthcheckInterval` removed
+
+**Migration Examples:**
+
+```js
+// v6: Creating transactions
+const tx = new Transaction()
+await tx.create([['vote', { voter: 'alice', author: 'bob', permlink: 'post', weight: 10000 }]])
+
+// v7: Creating transactions
+const tx = new Transaction()
+await tx.addOperation('vote', { voter: 'alice', author: 'bob', permlink: 'post', weight: 10000 })
+```
+
+```js
+// v6: API calls
+const result = await call('condenser_api.get_accounts', [['alice']])
+const accounts = result.result
+
+// v7: API calls
+const accounts = await callRPC('condenser_api.get_accounts', [['alice']])
+```
+
+```js
+// v6: Configuration
+config.node = 'https://api.hive.blog'
+config.timeout = 10 // seconds
+
+// v7: Configuration
+config.nodes = ['https://api.hive.blog', 'https://api.deathwing.me']
+config.timeout = 10_000 // milliseconds
+```
 
 ### What's new in v7
 
