@@ -8,7 +8,7 @@
 
 The most lightweight library for Hive blockchain while being a complete library. Regularly maintained to support the latest features of the blockchain. For Web and NodeJS.
 
-Library size: ~28KB minified+gzipped (including all the dependencies)
+Library size: ~29KB minified+gzipped (including all the dependencies)
 
 ## Comprehensive Documentation
 
