@@ -11,7 +11,7 @@ npm install hive-tx
 ## Basic Setup
 
 ```typescript
-import { Transaction, PrivateKey, PublicKey, Memo, call, utils } from 'hive-tx'
+import { Transaction, PrivateKey, PublicKey, Memo, callRPC, utils } from 'hive-tx'
 ```
 
 ## Configuration
@@ -56,7 +56,7 @@ async function transferHive() {
   })
 
   // Import your private active key (never hardcode in production!)
-  const privateKey = PrivateKey.fromString('5J...your-private-key-wif')
+  const privateKey = PrivateKey.from('5J...your-private-key-wif')
 
   // Sign the transaction
   const signedTx = tx.sign(privateKey)
@@ -85,7 +85,7 @@ async function signAndVerify() {
   })
 
   // Private posting key
-  const privateKey = PrivateKey.fromString('5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg')
+  const privateKey = PrivateKey.from('5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg')
 
   tx.sign(privateKey)
 
@@ -188,7 +188,7 @@ import { Memo, PrivateKey, PublicKey } from 'hive-tx'
 
 async function encryptMemo() {
   // Sender's private memo key (should be kept secret!)
-  const senderPrivateKey = PrivateKey.fromString('5J...sender-memo-key')
+  const senderPrivateKey = PrivateKey.from('5J...sender-memo-key')
 
   // Recipient's public memo key (publicly available)
   const recipientPublicKey = 'STM...recipient-public-memo-key'
@@ -208,7 +208,7 @@ import { Memo, PrivateKey } from 'hive-tx'
 
 function decryptMemo() {
   // Recipient's private memo key
-  const recipientPrivateKey = PrivateKey.fromString('5J...recipient-memo-key')
+  const recipientPrivateKey = PrivateKey.from('5J...recipient-memo-key')
 
   // Encrypted memo from transaction
   const encryptedMemo = '#Encrypted string from blockchain'
@@ -294,7 +294,7 @@ import { PrivateKey, PublicKey } from 'hive-tx'
 
 function workWithKeys() {
   // Import private key from WIF
-  const privateKey = PrivateKey.fromString('5J...wif-key')
+  const privateKey = PrivateKey.from('5J...wif-key')
 
   // Get different types of private keys from master password
   const ownerPrivateKey = privateKey.fromLogin(
