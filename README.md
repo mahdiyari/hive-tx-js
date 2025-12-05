@@ -1,326 +1,206 @@
 # hive-tx
 
-Lightweight and complete JavaScript library for Hive blockchain - Web and NodeJS.
+[![npm version](https://badge.fury.io/js/hive-tx.svg)](https://www.npmjs.com/package/hive-tx)
+[![npm downloads](https://img.shields.io/npm/dm/hive-tx.svg)](https://www.npmjs.com/package/hive-tx)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/mahdiyari/hive-tx-js/blob/master/LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-green.svg)](https://nodejs.org/)
 
-#### Why this?
+The most lightweight library for Hive blockchain while being a complete library. Regularly maintained to support the latest features of the blockchain. For Web and NodeJS.
 
-The most lightweight while being a complete library.
+Library size: ~29KB minified+gzipped (including all the dependencies)
 
-Some libraries are not easy to integrate and in some cases are incompatible with some frameworks like [Nativescript](https://www.nativescript.org/)
+## Comprehensive Documentation
 
-Hive-tx is a solution to such cases when the other libraries are not working.
+- 🚀 [Quick Start Guide](docs/QUICKSTART.md) - Get up and running in minutes
+- 💻 [Examples](docs/EXAMPLES.md) - Practical usage examples
 
 ## Installation
 
 ```bash
+# Require nodejs +20
 npm install hive-tx --save
 ```
 
 ## Usage
 
-**Browser:**
+```js
+import { Transaction, PrivateKey, callRPC } from 'hive-tx'
+```
+
+The library has two build outputs:
+
+- ES Module (esm)
+- CommonJS (cjs)
+
+Your application will automatically pick the right build for your environment but you can also import either of them directly from `hive-tx/esm` and `hive-tx/cjs`.
+
+There is also a browser build which you can use like this:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/hive-tx/dist/hive-tx.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hive-tx@7/dist/browser/hive-tx.min.js"></script>
+<!-- hiveTx will be available globally -->
 ```
 
-`hiveTx` is available after including /dist/hive-tx.min.js file in your html file.
+## Quick Usage Examples
 
-**NodeJS:**
+### New Transaction API (v7+)
 
 ```js
-// ES Module
-import * as hiveTx from 'hive-tx'
+import { Transaction, PrivateKey } from 'hive-tx'
 
-// OR import what you use
-import { call, Transaction, PrivateKey } from 'hive-tx'
+// Create and broadcast a vote
+const tx = new Transaction()
+await tx.addOperation('vote', {
+  voter: 'your-username',
+  author: 'post-author',
+  permlink: 'post-permlink',
+  weight: 10000 // 100%
+})
 
-// OR in CommonJS environments using dynamic import()
-const hiveTx = await import('hive-tx')
-
-// OR import what you use
-const { call, Transaction, PrivateKey } = await import('hive-tx')
+const key = PrivateKey.from('your-private-key')
+tx.sign(key)
+const result = await tx.broadcast()
+console.log('Vote successful!', result.result.tx_id)
 ```
 
-## Usage examples
-
-**Configuration**
-
-Set or get configs:
+### Transfer HIVE
 
 ```js
-// default values that are already defined in config.js
-hiveTx.config.node: [
+import { Transaction, PrivateKey } from 'hive-tx'
+
+const tx = new Transaction()
+await tx.addOperation('transfer', {
+  from: 'sender',
+  to: 'receiver',
+  amount: '1.000 HIVE',
+  memo: 'Thanks for your help!'
+})
+
+const key = PrivateKey.from('your-active-key')
+tx.sign(key)
+const result = await tx.broadcast()
+console.log('Transfer successful!', result.result.tx_id)
+```
+
+### API Calls
+
+```js
+import { callRPC, callREST, callWithQuorum } from 'hive-tx'
+
+// Get account information
+const accounts = await callRPC('condenser_api.get_accounts', [['username']])
+console.log('Account:', result[0])
+
+// Get blockchain properties
+const props = await callRPC('condenser_api.get_dynamic_global_properties')
+console.log('Head block:', props.head_block_number)
+
+const balance = await callREST('balance', '/accounts/{account-name}/balances', {
+  'account-name': 'alice'
+})
+console.log(balance)
+
+// Cross-check the result of the call with 2 nodes
+const accounts = await callWithQuorum('condenser_api.get_accounts', [['username']], 2)
+console.log('Account:', result[0])
+```
+
+### Key Management
+
+```js
+import { PrivateKey } from 'hive-tx'
+
+// Create keys in multiple ways
+const key1 = PrivateKey.from('5JdeC9P7Pbd1uGdFVEsJ41EkEnADbbHGq6p1BwFxm6txNBsQnsw')
+const key2 = PrivateKey.randomKey()
+const key3 = PrivateKey.fromLogin('username', 'password', 'posting')
+const key4 = PrivateKey.fromSeed('my-secret-seed')
+```
+
+## Configuration
+
+```js
+import { config } from 'hive-tx'
+
+// Configure API nodes with failover
+// Default nodes that are already set:
+config.nodes = [
   'https://api.hive.blog',
   'https://api.deathwing.me',
+  'https://api.openhive.network',
   'https://rpc.mahdiyari.info',
   'https://techcoderx.com',
   'https://hiveapi.actifit.io',
-  'https://hive-api.dlux.io',
-  'https://hive-api.arcange.eu',
   'https://api.c0ff33a.uk'
 ]
-// OR hiveTx.config.node = "https://api.hive.blog"
-hiveTx.config.chain_id = "beeab0de00000000000000000000000000000000000000000000000000000000"
-hiveTx.config.address_prefix = "STM"
-hiveTx.config.axiosAdapter = null
-hiveTx.config.timeout: 5 // 5 seconds
-hiveTx.config.retry: 5 // consecutive retries on one call
-hiveTx.config.healthcheckInterval: 30_000 // in ms
+
+// Custom timeout and retry settings
+config.timeout = 10_000 // 10 seconds
+config.retry = 8 // 8 retry attempts before throwing an error
 ```
 
-You can define a different adapter if your environment doesn't support 'xhr' or 'http'  
-See https://github.com/haverstack/axios-fetch-adapter  
-Example:
+### Breaking Changes in v7
+
+v7 is a complete TypeScript rewrite with significant API improvements. See [CHANGELOG.md](CHANGELOG.md) for full details.
+
+**Key Breaking Changes:**
+
+- `tx.create()` => `await tx.addOperation(opName, opBody)`
+- `call()` => `callRPC()` - Returns result directly, throws RPCError on errors
+- `Transaction.broadcast(timeout?, retry?)` => `Transaction.broadcast(checkStatus?)`
+- All timeout/expiration values now in milliseconds (was seconds)
+- `new Transaction(transaction)` => `new Transaction({transaction, expiration})`
+- `Transaction.signedTransaction` removed - Use `Transaction.transaction`
+- `config.node` (string) => `config.nodes` (array)
+- `config.healthcheckInterval` removed
+
+**Migration Examples:**
 
 ```js
-import fetchAdapter from '@haverstack/axios-fetch-adapter'
-hiveTx.config.axiosAdapter = fetchAdapter
-```
+// v6: Creating transactions
+const tx = new Transaction()
+await tx.create([['vote', { voter: 'alice', author: 'bob', permlink: 'post', weight: 10000 }]])
 
-**Create transaction:**
+// v7: Creating transactions
+const tx = new Transaction()
+await tx.addOperation('vote', { voter: 'alice', author: 'bob', permlink: 'post', weight: 10000 })
+```
 
 ```js
-const tx = new hiveTx.Transaction(trx?)
-```
+// v6: API calls
+const result = await call('condenser_api.get_accounts', [['alice']])
+const accounts = result.result
 
-or
+// v7: API calls
+const accounts = await callRPC('condenser_api.get_accounts', [['alice']])
+```
 
 ```js
-const tx = new hiveTx.Transaction()
-tx.create(operations, (expiration = 60))
+// v6: Configuration
+config.node = 'https://api.hive.blog'
+config.timeout = 10 // seconds
+
+// v7: Configuration
+config.nodes = ['https://api.hive.blog', 'https://api.deathwing.me']
+config.timeout = 10_000 // milliseconds
 ```
 
-Example:
+### What's new in v7
 
-```js
-const operations = [
-  [
-    'vote',
-    {
-      voter: 'guest123',
-      author: 'guest123',
-      permlink: '20191107t125713486z-post',
-      weight: 9900,
-    },
-  ],
-]
-
-const tx = new hiveTx.Transaction()
-tx.create(operations).then(() => console.log(tx.transaction))
-```
-
-**Sign transaction:**
-
-```js
-const myKey = '5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg'
-const privateKey = hiveTx.PrivateKey.from(myKey)
-
-tx.sign(privateKey)
-console.log(tx.signedTransaction)
-```
-
-**Broadcast transaction:**
-
-```js
-tx.broadcast().then((res) => console.log(res))
-```
-
-**Get transaction digest and id**
-
-Will return the hash and transaction id without broadcasting the transaction.
-
-```js
-const digest = tx.digest()
-// { digest: Uint8Array, txId: string }
-```
-
-**Make node call:**
-
-```js
-hiveTx.call(method, params = [], timeout = 10): Promise
-```
-
-Example:
-
-```js
-hiveTx
-  .call('condenser_api.get_accounts', [['mahdiyari']])
-  .then((res) => console.log(res))
-```
-
-**Sign message and verify sginature:**
-
-```js
-hiveTx.PrivateKey.sign(message: Uint8Array)
-hiveTx.PublicKey.verify(message: Uint8Array, signature: Signature)
-```
-
-Example:
-
-```js
-const { sha256 } = require('hive-tx/helpers/crypto')
-
-const privateKey = hiveTx.PrivateKey.from(
-  '5JRaypasxMx1L97ZUX7YuC5Psb5EAbF821kkAGtBj7xCJFQcbLg'
-)
-const publicKey = hiveTx.PublicKey.from(
-  'STM6aGPtxMUGnTPfKLSxdwCHbximSJxzrRjeQmwRW9BRCdrFotKLs'
-)
-const message = sha256('testing')
-const signature = privateKey.sign(message)
-const verify = publicKey.verify(message, signature) // true
-```
-
-Or create Sginature from string:
-
-```js
-const signature = hiveTx.Signature.from(
-  '1f019dc13a308cef138162cc16ab7c3aa1891941fddec66d83ff29b01b649a86600802d301f13505abc8c9ccbbeb86852fc71134fe209a6e717c6fd7b4cd1505a2'
-)
-```
-
-**Generate random key**
-
-```js
-hiveTx.PrivateKey.randomKey()
-```
-
-**Retrieve public key from Signature**
-
-```js
-const signature = hiveTx.Signature.from(string)
-signature.getPublicKey(message)
-```
-
-For example we find the public key used for signing this transaction:  
-https://hiveblocks.com/tx/207c06a5448e18b501d15891aed6f3ecbeb96b83
-
-```js
-const signature = hiveTx.Signature.from(
-  '203dfa2f2620f94a033c424710bbf22c518e1d9aec4170b342789acdc714bf0b483ff1e2ec1fcd5607e5df767ba09751792484a7ac1cf31c94cf55b1e81df6be30'
-)
-const trx = new hiveTx.Transaction({
-  ref_block_num: 30883,
-  ref_block_prefix: 3663302639,
-  expiration: '2023-05-26 07:49:44',
-  operations: [
-    [
-      'vote',
-      {
-        voter: 'mahdiyari',
-        author: 'afa.hb03',
-        permlink:
-          'esp-engcoastal-sentry-splinterlands-art-contest-week-242-by-afahb03',
-        weight: 2000,
-      },
-    ],
-  ],
-  extensions: [],
-})
-const { digest } = trx.digest()
-const publicKey = signature.getPublicKey(digest).toString()
-// STM8WWUYHMdHLgEHidYCztswzfZCViA16EqGkAxt7RG4dWwDpFtCF
-// To find which account has this public key
-const account = await hiveTx.call('condenser_api.get_key_references', [
-  ['STM8WWUYHMdHLgEHidYCztswzfZCViA16EqGkAxt7RG4dWwDpFtCF'],
-])
-// steemauto
-```
-
-**Encode/Decode Memo**
-
-```js
-import { Memo, PrivateKey, PublicKey } from 'hive-tx'
-
-// sender private key
-const privateKey = PrivateKey.from('...')
-// receiver public memo key
-const publicKey = PublicKey.from('...')
-
-// must have #
-const memo = '#testing'
-const encryptedMemo = await Memo.encode(privateKey, publicKey, memo)
-
-// Decode using receiver's private memo key
-const decryptedMemo = await Memo.decode(privateKey, encryptedMemo)
-```
-
-### Utils
-
-In browser build `utils` is exported. For example:
-
-```
-hiveTx.utils.validateUsername('test')
-```
-
-**Validate Username**  
-Example:
-
-```js
-import { validateUsername } from 'hive-tx/helpers/utils.js'
-console.log(validateUsername('test'))
-// null
-console.log(validateUsername('Big'))
-// Account name should start with a lowercase letter.
-```
-
-**makeBitMaskFilter - get_account_history**  
-Example:
-
-```js
-import { call } from 'hive-tx'
-import { makeBitMaskFilter, operations as op } from 'hive-tx/helpers/utils.js'
-const filter = makeBitMaskFilter([op.transfer, op.transfer_to_vesting])
-call('condenser_api.get_account_history', ['mahdiyari', -1, 1, ...filter]).then(
-  (res) => console.log(res)
-)
-```
-
-**buildWitnessSetProperties**  
-Needed for `witness_set_properties` operation.
-
-Example:
-
-```js
-import { buildWitnessSetProperties } from 'hive-tx/helpers/utils.js'
-const owner = 'mahdiyari'
-const props = {
-  key: 'STM1111111111111111111111111111111114T1Anm', // Required - signing key
-  account_creation_fee: '0.000 HIVE', // optional
-  account_subsidy_budget: 10000, // optional
-  account_subsidy_decay: 330782, // optional
-  maximum_block_size: 65536, // optional
-  hbd_interest_rate: 0, // optional
-  hbd_exchange_rate: { base: '0.250 HBD', quote: '1.000 HIVE' }, // optional
-  url: 'https://testurl', // optional
-  new_signing_key: 'STM1111111111111111111111111111111114T1Anm', // optional
-}
-const witnessOps = buildWitnessSetProperties(owner, props)
-const trx = new Transaction()
-trx.create([witnessOps]).then(() => {
-  trx.sign(privateKey)
-  trx.broadcast()
-})
-```
-
-**Retrying and failover**  
-Hive-tx will retry and change the node to the next in the array IF `hiveTx.config.node` provided as array which by default is.  
-By default hive-tx will use the timeout and retry values from the global config but you can supply timeout and retry values per request as well.
-
-```js
-// timeout: 5, retry: 3
-hiveTx
-  .call('condenser_api.get_accounts', [['mahdiyari']], 5, 3)
-  .then((res) => console.log(res))
-// retrying applies to broadcasting as well
-tx.broadcast(5, 3)
-```
-
-Note: Retrying a transaction is safe in this implementation as the chain won't accept a duplicate transaction.  
-Note: retry = 5 will actually make 6 calls.  
-Note: Failover will happen on any error and switch to the next node.
+- Codebase reworked in TypeScript
+- All methods now have good JSDoc documentation
+- Added types for all operations
+- Added `callWithQuorum()` - JSONRPC call that cross-checks the result with multiple nodes
+- Added `callREST()` with full typing for new REST APIs
+- Added tests including operation tests to keep them up to date with hived
+- Added docs/EXAMPLES.md and docs/QUICKSTART.md
+- Output 3 builds: ESM, CJS, UMD minified .js for browser
 
 ## License
 
 MIT
+
+## Support
+
+- #dev-chat at [Hive's Discord server](https://myhive.li/discord)
