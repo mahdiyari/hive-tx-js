@@ -23,7 +23,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "npm run build:clean && npm run build:node && npm run build:browser",
+    "build": "npm run build:clean && npm run build:node && npm run build:browser && npm run format",
     "build:node": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
@@ -32,7 +32,7 @@
     "format": "prettier --write 'src/**/*.{js,ts}'",
     "test": "npm run build:esm && tsx tests/test.ts",
     "test:more": "npx nve 20,22,23,24,25 npm test",
-    "generate:types": "tsx src/type_generators/index.ts",
+    "generate:types": "tsx src/type_generators/index.ts && npm run format",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
