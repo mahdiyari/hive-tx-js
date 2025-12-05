@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  test:
+    name: Test on Node.js ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20, 22, 24]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run build
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+        timeout-minutes: 5
+        continue-on-error: ${{ matrix.node-version != 20 }}
+        env:
+          # Tests make live API calls to Hive nodes and external PostgreSQL
+          NODE_ENV: test
+
+      - name: Check bundle size
+        if: matrix.node-version == 20
+        run: |
+          GZIP_SIZE=$(gzip -c dist/browser/hive-tx.min.js | wc -c)
+          echo "Browser bundle gzipped size: ${GZIP_SIZE} bytes (~$((GZIP_SIZE / 1024)) KB)"
+          if [ $GZIP_SIZE -gt 35000 ]; then
+            echo "Warning: Bundle size exceeds 35KB (advertised as ~29KB)"
+            exit 1
+          fi
+
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npx prettier --check 'src/**/*.{js,ts}'
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
