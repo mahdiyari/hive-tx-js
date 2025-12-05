@@ -9,7 +9,7 @@ npm install hive-tx --save
 ```
 
 ```js
-import { call, Transaction, PrivateKey } from 'hive-tx'
+import { Transaction, PrivateKey, callRPC } from 'hive-tx'
 ```
 
 The library has two build outputs:
@@ -23,7 +23,7 @@ There is also a browser build which you can use like this:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/hive-tx@7/dist/browser/hive-tx.min.js"></script>
-<!-- hiveTx will be available globbaly -->
+<!-- hiveTx will be available globally -->
 ```
 
 ## Creating Transactions
