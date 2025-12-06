@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/hive-tx.svg)](https://www.npmjs.com/package/hive-tx)
 [![npm downloads](https://img.shields.io/npm/dm/hive-tx.svg)](https://www.npmjs.com/package/hive-tx)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/mahdiyari/hive-tx-js/blob/master/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/mahdiyari/hive-tx/blob/master/LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-green.svg)](https://nodejs.org/)
 

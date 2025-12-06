@@ -50,13 +50,13 @@
     "smart-contract",
     "wallet"
   ],
-  "homepage": "https://github.com/mahdiyari/hive-tx-js",
+  "homepage": "https://github.com/mahdiyari/hive-tx",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mahdiyari/hive-tx-js.git"
+    "url": "git+https://github.com/mahdiyari/hive-tx.git"
   },
   "bugs": {
-    "url": "https://github.com/mahdiyari/hive-tx-js/issues"
+    "url": "https://github.com/mahdiyari/hive-tx/issues"
   },
   "engines": {
     "node": ">=20"
