@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <script src="../dist/browser/hive-tx.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hive-tx@7/dist/browser/hive-tx.min.js"></script>
   <title>Test hive-tx</title>
 </head>
 
@@ -30,7 +30,6 @@
 
         // sign the transaction
         tx.sign(privateKey)
-        console.log('Signed transaction:', tx.signedTransaction)
 
         // broadcast the transaction
         tx.broadcast().then(res => console.log('Broadcast result:', res))
