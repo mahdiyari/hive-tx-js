@@ -312,7 +312,7 @@ export const callWithQuorum = async <T = any>(
 function findConsensus(results: any[], quorum: number) {
   const resultGroups = new Map<string, any[]>()
   for (const result of results) {
-    const key = JSON.stringify(result.data)
+    const key = JSON.stringify(result)
     if (!resultGroups.has(key)) {
       resultGroups.set(key, [])
     }
